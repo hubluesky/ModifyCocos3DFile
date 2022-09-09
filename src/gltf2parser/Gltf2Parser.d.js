@@ -610,7 +610,7 @@ class Gltf2Parser {
     const bufView = this.json.bufferViews[accessor.bufferView];
     if (bufView.byteStride) {
       console.error("UNSUPPORTED - Parsing Stride Buffer");
-      return null;
+      // return null;
     }
     return new Accessor(accessor, bufView, this.bin);
   }

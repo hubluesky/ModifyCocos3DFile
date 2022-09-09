@@ -5,6 +5,7 @@ import Gltf2Parser, { Mesh, parseGLB, Primitive, Accessor } from "./gltf2parser/
 import fetch from 'node-fetch';
 import { assert } from 'console';
 import { TTypeArray } from './gltf2parser/types.js';
+import { Geometry } from './geometry.js';
 // @ts-ignore
 globalThis.fetch = fetch;
 
@@ -38,8 +39,13 @@ const vertexBundles = [
                 "isNormalized": false
             },
             {
-                "name": "a_texCoord1",
-                "format": 21,
+                "name": "a_joints",
+                "format": 42,
+                "isNormalized": false
+            },
+            {
+                "name": "a_weights",
+                "format": 44,
                 "isNormalized": false
             }
         ]
@@ -68,7 +74,6 @@ function readFileSync(filePath: string): ArrayBuffer {
 function readerCocosMesh() {
     const filename = "1263d74c-8167-4928-91a6-4e2672411f47@fc873.bin";
     let arrayBuffer = readFileSync(filename);
-    console.log("readerCocosMesh ", filename);
 
     for (let iv = 0; iv < vertexBundles.length; iv++) {
         let vertexBundle = vertexBundles[iv];
@@ -86,7 +91,7 @@ function readerCocosMesh() {
             // const outputStride = stride;
             // const outputComponentByteLength = inputComponentByteLength;
             // console.log("FormatInfos[attribute.format] ", FormatInfos[attribute.format].size);
-            
+
             for (let iVertex = 0; iVertex < vertexCount; ++iVertex) {
                 text += "\t[";
                 for (let iComponent = 0; iComponent < componentCount; ++iComponent) {
@@ -99,7 +104,7 @@ function readerCocosMesh() {
                     // writer(outputOffset, reader(inputOffset));
                 }
                 text += "]";
-            }
+            } 
         }
         console.log("vertexBundle", iv, text);
     }
@@ -115,7 +120,7 @@ function readerCocosMesh() {
     }
 }
 
-readerCocosMesh();
+// readerCocosMesh();
 
 async function fbxToGltf(input: string, out: string) {
     const toolPath = "./fbx-gltf-conv/bin/win32/FBX-glTF-conv";
@@ -169,7 +174,6 @@ function gltfToCocosMesh(mesh: Mesh, vertexBundles: readonly IVertexBundle[], pr
         let primitive2 = mesh.primitives[ip];
         for (const vertexBundleIndex of primitive.vertexBundelIndices) {
             const vertexBundle = vertexBundles[vertexBundleIndex];
-
             // let attributesSize = getOffset(vertexBundle.attributes as Attribute[], vertexBundle.attributes.length);
             vertexBundle.view.offset = vertexBundelOffset;
             vertexBundle.view.count = primitive2.position!.elementCnt;
@@ -217,7 +221,7 @@ function gltfToCocosMesh(mesh: Mesh, vertexBundles: readonly IVertexBundle[], pr
 
                 const formatInfo = FormatInfos[attribute.format];
                 const componentCount = formatInfo.count;
-
+                
                 assert(componentCount == accessor.componentLen);
 
                 const inputComponentByteLength = getComponentByteLength(attribute.format);
@@ -240,7 +244,9 @@ function convertFBXToCocosMesh(filename: string): void {
     assert(gltf != null);
     let mesh = gltf!.getMesh(0);
     assert(mesh != null);
-    gltfToCocosMesh(mesh!, vertexBundles as IVertexBundle[], primitives);
+    let geomerty = new Geometry();
+    geomerty.readGltfMesh(mesh!);
+    // gltfToCocosMesh(mesh!, vertexBundles as IVertexBundle[], primitives);
 }
 
-// convertFBXToCocosMesh("triangle");
+convertFBXToCocosMesh("triangle");
