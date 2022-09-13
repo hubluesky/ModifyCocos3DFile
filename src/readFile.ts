@@ -153,7 +153,7 @@ function parseGltf(url: string) {
 
 function readFBXToGltf(filename: string) {
     const gltfPath = `./${filename}/${filename}.gltf`;
-    fbxToGltf(filename + ".fbx", gltfPath);
+    // fbxToGltf(filename + ".fbx", gltfPath);
     return parseGltf(gltfPath);
 }
 
@@ -249,4 +249,4 @@ function convertFBXToCocosMesh(filename: string): void {
     // gltfToCocosMesh(mesh!, vertexBundles as IVertexBundle[], primitives);
 }
 
-convertFBXToCocosMesh("triangle");
+convertFBXToCocosMesh("Triangle");

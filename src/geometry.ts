@@ -3,10 +3,8 @@ import Accessor from "./gltf2parser/Accessor";
 import { AttributeName } from "./cocos.js";
 import { Vec3 } from "./vec3.js";
 
-
 type ObjectInclude<T, E> = { [k in keyof T]: T[k] extends E ? k : never }[keyof T];
 const attributes = ["indices", "a_position", "a_normal", "a_texCoord", "a_tangent", "a_joints", "a_weights"];
-
 
 export class Geometry {
     public indicesList: number[][] = [];
@@ -20,6 +18,54 @@ export class Geometry {
     tempVec1: Vec3 = new Vec3();
     tempVec2: Vec3 = new Vec3();
     tempVec3: Vec3 = new Vec3();
+    tempVec4: Vec3 = new Vec3();
+    tempVec5: Vec3 = new Vec3();
+
+
+    attributeName: string = '';
+
+    public getAttributeList(attribute: string, primitive: Primitive, returnType: string): Accessor | number[][] {
+        let accessor: Accessor;
+        let attributeList: number[][] = [];
+        switch (attribute) {
+            case AttributeName.ATTR_POSITION:
+                accessor = this.getAttributeAccessor(primitive, "position");
+                attributeList = this.positionList;
+                break;
+            case AttributeName.ATTR_NORMAL:
+                accessor = this.getAttributeAccessor(primitive, "normal");
+                attributeList = this.normalList;
+                break;
+            case AttributeName.ATTR_TEX_COORD:
+                accessor = this.getAttributeAccessor(primitive, "texcoord_0");
+                attributeList = this.texCoordList;
+                break;
+            case AttributeName.ATTR_TANGENT:
+                accessor = this.getAttributeAccessor(primitive, "tangent");
+                attributeList = this.tangentList;
+                break;
+            case AttributeName.ATTR_JOINTS:
+                accessor = this.getAttributeAccessor(primitive, "joints_0");
+                attributeList = this.jointList;
+                break;
+            case AttributeName.ATTR_WEIGHTS:
+                accessor = this.getAttributeAccessor(primitive, "weights_0");
+                attributeList = this.weightList;
+                break;
+            case "indices":
+                accessor = this.getAttributeAccessor(primitive, "indices");
+                attributeList = this.indicesList;
+                break;
+            default:
+                throw `Can not suppert attribute ${attribute}`;
+        }
+        if (returnType == 'accessor') {
+            return accessor;
+        } else {
+            return attributeList;
+        }
+    }
+
     public getAttributeAccessor(primitive: Primitive, property: ObjectInclude<Primitive, Accessor | null>): Accessor {
         return primitive[property]!;
     }
@@ -30,40 +76,7 @@ export class Geometry {
             // console.log('primitive', primitive);
             for (let j = 0; j < attributes.length; j++) {
                 let attribute = attributes[j];
-                let accessor: Accessor;
-                let curList: number[][] = [];
-                switch (attribute) {
-                    case AttributeName.ATTR_POSITION:
-                        accessor = this.getAttributeAccessor(primitive, "position");
-                        this.positionList = curList;
-                        break;
-                    case AttributeName.ATTR_NORMAL:
-                        accessor = this.getAttributeAccessor(primitive, "normal");
-                        this.normalList = curList;
-                        break;
-                    case AttributeName.ATTR_TEX_COORD:
-                        accessor = this.getAttributeAccessor(primitive, "texcoord_0");
-                        this.texCoordList = curList;
-                        break;
-                    case AttributeName.ATTR_TANGENT:
-                        accessor = this.getAttributeAccessor(primitive, "tangent");
-                        this.tangentList = curList;
-                        break;
-                    case AttributeName.ATTR_JOINTS:
-                        accessor = this.getAttributeAccessor(primitive, "joints_0");
-                        this.jointList = curList;
-                        break;
-                    case AttributeName.ATTR_WEIGHTS:
-                        accessor = this.getAttributeAccessor(primitive, "weights_0");
-                        this.weightList = curList;
-                        break;
-                    case "indices":
-                        accessor = this.getAttributeAccessor(primitive, "indices");
-                        this.indicesList = curList;
-                        break;
-                    default:
-                        throw `Can not suppert attribute ${attribute}`;
-                }
+                let accessor = this.getAttributeList(attribute, primitive, 'accessor') as Accessor;
                 if (accessor == null) continue;
                 if (accessor.data == null) throw "";
 
@@ -76,9 +89,9 @@ export class Geometry {
                         const inputOffset = iVertex * componentCount + iComponent;
                         vertexArr.push(accessor.data![inputOffset]);
                     }
-                    curList.push(vertexArr);
+                    let attributeList = this.getAttributeList(attribute, primitive, 'attributeList') as number[][];
+                    attributeList.push(vertexArr);
                 }
-
             }
         }
         this.computeNormals();
@@ -96,7 +109,7 @@ export class Geometry {
     }
 
     public computeNormals(): void {
-        // if (this.normalList.length != 0) return;
+        if (this.normalList.length != 0) return;
         this.normalList = [];
         for (let i = 0; i < this.positionList.length; i++) {
             this.normalList.push([]);
@@ -129,18 +142,68 @@ export class Geometry {
             this.vecToxyz(this.normalList, index1, vertexNormal1Vec);
             this.vecToxyz(this.normalList, index2, vertexNormal2Vec);
             this.vecToxyz(this.normalList, index3, vertexNormal3Vec);
-
         }
         for (let i = 0; i < this.normalList.length; i++) {
             let normal = this.xyzTovec(this.normalList[i]);
             normal.normalize();
             this.vecToxyz(this.normalList, i, normal);
         }
-        console.log(this.normalList);
+        // console.log(this.normalList);
     }
 
     public computeTangents(): void {
-        if (this.tangentList.length != 0) return;
+        // if (this.tangentList.length != 0) return;
+        console.log(this.tangentList);
+        this.tangentList = [];
+        for (let i = 0; i < this.positionList.length; i++) {
+            this.tangentList.push([]);
+            this.tangentList[i].push(0, 0, 0);
+        }
+        for (let i = 0; i < this.indicesList.length; i += 3) {
+            let index1 = this.indicesList[i + 0][0];
+            let index2 = this.indicesList[i + 1][0];
+            let index3 = this.indicesList[i + 2][0];
+
+            let vertex1 = this.positionList[index1];
+            let vertex1Vec = this.xyzTovec(vertex1);
+            let vertex2 = this.positionList[index2];
+            let vertex2Vec = this.xyzTovec(vertex2);
+            let vertex3 = this.positionList[index3];
+            let vertex3Vec = this.xyzTovec(vertex3);
+
+            Vec3.subtract(this.tempVec1, vertex2Vec, vertex1Vec);
+            Vec3.subtract(this.tempVec2, vertex3Vec, vertex1Vec);
+
+            let texcoord1 = this.texCoordList[index1];
+            let texcoord2 = this.texCoordList[index2];
+            let texcoord3 = this.texCoordList[index3];
+            let coordy1 = texcoord2[1] - texcoord1[1];
+            let coordy2 = texcoord3[1] - texcoord1[1];
+
+            // console.log(coordy1,coordy2,texcoord1,texcoord2,texcoord3);
+
+            Vec3.multiplyScalar(this.tempVec3, this.tempVec1, coordy2);
+            Vec3.multiplyScalar(this.tempVec4, this.tempVec2, coordy1);
+            Vec3.subtract(this.tempVec5, this.tempVec4, this.tempVec3);
+
+            let tangent1 = this.tangentList[index1];
+            let tangent2 = this.tangentList[index2];
+            let tangent3 = this.tangentList[index3];
+
+            let tangent1Vec = this.xyzTovec(tangent1).add(this.tempVec5);
+            let tangent2Vec = this.xyzTovec(tangent2).add(this.tempVec5);            
+            let tangent3Vec = this.xyzTovec(tangent3).add(this.tempVec5);
+
+            this.vecToxyz(this.tangentList, index1, tangent1Vec);
+            this.vecToxyz(this.tangentList, index2, tangent2Vec);
+            this.vecToxyz(this.tangentList, index3, tangent3Vec);
+        }
+        for (let i = 0; i < this.tangentList.length; i++) {
+            let tangent = this.xyzTovec(this.tangentList[i]);
+            tangent.normalize();
+            this.vecToxyz(this.tangentList, i, tangent);
+        }
+        console.log(this.tangentList, 'sss');
 
     }
 }
