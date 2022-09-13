@@ -12,15 +12,19 @@ export class Geometry {
     public normalList: number[][] = [];
     public texCoordList: number[][] = [];
     public tangentList: number[][] = [];
+    public tangent1List: number[][] = [];
     public jointList: number[][] = [];
     public weightList: number[][] = [];
+
 
     tempVec1: Vec3 = new Vec3();
     tempVec2: Vec3 = new Vec3();
     tempVec3: Vec3 = new Vec3();
     tempVec4: Vec3 = new Vec3();
     tempVec5: Vec3 = new Vec3();
-
+    tempVec6: Vec3 = new Vec3();
+    tempVec7: Vec3 = new Vec3();
+    tempVec8: Vec3 = new Vec3();
 
     attributeName: string = '';
 
@@ -110,7 +114,6 @@ export class Geometry {
 
     public computeNormals(): void {
         if (this.normalList.length != 0) return;
-        this.normalList = [];
         for (let i = 0; i < this.positionList.length; i++) {
             this.normalList.push([]);
             this.normalList[i].push(0, 0, 0);
@@ -148,7 +151,6 @@ export class Geometry {
             normal.normalize();
             this.vecToxyz(this.normalList, i, normal);
         }
-        // console.log(this.normalList);
     }
 
     public computeTangents(): void {
@@ -157,7 +159,9 @@ export class Geometry {
         this.tangentList = [];
         for (let i = 0; i < this.positionList.length; i++) {
             this.tangentList.push([]);
-            this.tangentList[i].push(0, 0, 0);
+            this.tangentList[i].push(0, 0, 0, 0);
+            this.tangent1List.push([]);
+            this.tangent1List[i].push(0, 0, 0);
         }
         for (let i = 0; i < this.indicesList.length; i += 3) {
             let index1 = this.indicesList[i + 0][0];
@@ -177,11 +181,9 @@ export class Geometry {
             let texcoord1 = this.texCoordList[index1];
             let texcoord2 = this.texCoordList[index2];
             let texcoord3 = this.texCoordList[index3];
-            let coordy1 = texcoord2[1] - texcoord1[1];
+
+            let coordy1 = texcoord2[1] - texcoord1[1];  // texcoord y
             let coordy2 = texcoord3[1] - texcoord1[1];
-
-            // console.log(coordy1,coordy2,texcoord1,texcoord2,texcoord3);
-
             Vec3.multiplyScalar(this.tempVec3, this.tempVec1, coordy2);
             Vec3.multiplyScalar(this.tempVec4, this.tempVec2, coordy1);
             Vec3.subtract(this.tempVec5, this.tempVec4, this.tempVec3);
@@ -189,21 +191,55 @@ export class Geometry {
             let tangent1 = this.tangentList[index1];
             let tangent2 = this.tangentList[index2];
             let tangent3 = this.tangentList[index3];
-
             let tangent1Vec = this.xyzTovec(tangent1).add(this.tempVec5);
-            let tangent2Vec = this.xyzTovec(tangent2).add(this.tempVec5);            
+            let tangent2Vec = this.xyzTovec(tangent2).add(this.tempVec5);
             let tangent3Vec = this.xyzTovec(tangent3).add(this.tempVec5);
-
             this.vecToxyz(this.tangentList, index1, tangent1Vec);
             this.vecToxyz(this.tangentList, index2, tangent2Vec);
             this.vecToxyz(this.tangentList, index3, tangent3Vec);
+
+            // 计算切线的第四个分量 w
+            let coordy3 = texcoord2[0] - texcoord1[0];  // texcoord x
+            let coordy4 = texcoord3[0] - texcoord1[0];
+            Vec3.multiplyScalar(this.tempVec6, this.tempVec1, coordy4);
+            Vec3.multiplyScalar(this.tempVec7, this.tempVec2, coordy3);
+            Vec3.subtract(this.tempVec8, this.tempVec6, this.tempVec7);
+
+            let tangent4 = this.tangent1List[index1];
+            let tangent5 = this.tangent1List[index2];
+            let tangent6 = this.tangent1List[index3];
+            let tangent4Vec = this.xyzTovec(tangent4).add(this.tempVec8);
+            let tangent5Vec = this.xyzTovec(tangent5).add(this.tempVec8);
+            let tangent6Vec = this.xyzTovec(tangent6).add(this.tempVec8);
+            this.vecToxyz(this.tangent1List, index1, tangent4Vec);
+            this.vecToxyz(this.tangent1List, index2, tangent5Vec);
+            this.vecToxyz(this.tangent1List, index3, tangent6Vec);
+
+            let temp = new Vec3();
+            let normal1 = this.normalList[index1];
+            let normal1Vec = this.xyzTovec(normal1);
+            let normal2 = this.normalList[index2];
+            let normal2Vec = this.xyzTovec(normal2);
+            let normal3 = this.normalList[index3];
+            let normal3Vec = this.xyzTovec(normal3);
+            let w1 = Vec3.dot(Vec3.cross(temp, normal1Vec, tangent4Vec), tangent1Vec) < 0.0 ? -1 : 1;
+            let w2 = Vec3.dot(Vec3.cross(temp, normal2Vec, tangent5Vec), tangent2Vec) < 0.0 ? -1 : 1;
+            let w3 = Vec3.dot(Vec3.cross(temp, normal3Vec, tangent6Vec), tangent3Vec) < 0.0 ? -1 : 1;
+            console.log(w1, w2, w3);
+            this.tangentList[index1][3] = w1;
+            this.tangentList[index2][3] = w2;
+            this.tangentList[index3][3] = w3;
         }
+        console.log(this.tangent1List, 'tangent1List');
+
+
         for (let i = 0; i < this.tangentList.length; i++) {
             let tangent = this.xyzTovec(this.tangentList[i]);
             tangent.normalize();
             this.vecToxyz(this.tangentList, i, tangent);
         }
-        console.log(this.tangentList, 'sss');
+
+        console.log(this.tangentList, 'tangentList');
 
     }
 }
