@@ -155,7 +155,7 @@ export class Geometry {
 
     public computeTangents(): void {
         // if (this.tangentList.length != 0) return;
-        console.log(this.tangentList);
+        // console.log(this.tangentList);
         this.tangentList = [];
         for (let i = 0; i < this.positionList.length; i++) {
             this.tangentList.push([]);
@@ -230,8 +230,7 @@ export class Geometry {
             this.tangentList[index2][3] = w2;
             this.tangentList[index3][3] = w3;
         }
-        console.log(this.tangent1List, 'tangent1List');
-
+        // console.log(this.tangent1List, 'tangent1List');
 
         for (let i = 0; i < this.tangentList.length; i++) {
             let tangent = this.xyzTovec(this.tangentList[i]);
@@ -239,7 +238,7 @@ export class Geometry {
             this.vecToxyz(this.tangentList, i, tangent);
         }
 
-        console.log(this.tangentList, 'tangentList');
+        // console.log(this.tangentList, 'tangentList');
 
     }
 }

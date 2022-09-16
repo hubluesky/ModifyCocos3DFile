@@ -74,15 +74,16 @@ function readFileSync(filePath: string): ArrayBuffer {
 function readerCocosMesh() {
     const filename = "1263d74c-8167-4928-91a6-4e2672411f47@fc873.bin";
     let arrayBuffer = readFileSync(filename);
-
+    console.log('byteLength', arrayBuffer.byteLength);
+    let aOffset;
     for (let iv = 0; iv < vertexBundles.length; iv++) {
         let vertexBundle = vertexBundles[iv];
         let text = "";
         for (let ia = 0; ia < vertexBundle.attributes.length; ia++) {
-            let aOffset = getOffset(vertexBundle.attributes as Attribute[], ia);
+            aOffset = getOffset(vertexBundle.attributes as Attribute[], ia);
             const view = new DataView(arrayBuffer, vertexBundle.view.offset + aOffset);
             let attribute = vertexBundle.attributes[ia];
-            text += "\n" + attribute.name + " " + getOffset(vertexBundle.attributes as Attribute[], ia);
+            text += "\n" + attribute.name + " " + aOffset;
             let reader = getReader(view, attribute.format);
             const vertexCount = vertexBundle.view.count;
             const componentCount = FormatInfos[attribute.format].count;
@@ -91,20 +92,18 @@ function readerCocosMesh() {
             // const outputStride = stride;
             // const outputComponentByteLength = inputComponentByteLength;
             // console.log("FormatInfos[attribute.format] ", FormatInfos[attribute.format].size);
-
             for (let iVertex = 0; iVertex < vertexCount; ++iVertex) {
                 text += "\t[";
                 for (let iComponent = 0; iComponent < componentCount; ++iComponent) {
                     const inputOffset = inputStride * iVertex + inputComponentByteLength * iComponent;
                     let value = reader!(inputOffset);
-
                     text += value;
                     if (iComponent + 1 < componentCount) text += ",";
                     // const outputOffset = outputStride * iVertex + outputComponentByteLength * iComponent;
                     // writer(outputOffset, reader(inputOffset));
                 }
                 text += "]";
-            } 
+            }
         }
         console.log("vertexBundle", iv, text);
     }
@@ -120,7 +119,7 @@ function readerCocosMesh() {
     }
 }
 
-// readerCocosMesh();
+readerCocosMesh();
 
 async function fbxToGltf(input: string, out: string) {
     const toolPath = "./fbx-gltf-conv/bin/win32/FBX-glTF-conv";
@@ -221,7 +220,7 @@ function gltfToCocosMesh(mesh: Mesh, vertexBundles: readonly IVertexBundle[], pr
 
                 const formatInfo = FormatInfos[attribute.format];
                 const componentCount = formatInfo.count;
-                
+
                 assert(componentCount == accessor.componentLen);
 
                 const inputComponentByteLength = getComponentByteLength(attribute.format);
