@@ -44,7 +44,7 @@ export function writeBin(geomerty: Geometry) {
                 let offset = k * inputComponentByteLength;
                 writer(offset, data);
             }
-            fs.writeFileSync("aa.js",dataView,{encoding:"binary",flag:'a'});
+            // fs.writeFileSync("aa.js",dataView,{encoding:"binary",flag:'a'});
         }
     }
 }
