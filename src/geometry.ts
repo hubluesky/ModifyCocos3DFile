@@ -2,9 +2,11 @@ import { Mesh, Primitive } from "./gltf2parser/Mesh";
 import Accessor from "./gltf2parser/Accessor";
 import { AttributeName } from "./cocos.js";
 import { Vec3 } from "./vec3.js";
+import { attributes } from "./config.js";
+
 
 type ObjectInclude<T, E> = { [k in keyof T]: T[k] extends E ? k : never }[keyof T];
-const attributes = ["indices", "a_position", "a_normal", "a_texCoord", "a_tangent", "a_joints", "a_weights"];
+ 
 
 export class Geometry {
     public indicesList: number[][] = [];
@@ -15,7 +17,7 @@ export class Geometry {
     public tangent1List: number[][] = [];
     public jointList: number[][] = [];
     public weightList: number[][] = [];
-
+    public byteLengthList:number[]=[];
 
     tempVec1: Vec3 = new Vec3();
     tempVec2: Vec3 = new Vec3();
@@ -80,26 +82,35 @@ export class Geometry {
             // console.log('primitive', primitive);
             for (let j = 0; j < attributes.length; j++) {
                 let attribute = attributes[j];
-                let accessor = this.getAttributeList(attribute, primitive, 'accessor') as Accessor;
+                let accessor = this.getAttributeList(attribute.name, primitive, 'accessor') as Accessor;
                 if (accessor == null) continue;
                 if (accessor.data == null) throw "";
 
                 const vertexCount = accessor.elementCnt;
                 const componentCount = accessor.componentLen;
-
+                const vertexSize = accessor.byteSize/ accessor.elementCnt; 
+                if(!this.byteLengthList[j]){
+                    this.byteLengthList[j] = vertexSize;
+                }
                 for (let iVertex = 0; iVertex < vertexCount; ++iVertex) {
                     let vertexArr: number[] = [];
                     for (let iComponent = 0; iComponent < componentCount; ++iComponent) {
                         const inputOffset = iVertex * componentCount + iComponent;
                         vertexArr.push(accessor.data![inputOffset]);
                     }
-                    let attributeList = this.getAttributeList(attribute, primitive, 'attributeList') as number[][];
+                    let attributeList = this.getAttributeList(attribute.name, primitive, 'attributeList') as number[][];
                     attributeList.push(vertexArr);
                 }
             }
         }
         this.computeNormals();
         this.computeTangents();
+        console.log(this.positionList, 'position');
+        console.log(this.normalList, 'normal');
+        console.log(this.texCoordList, 'textcoord');
+        console.log(this.tangentList, 'tangent');
+        console.log(this.jointList, 'joint');
+        console.log(this.weightList, 'weight');
     }
 
     public vecToxyz(list: number[][], vertexIndex: number, vertexNormal: Vec3) {
@@ -154,9 +165,7 @@ export class Geometry {
     }
 
     public computeTangents(): void {
-        // if (this.tangentList.length != 0) return;
-        // console.log(this.tangentList);
-        this.tangentList = [];
+        if (this.tangentList.length != 0) return;
         for (let i = 0; i < this.positionList.length; i++) {
             this.tangentList.push([]);
             this.tangentList[i].push(0, 0, 0, 0);
@@ -225,20 +234,18 @@ export class Geometry {
             let w1 = Vec3.dot(Vec3.cross(temp, normal1Vec, tangent4Vec), tangent1Vec) < 0.0 ? -1 : 1;
             let w2 = Vec3.dot(Vec3.cross(temp, normal2Vec, tangent5Vec), tangent2Vec) < 0.0 ? -1 : 1;
             let w3 = Vec3.dot(Vec3.cross(temp, normal3Vec, tangent6Vec), tangent3Vec) < 0.0 ? -1 : 1;
-            console.log(w1, w2, w3);
+            // console.log(w1, w2, w3);
             this.tangentList[index1][3] = w1;
             this.tangentList[index2][3] = w2;
             this.tangentList[index3][3] = w3;
         }
         // console.log(this.tangent1List, 'tangent1List');
-
         for (let i = 0; i < this.tangentList.length; i++) {
             let tangent = this.xyzTovec(this.tangentList[i]);
             tangent.normalize();
             this.vecToxyz(this.tangentList, i, tangent);
         }
-
-        // console.log(this.tangentList, 'tangentList');
+     
 
     }
 }

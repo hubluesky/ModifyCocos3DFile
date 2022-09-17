@@ -6,6 +6,7 @@ import fetch from 'node-fetch';
 import { assert } from 'console';
 import { TTypeArray } from './gltf2parser/types.js';
 import { Geometry } from './geometry.js';
+import { writeBin } from './writeFile.js';
 // @ts-ignore
 globalThis.fetch = fetch;
 
@@ -13,9 +14,9 @@ const vertexBundles = [
     {
         "view": {
             "offset": 0,
-            "length": 224,
-            "count": 4,
-            "stride": 56
+            "length": 144,
+            "count": 3,
+            "stride": 48
         },
         "attributes": [
             {
@@ -38,16 +39,16 @@ const vertexBundles = [
                 "format": 44,
                 "isNormalized": false
             },
-            {
-                "name": "a_joints",
-                "format": 42,
-                "isNormalized": false
-            },
-            {
-                "name": "a_weights",
-                "format": 44,
-                "isNormalized": false
-            }
+            // {
+            //     "name": "a_joints",
+            //     "format": 42,
+            //     "isNormalized": false
+            // },
+            // {
+            //     "name": "a_weights",
+            //     "format": 44,
+            //     "isNormalized": false
+            // }
         ]
     }
 ]
@@ -72,7 +73,7 @@ function readFileSync(filePath: string): ArrayBuffer {
 }
 
 function readerCocosMesh() {
-    const filename = "1263d74c-8167-4928-91a6-4e2672411f47@fc873.bin";
+    const filename = "test.bin";
     let arrayBuffer = readFileSync(filename);
     console.log('byteLength', arrayBuffer.byteLength);
     let aOffset;
@@ -108,15 +109,15 @@ function readerCocosMesh() {
         console.log("vertexBundle", iv, text);
     }
 
-    for (let primitive of primitives) {
-        const Ctor = getIndexStrideCtor(primitive.indexView.stride);
-        let ibo = new Ctor(arrayBuffer, primitive.indexView.offset, primitive.indexView.count);
+    // for (let primitive of primitives) {
+    //     const Ctor = getIndexStrideCtor(primitive.indexView.stride);
+    //     let ibo = new Ctor(arrayBuffer, primitive.indexView.offset, primitive.indexView.count);
 
-        let indexValues = "";
-        for (let i = 0; i < primitive.indexView.count; i++)
-            indexValues += ibo[i] + " ";
-        console.log("indexValues", indexValues);
-    }
+    //     let indexValues = "";
+    //     for (let i = 0; i < primitive.indexView.count; i++)
+    //         indexValues += ibo[i] + " ";
+    //     // console.log("indexValues", indexValues);
+    // }
 }
 
 readerCocosMesh();
@@ -245,6 +246,7 @@ function convertFBXToCocosMesh(filename: string): void {
     assert(mesh != null);
     let geomerty = new Geometry();
     geomerty.readGltfMesh(mesh!);
+    writeBin(geomerty);
     // gltfToCocosMesh(mesh!, vertexBundles as IVertexBundle[], primitives);
 }
 
