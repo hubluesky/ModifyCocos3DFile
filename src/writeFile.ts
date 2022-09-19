@@ -5,6 +5,7 @@ import * as fs from 'fs';
 
 let dataView: DataView;
 
+
 export function writeBin(geomerty: Geometry) {
     let vertexCount = geomerty.positionList.length;
     let attributeList: number[][] = [];
@@ -44,7 +45,7 @@ export function writeBin(geomerty: Geometry) {
                 let offset = k * inputComponentByteLength;
                 writer(offset, data);
             }
-            // fs.writeFileSync("aa.js",dataView,{encoding:"binary",flag:'a'});
+            fs.writeFileSync("test.bin",dataView,{encoding:"binary",flag:'a'});
         }
     }
 }

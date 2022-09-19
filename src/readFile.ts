@@ -72,6 +72,7 @@ function readFileSync(filePath: string): ArrayBuffer {
     return nb.buffer.slice(nb.byteOffset, nb.byteOffset + nb.byteLength);
 }
 
+
 function readerCocosMesh() {
     const filename = "test.bin";
     let arrayBuffer = readFileSync(filename);
