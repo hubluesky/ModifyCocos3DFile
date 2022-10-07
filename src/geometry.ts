@@ -6,7 +6,7 @@ import { attributes } from "./config.js";
 
 
 type ObjectInclude<T, E> = { [k in keyof T]: T[k] extends E ? k : never }[keyof T];
- 
+
 
 export class Geometry {
     public indicesList: number[][] = [];
@@ -17,7 +17,6 @@ export class Geometry {
     public tangent1List: number[][] = [];
     public jointList: number[][] = [];
     public weightList: number[][] = [];
-    public byteLengthList:number[]=[];
 
     tempVec1: Vec3 = new Vec3();
     tempVec2: Vec3 = new Vec3();
@@ -79,7 +78,6 @@ export class Geometry {
     public readGltfMesh(mesh: Mesh): void {
         for (let i = 0; i < mesh.primitives.length; i++) {
             let primitive = mesh.primitives[i];
-            // console.log('primitive', primitive);
             for (let j = 0; j < attributes.length; j++) {
                 let attribute = attributes[j];
                 let accessor = this.getAttributeList(attribute.name, primitive, 'accessor') as Accessor;
@@ -88,10 +86,7 @@ export class Geometry {
 
                 const vertexCount = accessor.elementCnt;
                 const componentCount = accessor.componentLen;
-                const vertexSize = accessor.byteSize/ accessor.elementCnt; 
-                if(!this.byteLengthList[j]){
-                    this.byteLengthList[j] = vertexSize;
-                }
+
                 for (let iVertex = 0; iVertex < vertexCount; ++iVertex) {
                     let vertexArr: number[] = [];
                     for (let iComponent = 0; iComponent < componentCount; ++iComponent) {
@@ -105,12 +100,12 @@ export class Geometry {
         }
         this.computeNormals();
         this.computeTangents();
-        console.log(this.positionList, 'position');
-        console.log(this.normalList, 'normal');
-        console.log(this.texCoordList, 'textcoord');
-        console.log(this.tangentList, 'tangent');
-        console.log(this.jointList, 'joint');
-        console.log(this.weightList, 'weight');
+        // console.log(this.positionList, 'position');
+        // console.log(this.normalList, 'normal');
+        // console.log(this.texCoordList, 'textcoord');
+        // console.log(this.tangentList, 'tangent');
+        // console.log(this.jointList, 'joint');
+        // console.log(this.weightList, 'weight');
     }
 
     public vecToxyz(list: number[][], vertexIndex: number, vertexNormal: Vec3) {
@@ -125,6 +120,7 @@ export class Geometry {
 
     public computeNormals(): void {
         if (this.normalList.length != 0) return;
+
         for (let i = 0; i < this.positionList.length; i++) {
             this.normalList.push([]);
             this.normalList[i].push(0, 0, 0);
@@ -245,7 +241,5 @@ export class Geometry {
             tangent.normalize();
             this.vecToxyz(this.tangentList, i, tangent);
         }
-     
-
     }
 }

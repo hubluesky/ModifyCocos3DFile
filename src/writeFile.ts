@@ -1,4 +1,4 @@
-import { AttributeName, FormatInfo, getComponentByteLength, getWriter } from "./cocos.js";
+import { AttributeName, FormatInfo, FormatInfos, getComponentByteLength, getWriter } from "./cocos.js";
 import { attributes } from "./config.js";
 import { Geometry } from "./geometry.js";
 import * as fs from 'fs';
@@ -9,8 +9,8 @@ let dataView: DataView;
 export function writeBin(geomerty: Geometry) {
     let vertexCount = geomerty.positionList.length;
     let attributeList: number[][] = [];
-    for (let i = 0; i < vertexCount ; i++) {
-        for (let j = 1; j < attributes.length ; j++) {
+    for (let i = 0; i < vertexCount; i++) {
+        for (let j = 1; j < attributes.length; j++) {
             let attribute = attributes[j];
             switch (attribute.name) {
                 case AttributeName.ATTR_POSITION:
@@ -36,7 +36,7 @@ export function writeBin(geomerty: Geometry) {
             }
             if (attributeList.length == 0) continue;
             let vertexData = attributeList[i];
-            let buffer = new ArrayBuffer(geomerty.byteLengthList[j]);
+            let buffer = new ArrayBuffer(FormatInfos[attribute.format].size);
             dataView = new DataView(buffer);
             let writer = getWriter(dataView, attribute.format)!;
             let inputComponentByteLength = getComponentByteLength(attribute.format);
@@ -45,7 +45,7 @@ export function writeBin(geomerty: Geometry) {
                 let offset = k * inputComponentByteLength;
                 writer(offset, data);
             }
-            fs.writeFileSync("test.bin",dataView,{encoding:"binary",flag:'a'});
+            fs.writeFileSync("test.bin", dataView, { encoding: "binary", flag: 'a' });
         }
     }
 }
