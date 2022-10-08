@@ -1,0 +1,344 @@
+2022-09-29T03:07:19.871Z - log: [Package] menu@1.0.0 enable
+2022-09-29T03:07:19.873Z - log: [Package] profile@1.0.0 enable
+2022-09-29T03:07:19.880Z - log: [Package] project@1.0.2 enable
+2022-09-29T03:07:19.884Z - log: [Package] messages@1.0.0 enable
+2022-09-29T03:07:19.887Z - log: [Package] program@1.0.0 enable
+2022-09-29T03:07:19.892Z - log: [Package] tester@1.0.0 enable
+2022-09-29T03:07:19.896Z - log: [Package] preferences@1.0.0 enable
+2022-09-29T03:07:22.800Z - log: [Package] engine@1.0.6 enable
+2022-09-29T03:07:23.809Z - log: [Package] programming@1.0.0 enable
+2022-09-29T03:07:23.866Z - warn: 
+2022-09-29T03:07:23.899Z - warn: 
+2022-09-29T03:07:24.145Z - log: [Package] device@1.0.1 enable
+2022-09-29T03:07:24.178Z - log: [Package] ui-kit@1.0.1 enable
+2022-09-29T03:07:24.206Z - log: [Package] engine-extends@1.0.0 enable
+2022-09-29T03:07:24.264Z - log: [Package] asset-db@1.0.0 enable
+2022-09-29T03:07:24.264Z - warn: 
+2022-09-29T03:07:24.299Z - log: [Package] scene@1.0.0 enable
+2022-09-29T03:07:24.435Z - log: [Package] server@1.0.0 enable
+2022-09-29T03:07:24.464Z - log: [Package] utils@1.0.0 enable
+2022-09-29T03:07:25.112Z - warn: Browserslist: caniuse-lite is outdated. Please run:
+npx browserslist@latest --update-db
+
+Why you should do it regularly:
+https://github.com/browserslist/browserslist#browsers-data-updating
+2022-09-29T03:07:34.336Z - warn: 
+2022-09-29T03:07:34.336Z - warn: 
+2022-09-29T03:07:34.336Z - warn: 
+2022-09-29T03:07:34.341Z - warn: 
+2022-09-29T03:07:34.341Z - warn: 
+2022-09-29T03:07:34.341Z - warn: 
+2022-09-29T03:07:35.576Z - warn: 
+2022-09-29T03:07:35.631Z - log: [Package] preview@1.0.1 enable
+2022-09-29T03:07:35.662Z - log: [Package] animator@1.0.0 enable
+2022-09-29T03:07:35.700Z - log: pluginManager init: 0.121ms
+2022-09-29T03:07:36.701Z - log: Profile changed: builder (log.level: 4)
+2022-09-29T03:07:36.706Z - log: [Package] builder@1.3.3 enable
+2022-09-29T03:07:36.737Z - log: [Package] shortcuts@1.0.1 enable
+2022-09-29T03:07:36.767Z - log: [Package] animation-graph@1.0.0 enable
+2022-09-29T03:07:36.797Z - log: [Package] about@1.0.0 enable
+2022-09-29T03:07:36.825Z - log: [Package] assets@1.0.0 enable
+2022-09-29T03:07:36.854Z - log: [Package] console@1.0.0 enable
+2022-09-29T03:07:37.016Z - log: [Package] extension@3.0.16 enable
+2022-09-29T03:07:37.044Z - log: [Package] hierarchy@1.0.0 enable
+2022-09-29T03:07:37.071Z - log: [Package] inspector@1.0.0 enable
+2022-09-29T03:07:37.099Z - log: [Package] lightmap@1.0.4 enable
+2022-09-29T03:07:37.576Z - log: [Package] localization-editor@1.0.0 enable
+2022-09-29T03:07:37.584Z - log: [Build-plugin] register pkg localization-editor: 4.762ms
+2022-09-29T03:07:37.610Z - log: [Package] node-library@1.0.1 enable
+2022-09-29T03:07:37.634Z - log: [Package] package-asset@1.0.0 enable
+2022-09-29T03:07:37.661Z - log: [Package] process@1.0.0 enable
+2022-09-29T03:07:37.706Z - log: [Package] reference-image@1.0.0 enable
+2022-09-29T03:07:37.743Z - log: [Package] alipay-mini-game@1.0.1 enable
+2022-09-29T03:07:37.744Z - log: [Build-plugin] register pkg alipay-mini-game: 1.049ms
+2022-09-29T03:07:37.774Z - log: [Package] android@1.0.1 enable
+2022-09-29T03:07:37.781Z - log: [Build-plugin] register pkg android: 6.393ms
+2022-09-29T03:07:37.818Z - log: [Package] baidu-mini-game@1.0.1 enable
+2022-09-29T03:07:37.822Z - log: [Build-plugin] register pkg baidu-mini-game: 3.788ms
+2022-09-29T03:07:37.902Z - log: [Package] bytedance-mini-game@1.0.2 enable
+2022-09-29T03:07:37.905Z - log: [Build-plugin] register pkg bytedance-mini-game: 2.812ms
+2022-09-29T03:07:37.928Z - log: [Package] certificate@1.0.0 enable
+2022-09-29T03:07:37.950Z - log: [Package] channel-upload-tools@1.0.0 enable
+2022-09-29T03:07:37.973Z - log: [Package] cocos-play@1.0.1 enable
+2022-09-29T03:07:37.977Z - log: [Build-plugin] register pkg cocos-play: 4.51ms
+2022-09-29T03:07:38.004Z - log: [Package] huawei-agc@1.0.0 enable
+2022-09-29T03:07:38.008Z - log: [Build-plugin] register pkg huawei-agc: 3.524ms
+2022-09-29T03:07:38.034Z - log: [Package] huawei-quick-game@1.0.1 enable
+2022-09-29T03:07:38.038Z - log: [Build-plugin] register pkg huawei-quick-game: 3.809ms
+2022-09-29T03:07:38.066Z - log: [Package] ios@1.0.0 enable
+2022-09-29T03:07:38.070Z - log: [Build-plugin] register pkg ios: 3.77ms
+2022-09-29T03:07:38.095Z - log: [Package] linux@1.0.0 enable
+2022-09-29T03:07:38.097Z - log: [Build-plugin] register pkg linux: 1.39ms
+2022-09-29T03:07:38.127Z - log: [Package] mac@1.0.0 enable
+2022-09-29T03:07:38.132Z - log: [Build-plugin] register pkg mac: 4.413ms
+2022-09-29T03:07:38.226Z - log: [Package] native@1.0.2 enable
+2022-09-29T03:07:38.229Z - log: [Build-plugin] register pkg native: 2.898ms
+2022-09-29T03:07:38.267Z - log: [Package] ohos@1.0.0 enable
+2022-09-29T03:07:38.270Z - log: [Build-plugin] register pkg ohos: 3.454ms
+2022-09-29T03:07:38.295Z - log: [Package] open-harmonyos@1.0.0 enable
+2022-09-29T03:07:38.296Z - log: [Build-plugin] register pkg open-harmonyos: 0.869ms
+2022-09-29T03:07:38.325Z - log: [Package] oppo-mini-game@1.0.1 enable
+2022-09-29T03:07:38.330Z - log: [Build-plugin] register pkg oppo-mini-game: 4.424ms
+2022-09-29T03:07:38.356Z - log: [Package] runtime-dev-tools@1.0.0 enable
+2022-09-29T03:07:38.388Z - log: [Package] vivo-mini-game@1.0.1 enable
+2022-09-29T03:07:38.393Z - log: [Build-plugin] register pkg vivo-mini-game: 4.581ms
+2022-09-29T03:07:38.435Z - log: [Package] web-desktop@1.0.1 enable
+2022-09-29T03:07:38.440Z - log: [Build-plugin] register pkg web-desktop: 4.678ms
+2022-09-29T03:07:38.484Z - log: [Package] web-mobile@1.0.1 enable
+2022-09-29T03:07:38.488Z - log: [Build-plugin] register pkg web-mobile: 3.641ms
+2022-09-29T03:07:38.530Z - log: [Package] wechatgame@1.0.2 enable
+2022-09-29T03:07:38.534Z - log: [Build-plugin] register pkg wechatgame: 4.12ms
+2022-09-29T03:07:38.572Z - log: [Package] windows@1.0.1 enable
+2022-09-29T03:07:38.578Z - log: [Build-plugin] register pkg windows: 5.564ms
+2022-09-29T03:07:38.601Z - log: [Package] xiaomi-quick-game@1.0.1 enable
+2022-09-29T03:07:38.605Z - log: [Build-plugin] register pkg xiaomi-quick-game: 3.85ms
+2022-09-29T03:07:38.840Z - log: [Package] cocos-service@3.0.4 enable
+2022-09-29T03:07:38.843Z - log: [Build-plugin] register pkg cocos-service: 1.505ms
+2022-09-29T03:07:38.886Z - log: [Package] importer@1.0.0 enable
+2022-09-29T03:07:39.102Z - log: [Im-plugin] Check im-plugin version.
+2022-09-29T03:07:39.106Z - log: [Package] im-plugin@3.0.9 enable
+2022-09-29T03:07:39.144Z - log: [Package] language@1.0.0 enable
+2022-09-29T03:07:39.178Z - log: [Package] mobile-type@1.0.0 enable
+2022-09-29T03:07:39.192Z - error: ENOENT: no such file or directory, open 'D:\cocos\GltfToCocosMesh\assets\resources\config\languages.json'Error: ENOENT: no such file or directory, open 'D:\cocos\GltfToCocosMesh\assets\resources\config\languages.json'
+    at Object.openSync (fs.js:476:3)
+    at Object.func [as openSync] (electron/js2c/asar_bundle.js:5:1846)
+    at Object.readFileSync (fs.js:377:35)
+    at Object.e.readFileSync (electron/js2c/asar_bundle.js:5:8872)
+    at loadLangKeys (C:\Users\DELL\.CocosCreator\extensions\Language\dist\main.js:55:35)
+    at onAssetReady (C:\Users\DELL\.CocosCreator\extensions\Language\dist\main.js:38:5)
+2022-09-29T03:07:39.224Z - log: [Package] playable-build@1.0.0 enable
+2022-09-29T03:07:39.226Z - log: [Build-plugin] register pkg playable-build: 1.786ms
+2022-09-29T03:07:39.226Z - warn: 
+2022-09-29T03:07:39.226Z - warn: 
+2022-09-29T03:07:39.227Z - warn: 
+2022-09-29T03:07:39.252Z - log: [Package] playable-config@1.0.0 enable
+2022-09-29T03:07:41.049Z - log: [Im-plugin] No online info of im-plugin.
+2022-09-29T03:07:42.484Z - log: [Scene] Please specifiy a default value for "cc.EditorExtendable.__editorExtras__" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.504Z - log: [Scene] Please specifiy a default value for "CCPropertyOverrideInfo.value" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.504Z - log: [Scene] Please specifiy a default value for "cc.PrefabInfo.asset" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.505Z - log: [Scene] Please specifiy a default value for "cc.PrefabInfo.nestedPrefabInstanceRoots" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.507Z - log: [Scene] The 'default' attribute of 'ColorDesc.beginAccesses' must be an array
+2022-09-29T03:07:42.508Z - log: [Scene] The 'default' attribute of 'ColorDesc.endAccesses' must be an array
+2022-09-29T03:07:42.521Z - log: [Scene] Please specifiy a default value for "cc.animation.TrackBinding.proxy" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.521Z - log: [Scene] Please specifiy a default value for "cc.animation.Channel._curve" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.521Z - log: [Scene] Please specifiy a default value for "cc.animation.SingleChannelTrack._channel" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.522Z - log: [Scene] Please specifiy a default value for "cc.animation.VectorTrack._channels" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.522Z - log: [Scene] Please specifiy a default value for "cc.animation.ColorTrack._channels" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.522Z - log: [Scene] Please specifiy a default value for "cc.animation.SizeTrack._channels" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.523Z - log: [Scene] Please specifiy a default value for "cc.animation.Transition.from" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.523Z - log: [Scene] Please specifiy a default value for "cc.animation.Transition.to" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.523Z - log: [Scene] Please specifiy a default value for "cc.animation.StateMachine._entryState" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.523Z - log: [Scene] Please specifiy a default value for "cc.animation.StateMachine._exitState" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.523Z - log: [Scene] Please specifiy a default value for "cc.animation.StateMachine._anyState" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.523Z - log: [Scene] Please specifiy a default value for "cc.animation.Layer._stateMachine" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.524Z - log: [Scene] Please specifiy a default value for "cc.animation.ExoticVectorLikeTrackValues._values" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.524Z - log: [Scene] Please specifiy a default value for "cc.animation.ExoticVectorLikeTrackValues._isQuantized" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.524Z - log: [Scene] Please specifiy a default value for "cc.animation.ExoticTrack.times" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.524Z - log: [Scene] Please specifiy a default value for "cc.animation.ExoticTrack.values" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.524Z - log: [Scene] Please specifiy a default value for "cc.animation.QuantizedFloatArray.originalPrecision" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.524Z - log: [Scene] Please specifiy a default value for "cc.animation.QuantizedFloatArray.min" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.524Z - log: [Scene] Please specifiy a default value for "cc.animation.QuantizedFloatArray.extent" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.524Z - log: [Scene] Please specifiy a default value for "cc.animation.QuantizedFloatArray.values" property at its declaration:
+
+ 
+// Before:
+@property(...)
+myProp;
+// After:
+@property(...)
+myProp = 0;
+2022-09-29T03:07:42.556Z - log: [Scene] 'cc.ParticleSystem2D.color' hides inherited property 'cc.UIRenderer.color'. To make the current property override that implementation, add the `override: true` attribute please.
+2022-09-29T03:07:42.617Z - log: [Scene] No needs to indicate the 'cc.Boolean' attribute for "cc.Terrain._receiveShadow", which its default value is type of Boolean.
+2022-09-29T03:07:42.617Z - log: [Scene] No needs to indicate the 'cc.Boolean' attribute for "cc.Terrain._useNormalmap", which its default value is type of Boolean.
+2022-09-29T03:07:42.617Z - log: [Scene] No needs to indicate the 'cc.Boolean' attribute for "cc.Terrain._usePBR", which its default value is type of Boolean.
+2022-09-29T03:07:42.617Z - log: [Scene] No needs to indicate the 'cc.Boolean' attribute for "cc.Terrain._lodEnable", which its default value is type of Boolean.
+2022-09-29T03:07:42.701Z - info: [Scene] [Physics][Bullet]: Using asmjs Bullet libs.
+2022-09-29T03:07:42.714Z - info: [Scene] [PHYSICS]: using builtin.
+2022-09-29T03:07:42.810Z - log: [Scene] Cocos Creator v3.6.0
+2022-09-29T03:07:42.810Z - info: [Scene] Forward render pipeline initialized.
+2022-09-29T03:07:43.311Z - info: [Scene] [PHYSICS]: switch from builtin to bullet.
+2022-09-29T03:08:06.812Z - warn: Metrics: no valid info

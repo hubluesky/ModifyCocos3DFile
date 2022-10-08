@@ -9,13 +9,16 @@ import { Skin } from "./gltf2parser/Gltf2Parser.d";
 const dirName = path.resolve();
 
 
-export function writeMeta(geomerty: Geometry, mesh: Mesh, skin: Skin) {
+export function writeMeta(geomerty: Geometry, mesh: Mesh, skin: Skin | null) {
     let joints = [];
-    for (let i = 0; i < skin.joints.length; i++) {
-        let skinc = skin.joints[i];
-        let jointIndex = skinc.index;
-        joints.push(jointIndex);
+    if (skin) {
+        for (let i = 0; i < skin.joints.length; i++) {
+            let skinc = skin.joints[i];
+            let jointIndex = skinc.index;
+            joints.push(jointIndex);
+        }
     }
+
 
     let minPosition = mesh.primitives[0].position?.boundMin;
     minPosition?.unshift(1)
@@ -28,7 +31,7 @@ export function writeMeta(geomerty: Geometry, mesh: Mesh, skin: Skin) {
 
 
     let attributeList: number[][] = [];
-    for (let j = 1; j < attributes.length; j++) {
+    for (let j = 2; j < attributes.length; j++) {
         let attribute = attributes[j];
         switch (attribute.name) {
             case AttributeName.ATTR_POSITION:
@@ -131,7 +134,7 @@ export function writeMeta(geomerty: Geometry, mesh: Mesh, skin: Skin) {
             maxPosition
         ]
 
-    console.log(minPosition,maxPosition);
+    console.log(minPosition, maxPosition);
 
     let dir = path.join(dirName, './sourceMesh/model_cow.json');
     fs.readFile(dir, 'utf8', function (err, data1) {
@@ -139,13 +142,12 @@ export function writeMeta(geomerty: Geometry, mesh: Mesh, skin: Skin) {
             console.log('read json error');
         }
         let newData = JSON.parse(data1.toString());
-        
+
         newData[5][0][3] = data
-        console.log(newData,'sss');
-        fs.writeFile(dir,JSON.stringify(newData),function(err){
-            if(err){
+        console.log(newData, 'sss');
+        fs.writeFile(dir, JSON.stringify(newData), function (err) {
+            if (err) {
                 console.log('write json error');
-                
             }
         })
     })

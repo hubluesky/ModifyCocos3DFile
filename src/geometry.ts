@@ -100,12 +100,13 @@ export class Geometry {
         }
         this.computeNormals();
         this.computeTangents();
-        // console.log(this.positionList, 'position');
-        // console.log(this.normalList, 'normal');
-        // console.log(this.texCoordList, 'textcoord');
-        // console.log(this.tangentList, 'tangent');
-        // console.log(this.jointList, 'joint');
-        // console.log(this.weightList, 'weight');
+        console.log(this.indicesList, 'indicesList');
+        console.log(this.positionList, 'position');
+        console.log(this.normalList, 'normal');
+        console.log(this.texCoordList, 'textcoord');
+        console.log(this.tangentList, 'tangent');
+        console.log(this.jointList, 'joint');
+        console.log(this.weightList, 'weight');
     }
 
     public vecToxyz(list: number[][], vertexIndex: number, vertexNormal: Vec3) {

@@ -1,7 +1,7 @@
 export const attributes = [
     {
         "name": "indices",
-        "format":32
+        "format": 11
     },
     {
         "name": "a_position",
@@ -26,5 +26,6 @@ export const attributes = [
     {
         "name": "a_weights",
         "format": 44,
-    }
+    },
+
 ];
