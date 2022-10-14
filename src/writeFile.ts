@@ -49,7 +49,7 @@ export function writeBin(geomerty: Geometry, mesh: Mesh) {
             }
             // fs.writeFileSync("model_cow.bin", dataView, { encoding: "binary", flag: 'a' });
             // fs.writeFileSync("triangle.bin", dataView, { encoding: "binary", flag: 'a' });
-            fs.writeFileSync("quad.bin", dataView, { encoding: "binary", flag: 'a' });
+            // fs.writeFileSync("quad.bin", dataView, { encoding: "binary", flag: 'a' });
 
         }
     }
@@ -70,7 +70,6 @@ export function writeBin(geomerty: Geometry, mesh: Mesh) {
         }
         // fs.writeFileSync("model_cow.bin", dataView, { encoding: "binary", flag: 'a' });
         // fs.writeFileSync("triangle.bin", dataView, { encoding: "binary", flag: 'a' });
-        fs.writeFileSync("quad.bin", dataView, { encoding: "binary", flag: 'a' });
-
+        // fs.writeFileSync("quad.bin", dataView, { encoding: "binary", flag: 'a' });
     }
 }

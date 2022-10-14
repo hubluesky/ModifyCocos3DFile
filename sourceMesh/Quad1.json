@@ -27,21 +27,32 @@
         [
             0,
             ".bin",
-            2318019910,
+            921248687,
             [
                 {
                     "primitives": [
                         {
                             "primitiveMode": 7,
-                            "jointMapIndex": 0,
                             "vertexBundelIndices": [
                                 0
                             ],
                             "indexView": {
-                                "offset": 108,
-                                "length": 6,
-                                "count": 3,
-                                "stride": 2
+                                "offset": 192,
+                                "length": 24,
+                                "count": 6,
+                                "stride": 4
+                            }
+                        },
+                        {
+                            "primitiveMode": 7,
+                            "vertexBundelIndices": [
+                                1
+                            ],
+                            "indexView": {
+                                "offset": 408,
+                                "length": 24,
+                                "count": 6,
+                                "stride": 4
                             }
                         }
                     ],
@@ -49,9 +60,9 @@
                         {
                             "view": {
                                 "offset": 0,
-                                "length": 108,
-                                "count": 3,
-                                "stride": 36
+                                "length": 192,
+                                "count": 4,
+                                "stride": 48
                             },
                             "attributes": [
                                 {
@@ -73,39 +84,56 @@
                                     "name": "a_tangent",
                                     "format": 44,
                                     "isNormalized": false
-                                },
+                                }
+                            ]
+                        },
+                        {
+                            "view": {
+                                "offset": 216,
+                                "length": 192,
+                                "count": 4,
+                                "stride": 48
+                            },
+                            "attributes": [
                                 {
-                                    "name": "a_joints",
-                                    "format": 42,
+                                    "name": "a_position",
+                                    "format": 32,
                                     "isNormalized": false
                                 },
                                 {
-                                    "name": "a_weights",
+                                    "name": "a_normal",
+                                    "format": 32,
+                                    "isNormalized": false
+                                },
+                                {
+                                    "name": "a_texCoord",
+                                    "format": 21,
+                                    "isNormalized": false
+                                },
+                                {
+                                    "name": "a_tangent",
                                     "format": 44,
                                     "isNormalized": false
                                 }
                             ]
                         }
-                    ],
-                    "jointMaps": [
-                        []
                     ]
                 },
                 "minPosition",
                 8,
                 [
                     1,
-                    -0.8660253286361694,
-                    -0.5000000596046448,
-                    -5.960464477539063e-8
+                    -1,
+                    -6.123234262925839e-17,
+                    -1
                 ],
                 "maxPosition",
                 8,
                 [
                     1,
-                    0.8660253882408142,
                     1,
-                    0
+                    6.123234262925839e-17,
+                    1
                 ]
             ]
         ],

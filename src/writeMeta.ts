@@ -19,7 +19,6 @@ export function writeMeta(geomerty: Geometry, mesh: Mesh, skin: Skin | null) {
         }
     }
 
-
     let minPosition = mesh.primitives[0].position?.boundMin;
     minPosition?.unshift(1)
     let maxPosition = mesh.primitives[0].position?.boundMax;
@@ -29,126 +28,147 @@ export function writeMeta(geomerty: Geometry, mesh: Mesh, skin: Skin | null) {
     let stride = 0;
     let length = 0;
 
-
-    let attributeList: number[][] = [];
-    for (let j = 2; j < attributes.length; j++) {
-        let attribute = attributes[j];
-        switch (attribute.name) {
-            case AttributeName.ATTR_POSITION:
-                attributeList = geomerty.positionList;
-                break;
-            case AttributeName.ATTR_NORMAL:
-                attributeList = geomerty.normalList;
-                break;
-            case AttributeName.ATTR_TEX_COORD:
-                attributeList = geomerty.texCoordList;
-                break;
-            case AttributeName.ATTR_TANGENT:
-                attributeList = geomerty.tangentList;
-                break;
-            case AttributeName.ATTR_JOINTS:
-                attributeList = geomerty.jointList;
-                break;
-            case AttributeName.ATTR_WEIGHTS:
-                attributeList = geomerty.weightList;
-                break;
-            default:
-                throw `Can not suppert attribute ${attribute}`;
-        }
-        if (attributeList.length == 0) continue;
-        stride += FormatInfos[attribute.format].size;
-    }
-    length = count * stride;
-    let primitiveOffset = length;
-    let primitiveCount = mesh.primitives[0].indices?.elementCnt;
-    let primitiveLength = mesh.primitives[0].indices?.byteSize;
-    let data =
-        [
-            {
-                "primitives": [
-                    {
-                        "primitiveMode": 7,
-                        "jointMapIndex": 0,
-                        "vertexBundelIndices": [
-                            0
-                        ],
-                        "indexView": {
-                            "offset": primitiveOffset,
-                            "length": primitiveLength,
-                            "count": primitiveCount,
-                            "stride": primitiveLength! / primitiveCount!
-                        }
-                    }
-                ],
-                "vertexBundles": [
-                    {
-                        "view": {
-                            "offset": 0,
-                            "length": length,
-                            "count": count,
-                            "stride": stride
-                        },
-                        "attributes": [
-                            {
-                                "name": "a_position",
-                                "format": 32,
-                                "isNormalized": false
-                            },
-                            {
-                                "name": "a_normal",
-                                "format": 32,
-                                "isNormalized": false
-                            },
-                            {
-                                "name": "a_texCoord",
-                                "format": 21,
-                                "isNormalized": false
-                            },
-                            {
-                                "name": "a_tangent",
-                                "format": 44,
-                                "isNormalized": false
-                            },
-                            {
-                                "name": "a_joints",
-                                "format": 42,
-                                "isNormalized": false
-                            },
-                            {
-                                "name": "a_weights",
-                                "format": 44,
-                                "isNormalized": false
-                            }
-                        ]
-                    }
-                ],
-                "jointMaps": [
-                    joints
-                ]
-            },
-            "minPosition",
-            8,
-            minPosition,
-            "maxPosition",
-            8,
-            maxPosition
-        ]
-
-    console.log(minPosition, maxPosition);
-
-    let dir = path.join(dirName, './sourceMesh/model_cow.json');
-    fs.readFile(dir, 'utf8', function (err, data1) {
-        if (err) {
-            console.log('read json error');
-        }
-        let newData = JSON.parse(data1.toString());
-
-        newData[5][0][3] = data
-        console.log(newData, 'sss');
-        fs.writeFile(dir, JSON.stringify(newData), function (err) {
-            if (err) {
-                console.log('write json error');
+    for(let i=0;i<mesh.primitives.length;i++){
+        let attributeList: number[][] = [];
+        for (let j = 1; j < attributes.length; j++) {
+            let attribute = attributes[j];
+            switch (attribute.name) {
+                case AttributeName.ATTR_POSITION:
+                    attributeList = geomerty.positionList;
+                    break;
+                case AttributeName.ATTR_NORMAL:
+                    attributeList = geomerty.normalList;
+                    break;
+                case AttributeName.ATTR_TEX_COORD:
+                    attributeList = geomerty.texCoordList;
+                    break;
+                case AttributeName.ATTR_TANGENT:
+                    attributeList = geomerty.tangentList;
+                    break;
+                case AttributeName.ATTR_JOINTS:
+                    attributeList = geomerty.jointList;
+                    break;
+                case AttributeName.ATTR_WEIGHTS:
+                    attributeList = geomerty.weightList;
+                    break;
+                default:
+                    throw `Can not suppert attribute ${attribute}`;
             }
+            if (attributeList.length == 0) continue;
+            stride += FormatInfos[attribute.format].size;
+        }
+        length = count * stride;
+    
+        let primitiveOffset = length;
+        let primitiveStirde = 4;
+        let primitiveCount = mesh.primitives[0].indices?.elementCnt;
+        let primitiveLength = primitiveStirde * primitiveCount!;
+        let primitive = [];
+        if (skin) {
+            primitive.push({
+                "primitiveMode": 7,
+                "jointMapIndex": 0,
+                "vertexBundelIndices": [
+                    0
+                ],
+                "indexView": {
+                    "offset": primitiveOffset,
+                    "length": primitiveLength,
+                    "count": primitiveCount,
+                    "stride": primitiveStirde
+                }
+            })
+        } else {
+            primitive.push({
+                "primitiveMode": 7,
+                "vertexBundelIndices": [
+                    0
+                ],
+                "indexView": {
+                    "offset": primitiveOffset,
+                    "length": primitiveLength,
+                    "count": primitiveCount,
+                    "stride": primitiveStirde
+                }
+            })
+        }
+    
+        let data =
+            [
+                {
+                    "primitives": primitive,
+                    "vertexBundles": [
+                        {
+                            "view": {
+                                "offset": 0,
+                                "length": length,
+                                "count": count,
+                                "stride": stride
+                            },
+                            "attributes": [
+                                {
+                                    "name": "a_position",
+                                    "format": 32,
+                                    "isNormalized": false
+                                },
+                                {
+                                    "name": "a_normal",
+                                    "format": 32,
+                                    "isNormalized": false
+                                },
+                                {
+                                    "name": "a_texCoord",
+                                    "format": 21,
+                                    "isNormalized": false
+                                },
+                                {
+                                    "name": "a_tangent",
+                                    "format": 44,
+                                    "isNormalized": false
+                                },
+                                // {
+                                //     "name": "a_joints",
+                                //     "format": 42,
+                                //     "isNormalized": false
+                                // },
+                                // {
+                                //     "name": "a_weights",
+                                //     "format": 44,
+                                //     "isNormalized": false
+                                // }
+                            ]
+                        }
+                    ],
+                    "jointMaps": [
+                        joints
+                    ]
+                },
+                "minPosition",
+                8,
+                minPosition,
+                "maxPosition",
+                8,
+                maxPosition
+            ]
+    
+        let dir = path.join(dirName, './sourceMesh/quad.json');
+        fs.readFile(dir, 'utf8', function (err, data1) {
+            if (err) {
+                console.log('read json error');
+            }
+            let newData = JSON.parse(data1.toString());
+            let mainData = newData[5][0][3];
+            let primitive
+            mainData[0].primitives[0].indexView.count = primitiveCount!;
+            mainData[0].primitives[0].indexView.length = mainData[0].primitives[0].indexView.stride * primitiveCount!;
+    
+            fs.writeFile(dir, JSON.stringify(newData), function (err) {
+                if (err) {
+                    console.log('write json error');
+                }
+            })
         })
-    })
+    }
+
+  
 }

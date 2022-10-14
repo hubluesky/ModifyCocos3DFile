@@ -83,7 +83,6 @@ export class Geometry {
                 let accessor = this.getAttributeList(attribute.name, primitive, 'accessor') as Accessor;
                 if (accessor == null) continue;
                 if (accessor.data == null) throw "";
-
                 const vertexCount = accessor.elementCnt;
                 const componentCount = accessor.componentLen;
 
@@ -121,7 +120,6 @@ export class Geometry {
 
     public computeNormals(): void {
         if (this.normalList.length != 0) return;
-
         for (let i = 0; i < this.positionList.length; i++) {
             this.normalList.push([]);
             this.normalList[i].push(0, 0, 0);

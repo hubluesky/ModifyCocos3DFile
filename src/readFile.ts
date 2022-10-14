@@ -76,7 +76,7 @@ function readFileSync(filePath: string): ArrayBuffer {
 function readerCocosMesh() {
     // const filename = "./model_cow/model_cow.bin";
     // const filename = "./triangle.bin";
-    const filename = "./quad.bin";
+    const filename = "./sourceMesh/Quad.bin";
 
     let arrayBuffer = readFileSync(filename);
     console.log('byteLength', arrayBuffer.byteLength);
@@ -168,15 +168,14 @@ function convertFBXToCocosMesh(filename: string): void {
     let mesh = gltf!.getMesh(0);
     let skin = gltf!.getSkin(undefined);
     assert(mesh != null);
+
     let geomerty = new Geometry();
     geomerty.readGltfMesh(mesh!);
     writeBin(geomerty, mesh!);
     // writeMeta(geomerty, mesh!, skin);
 }
 
-// convertFBXToCocosMesh("model_cow");
-// convertFBXToCocosMesh("triangle");
-convertFBXToCocosMesh("Quad");
+convertFBXToCocosMesh("Quad2");
 
 
 
