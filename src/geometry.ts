@@ -7,7 +7,6 @@ import { attributes } from "./config.js";
 
 type ObjectInclude<T, E> = { [k in keyof T]: T[k] extends E ? k : never }[keyof T];
 
-
 export class Geometry {
     public indicesList: number[][] = [];
     public positionList: number[][] = [];
@@ -85,7 +84,6 @@ export class Geometry {
                 if (accessor.data == null) throw "";
                 const vertexCount = accessor.elementCnt;
                 const componentCount = accessor.componentLen;
-
                 for (let iVertex = 0; iVertex < vertexCount; ++iVertex) {
                     let vertexArr: number[] = [];
                     for (let iComponent = 0; iComponent < componentCount; ++iComponent) {
@@ -124,7 +122,6 @@ export class Geometry {
             this.normalList.push([]);
             this.normalList[i].push(0, 0, 0);
         }
-
         for (let i = 0; i < this.indicesList.length; i += 3) {
             let index1 = this.indicesList[i + 0][0];
             let index2 = this.indicesList[i + 1][0];
@@ -147,11 +144,12 @@ export class Geometry {
             let vertexNormal1Vec = this.xyzTovec(normal1).add(this.tempVec3);
             let vertexNormal2Vec = this.xyzTovec(normal2).add(this.tempVec3);
             let vertexNormal3Vec = this.xyzTovec(normal3).add(this.tempVec3);
-
             this.vecToxyz(this.normalList, index1, vertexNormal1Vec);
             this.vecToxyz(this.normalList, index2, vertexNormal2Vec);
             this.vecToxyz(this.normalList, index3, vertexNormal3Vec);
+            // console.log(this.normalList);
         }
+
         for (let i = 0; i < this.normalList.length; i++) {
             let normal = this.xyzTovec(this.normalList[i]);
             normal.normalize();
@@ -229,7 +227,6 @@ export class Geometry {
             let w1 = Vec3.dot(Vec3.cross(temp, normal1Vec, tangent4Vec), tangent1Vec) < 0.0 ? -1 : 1;
             let w2 = Vec3.dot(Vec3.cross(temp, normal2Vec, tangent5Vec), tangent2Vec) < 0.0 ? -1 : 1;
             let w3 = Vec3.dot(Vec3.cross(temp, normal3Vec, tangent6Vec), tangent3Vec) < 0.0 ? -1 : 1;
-            // console.log(w1, w2, w3);
             this.tangentList[index1][3] = w1;
             this.tangentList[index2][3] = w2;
             this.tangentList[index3][3] = w3;

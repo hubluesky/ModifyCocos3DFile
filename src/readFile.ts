@@ -7,7 +7,7 @@ import { assert } from 'console';
 import { TTypeArray } from './gltf2parser/types.js';
 import { Geometry } from './geometry.js';
 import { writeBin } from './writeFile.js';
-import { writeMeta } from './writeMeta.js';
+import { writeJson } from './writeJson.js';
 // @ts-ignore
 globalThis.fetch = fetch;
 
@@ -15,8 +15,8 @@ const vertexBundles = [
     {
         "view": {
             "offset": 0,
-            "length": 144,
-            "count": 3,
+            "length": 192,
+            "count": 4,
             "stride": 48
         },
         "attributes": [
@@ -40,27 +40,18 @@ const vertexBundles = [
                 "format": 44,
                 "isNormalized": false
             },
-            // {
-            //     "name": "a_joints",
-            //     "format": 42,
-            //     "isNormalized": false
-            // },
-            // {
-            //     "name": "a_weights",
-            //     "format": 44,
-            //     "isNormalized": false
-            // }
         ]
     }
 ]
 
 const primitives = [{
+
     "primitiveMode": 7,
     "vertexBundelIndices": [
         0
     ],
     "indexView": {
-        "offset": 224,
+        "offset": 192,
         "length": 24,
         "count": 6,
         "stride": 4
@@ -76,7 +67,7 @@ function readFileSync(filePath: string): ArrayBuffer {
 function readerCocosMesh() {
     // const filename = "./model_cow/model_cow.bin";
     // const filename = "./triangle.bin";
-    const filename = "./sourceMesh/Quad.bin";
+    const filename = "./targetMesh/quad.bin";
 
     let arrayBuffer = readFileSync(filename);
     console.log('byteLength', arrayBuffer.byteLength);
@@ -115,18 +106,17 @@ function readerCocosMesh() {
         }
         console.log("vertexBundle", iv, text);
     }
-
-    // for (let primitive of primitives) {
-    //     const Ctor = getIndexStrideCtor(primitive.indexView.stride);
-    //     let ibo = new Ctor(arrayBuffer, primitive.indexView.offset, primitive.indexView.count);
-    //     let indexValues = "";
-    //     for (let i = 0; i < primitive.indexView.count; i++)
-    //         indexValues += ibo[i] + " ";
-    //     // console.log("indexValues", indexValues);
-    // }
+    for (let primitive of primitives) {
+        const Ctor = getIndexStrideCtor(primitive.indexView.stride);
+        let ibo = new Ctor(arrayBuffer, primitive.indexView.offset, primitive.indexView.count);
+        let indexValues = "";
+        for (let i = 0; i < primitive.indexView.count; i++)
+            indexValues += ibo[i] + " ";
+        console.log("indexValues", indexValues);
+    }
 }
 
-// readerCocosMesh();
+readerCocosMesh();
 
 async function fbxToGltf(input: string, out: string) {
     const toolPath = "./fbx-gltf-conv/bin/darwin/FBX-glTF-conv";
@@ -172,10 +162,10 @@ function convertFBXToCocosMesh(filename: string): void {
     let geomerty = new Geometry();
     geomerty.readGltfMesh(mesh!);
     writeBin(geomerty, mesh!);
-    // writeMeta(geomerty, mesh!, skin);
+    writeJson(geomerty, mesh!, skin);
 }
 
-convertFBXToCocosMesh("Quad2");
+convertFBXToCocosMesh("Quad");
 
 
 
