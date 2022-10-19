@@ -482,6 +482,47 @@ export function getIndexStrideCtor(stride: number) {
     }
 }
 
+export type TypedArray = Uint8Array | Uint8ClampedArray | Int8Array | Uint16Array |
+Int16Array | Uint32Array | Int32Array | Float32Array | Float64Array;
+
+export type TypedArrayConstructor = Uint8ArrayConstructor | Uint8ClampedArrayConstructor |
+Int8ArrayConstructor | Uint16ArrayConstructor | Int16ArrayConstructor | Uint32ArrayConstructor |
+Int32ArrayConstructor | Float32ArrayConstructor | Float64ArrayConstructor;
+
+export function getTypedArrayConstructor (info: FormatInfo): TypedArrayConstructor {
+    if (info.isCompressed) {
+        return Uint8Array;
+    }
+    const stride = info.size / info.count;
+    switch (info.type) {
+        case FormatType.UNORM:
+        case FormatType.UINT: {
+            switch (stride) {
+                case 1: return Uint8Array;
+                case 2: return Uint16Array;
+                case 4: return Uint32Array;
+                default:
+                    return Uint8Array;
+            }
+        }
+        case FormatType.SNORM:
+        case FormatType.INT: {
+            switch (stride) {
+                case 1: return Int8Array;
+                case 2: return Int16Array;
+                case 4: return Int32Array;
+                default:
+                    return Int8Array;
+            }
+        }
+        case FormatType.FLOAT: {
+            return Float32Array;
+        }
+        default:
+    }
+    return Float32Array;
+}
+
 export interface IBufferView {
     offset: number;
     length: number;

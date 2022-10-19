@@ -6,6 +6,14 @@ import { attributes } from "./config.js";
 
 
 type ObjectInclude<T, E> = { [k in keyof T]: T[k] extends E ? k : never }[keyof T];
+const vec3Temp1: Vec3 = new Vec3();
+const vec3Temp2: Vec3 = new Vec3();
+const vec3Temp3: Vec3 = new Vec3();
+const vec3Temp4: Vec3 = new Vec3();
+const vec3Temp5: Vec3 = new Vec3();
+const vec3Temp6: Vec3 = new Vec3();
+const vec3Temp7: Vec3 = new Vec3();
+const vec3Temp8: Vec3 = new Vec3();
 
 export class Geometry {
     public indicesList: number[][] = [];
@@ -17,14 +25,7 @@ export class Geometry {
     public jointList: number[][] = [];
     public weightList: number[][] = [];
 
-    tempVec1: Vec3 = new Vec3();
-    tempVec2: Vec3 = new Vec3();
-    tempVec3: Vec3 = new Vec3();
-    tempVec4: Vec3 = new Vec3();
-    tempVec5: Vec3 = new Vec3();
-    tempVec6: Vec3 = new Vec3();
-    tempVec7: Vec3 = new Vec3();
-    tempVec8: Vec3 = new Vec3();
+
 
     attributeName: string = '';
 
@@ -134,16 +135,16 @@ export class Geometry {
             let vertex3 = this.positionList[index3];
             let vertex3Vec = this.xyzTovec(vertex3);
 
-            Vec3.subtract(this.tempVec1, vertex2Vec, vertex1Vec);
-            Vec3.subtract(this.tempVec2, vertex3Vec, vertex1Vec);
-            Vec3.cross(this.tempVec3, this.tempVec1, this.tempVec2);
+            Vec3.subtract(vec3Temp1, vertex2Vec, vertex1Vec);
+            Vec3.subtract(vec3Temp2, vertex3Vec, vertex1Vec);
+            Vec3.cross(vec3Temp3, vec3Temp1, vec3Temp2);
 
             let normal1 = this.normalList[index1];
             let normal2 = this.normalList[index2];
             let normal3 = this.normalList[index3];
-            let vertexNormal1Vec = this.xyzTovec(normal1).add(this.tempVec3);
-            let vertexNormal2Vec = this.xyzTovec(normal2).add(this.tempVec3);
-            let vertexNormal3Vec = this.xyzTovec(normal3).add(this.tempVec3);
+            let vertexNormal1Vec = this.xyzTovec(normal1).add(vec3Temp3);
+            let vertexNormal2Vec = this.xyzTovec(normal2).add(vec3Temp3);
+            let vertexNormal3Vec = this.xyzTovec(normal3).add(vec3Temp3);
             this.vecToxyz(this.normalList, index1, vertexNormal1Vec);
             this.vecToxyz(this.normalList, index2, vertexNormal2Vec);
             this.vecToxyz(this.normalList, index3, vertexNormal3Vec);
@@ -177,8 +178,8 @@ export class Geometry {
             let vertex3 = this.positionList[index3];
             let vertex3Vec = this.xyzTovec(vertex3);
 
-            Vec3.subtract(this.tempVec1, vertex2Vec, vertex1Vec);
-            Vec3.subtract(this.tempVec2, vertex3Vec, vertex1Vec);
+            Vec3.subtract(vec3Temp1, vertex2Vec, vertex1Vec);
+            Vec3.subtract(vec3Temp2, vertex3Vec, vertex1Vec);
 
             let texcoord1 = this.texCoordList[index1];
             let texcoord2 = this.texCoordList[index2];
@@ -186,16 +187,16 @@ export class Geometry {
 
             let coordy1 = texcoord2[1] - texcoord1[1];  // texcoord y
             let coordy2 = texcoord3[1] - texcoord1[1];
-            Vec3.multiplyScalar(this.tempVec3, this.tempVec1, coordy2);
-            Vec3.multiplyScalar(this.tempVec4, this.tempVec2, coordy1);
-            Vec3.subtract(this.tempVec5, this.tempVec4, this.tempVec3);
+            Vec3.multiplyScalar(vec3Temp3, vec3Temp1, coordy2);
+            Vec3.multiplyScalar(vec3Temp4, vec3Temp2, coordy1);
+            Vec3.subtract(vec3Temp5, vec3Temp4, vec3Temp3);
 
             let tangent1 = this.tangentList[index1];
             let tangent2 = this.tangentList[index2];
             let tangent3 = this.tangentList[index3];
-            let tangent1Vec = this.xyzTovec(tangent1).add(this.tempVec5);
-            let tangent2Vec = this.xyzTovec(tangent2).add(this.tempVec5);
-            let tangent3Vec = this.xyzTovec(tangent3).add(this.tempVec5);
+            let tangent1Vec = this.xyzTovec(tangent1).add(vec3Temp5);
+            let tangent2Vec = this.xyzTovec(tangent2).add(vec3Temp5);
+            let tangent3Vec = this.xyzTovec(tangent3).add(vec3Temp5);
             this.vecToxyz(this.tangentList, index1, tangent1Vec);
             this.vecToxyz(this.tangentList, index2, tangent2Vec);
             this.vecToxyz(this.tangentList, index3, tangent3Vec);
@@ -203,16 +204,16 @@ export class Geometry {
             // 计算切线的第四个分量 w
             let coordy3 = texcoord2[0] - texcoord1[0];  // texcoord x
             let coordy4 = texcoord3[0] - texcoord1[0];
-            Vec3.multiplyScalar(this.tempVec6, this.tempVec1, coordy4);
-            Vec3.multiplyScalar(this.tempVec7, this.tempVec2, coordy3);
-            Vec3.subtract(this.tempVec8, this.tempVec6, this.tempVec7);
+            Vec3.multiplyScalar(vec3Temp6, vec3Temp1, coordy4);
+            Vec3.multiplyScalar(vec3Temp7, vec3Temp2, coordy3);
+            Vec3.subtract(vec3Temp8, vec3Temp6, vec3Temp7);
 
             let tangent4 = this.tangent1List[index1];
             let tangent5 = this.tangent1List[index2];
             let tangent6 = this.tangent1List[index3];
-            let tangent4Vec = this.xyzTovec(tangent4).add(this.tempVec8);
-            let tangent5Vec = this.xyzTovec(tangent5).add(this.tempVec8);
-            let tangent6Vec = this.xyzTovec(tangent6).add(this.tempVec8);
+            let tangent4Vec = this.xyzTovec(tangent4).add(vec3Temp8);
+            let tangent5Vec = this.xyzTovec(tangent5).add(vec3Temp8);
+            let tangent6Vec = this.xyzTovec(tangent6).add(vec3Temp8);
             this.vecToxyz(this.tangent1List, index1, tangent4Vec);
             this.vecToxyz(this.tangent1List, index2, tangent5Vec);
             this.vecToxyz(this.tangent1List, index3, tangent6Vec);
