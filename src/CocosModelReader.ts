@@ -1,12 +1,6 @@
 import * as fs from 'fs';
-import path from "path";
 import CocosMesh, { CocosMeshMeta } from "./CocosMesh";
-
-export function readFileSync(filePath: string): ArrayBuffer {
-    let bufferString = fs.readFileSync(filePath, { encoding: "binary" });
-    const nb = Buffer.from(bufferString, "binary");
-    return nb.buffer.slice(nb.byteOffset, nb.byteOffset + nb.byteLength);
-}
+import { readFileSync } from './Common';
 
 export default class CocosModelReader {
     public readonly mesh: CocosMesh;

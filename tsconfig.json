@@ -8,10 +8,14 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
+    "allowJs": true,
+    "declaration": false,
     "noImplicitAny": true,
     "skipLibCheck": true
   },
+  "include": ["src/gltf2parser/Gltf2Parser.js"],
   "exclude": [
+    "dist",
     "node_modules",
   ],
   "ts-node": {

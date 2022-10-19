@@ -1,4 +1,4 @@
-import { FormatInfos, getIndexStrideCtor, getOffset, getReader, getTypedArrayConstructor, ISubMesh, IVertexBundle, TypedArray } from "./cocos";
+import { Attribute, FormatInfos, getIndexStrideCtor, getOffset, getReader, getTypedArrayConstructor, ISubMesh, IVertexBundle, TypedArray } from "./cocos";
 import { Vec3 } from "./vec3";
 
 export class CocosMeshMeta {
@@ -32,8 +32,13 @@ export class CocosMeshMeta {
     }
 }
 
+interface AttributeValue {
+    attribute: Attribute;
+    data: TypedArray;
+}
+
 interface VertexBundle {
-    readonly attributeValues: TypedArray[];
+    readonly attributeValues: AttributeValue[];
 }
 
 export default class CocosMesh {
@@ -43,42 +48,26 @@ export default class CocosMesh {
     public constructor(arrayBuffer: ArrayBuffer, meshMeta: CocosMeshMeta) {
         for (let iv = 0; iv < meshMeta.vertexBundles.length; iv++) {
             const vertexBundle = meshMeta.vertexBundles[iv];
-            // let text = "";
             this.bundles[iv] = { attributeValues: [] };
             for (let ia = 0; ia < vertexBundle.attributes.length; ia++) {
                 const view = new DataView(arrayBuffer, vertexBundle.view.offset + getOffset(vertexBundle.attributes, ia));
                 const { format } = vertexBundle.attributes[ia];
-                // text += "\n" + attribute.name + " " + getOffset(vertexBundle.attributes as Attribute[], ia + 1);
                 const reader = getReader(view, format)!;
                 console.assert(reader != null);
                 const vertexCount = vertexBundle.view.count;
                 const inputStride = vertexBundle.view.stride;
                 const componentCount = FormatInfos[format].count;
-                // const inputComponentByteLength = getComponentByteLength(format);
-                // const outputStride = stride;
-                // const outputComponentByteLength = inputComponentByteLength;
-                // console.log("FormatInfos[attribute.format] ", FormatInfos[attribute.format].size);
 
                 const StorageConstructor = getTypedArrayConstructor(FormatInfos[format]);
                 const storage = new StorageConstructor(vertexCount * componentCount);
-                this.bundles[iv].attributeValues[ia] = storage;
+                this.bundles[iv].attributeValues[ia] = { attribute: vertexBundle.attributes[ia], data: storage };
                 for (let iVertex = 0; iVertex < vertexCount; iVertex++) {
-                    // text += "\t[";
                     for (let iComponent = 0; iComponent < componentCount; iComponent++) {
                         storage[componentCount * iVertex + iComponent] = reader(inputStride * iVertex + storage.BYTES_PER_ELEMENT * iComponent);
-
-                        // const inputOffset = inputStride * iVertex + inputComponentByteLength * iComponent;
-                        // let value = reader(inputOffset);
-                        // text += value;
-                        // if (iComponent + 1 < componentCount) text += ",";
-                        // const outputOffset = outputStride * iVertex + outputComponentByteLength * iComponent;
-                        // writer(outputOffset, reader(inputOffset));
                     }
-                    // text += "]";
                 }
 
             }
-            // console.log("vertexBundle", iv, text);
         }
 
         for (const primitive of meshMeta.primitives) {
@@ -86,10 +75,6 @@ export default class CocosMesh {
             const Ctor = getIndexStrideCtor(indexView.stride);
             const ibo = new Ctor(arrayBuffer, indexView.offset, indexView.count);
             this.primitives.push(ibo);
-            // let indexValues = "";
-            // for (let i = 0; i < indexView.count; i++)
-            //     indexValues += ibo[i] + " ";
-            // console.log("indexValues", indexValues);
         }
     }
 }
