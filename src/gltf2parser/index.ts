@@ -168,7 +168,7 @@ class Gltf2Parser{
                     idx = tup[ 1 ];
                 }
             break; }
-            case "number" : if( id < json.skins.length ){ js = json.meshes[ id ]; idx = id; } break;
+            case "number" : if( id < json.skins.length ){ js = json.skins[ id ]; idx = id; } break;
             default       : js = json.skins[ 0 ]; idx = 0; break;
         }
 
@@ -513,8 +513,8 @@ class Gltf2Parser{
             const compLen       = ComponentVarMap[ accessor.type ];
             const byteSize      = ComponentTypeMap[ accessor.componentType ][ 0 ];
             if( bufView.byteStride !== compLen * byteSize ){ 
-                console.error( 'UNSUPPORTED - Parsing Interleaved Buffer With Accessor Object' );
-                return null;
+                // console.error( 'UNSUPPORTED - Parsing Interleaved Buffer With Accessor Object' );
+                // return null;
             }
         }
 

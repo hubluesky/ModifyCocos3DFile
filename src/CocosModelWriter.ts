@@ -59,13 +59,17 @@ export default class CocosModelWriter {
 
                 const stride = vertexBundle.view.stride;
                 const outputComponentByteLength = getComponentByteLength(format);
+                let text = "";
                 for (let iVertex = 0; iVertex < vertexCount; ++iVertex) {
                     for (let iComponent = 0; iComponent < componentCount; ++iComponent) {
                         const inputOffset = iVertex + iComponent;
                         const outputOffset = stride * iVertex + outputComponentByteLength * iComponent;
+                        // console.log(name, iVertex, iComponent, attributeData.data[inputOffset]);
+                        text += "\t" + attributeData.data[inputOffset];
                         writer(outputOffset, attributeData.data[inputOffset]);
                     }
                 }
+                console.log(name, componentCount, text);
             }
         }
 
@@ -79,6 +83,11 @@ export default class CocosModelWriter {
             const indicesAccessor = geometry.primitiveDatas[p].indicesAccessor;
             for (let i = 0; i < indicesAccessor.elementCnt; i++) {
                 ibo[i] = indicesAccessor.data[i];
+            }
+
+            if (meshMeta.jointMaps != null) {
+                if (meshMeta.jointMaps[p] != null && geometry.primitiveDatas[p].joints != null)
+                    meshMeta.jointMaps[p] = geometry.primitiveDatas[p].joints;
             }
         }
 

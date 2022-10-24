@@ -1,5 +1,5 @@
 
-const isLittleEndian = true;
+export const isLittleEndian = true;
 
 export enum Format {
 

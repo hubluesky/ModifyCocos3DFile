@@ -1,4 +1,5 @@
-import { AttributeName } from "./Cocos";
+import { AttributeName, isLittleEndian } from "./Cocos";
+import { Skin } from "./gltf2Parser";
 import Accessor from "./gltf2Parser/Accessor";
 import { Mesh, Primitive } from "./gltf2Parser/Mesh";
 import { Vec3 } from "./Vec3";
@@ -29,6 +30,7 @@ class Vec4 extends Vec3 {
 
 interface PrimitiveData {
     readonly indicesAccessor: Accessor;
+    readonly joints?: number[];
     readonly attributeDatas: AttributeData[];
 }
 
@@ -45,9 +47,10 @@ interface UVCoord {
 export default class Geometry {
     public readonly primitiveDatas: PrimitiveData[] = [];
 
-    public constructor(mesh: Mesh) {
+    public constructor(mesh: Mesh, skin: Skin) {
+        const joints: number[] = skin == null ? null : skin.joints.map(x => x.index);
         for (const primitive of mesh.primitives) {
-            const primitiveData: PrimitiveData = { attributeDatas: [], indicesAccessor: primitive.indices };
+            const primitiveData: PrimitiveData = { attributeDatas: [], indicesAccessor: primitive.indices, joints };
             this.primitiveDatas.push(primitiveData);
             for (const key in attributeMaps) {
                 const type = attributeMaps[key as PrimitiveKeys];
@@ -62,7 +65,7 @@ export default class Geometry {
         let boundMax = new Vec3(Number.MIN_VALUE, Number.MIN_VALUE, Number.MIN_VALUE);
         for (let primitive of this.primitiveDatas) {
             const positionAccessor = primitive.attributeDatas.find(x => x.name == AttributeName.ATTR_POSITION).accessor;
-            for (let i = 0; i < positionAccessor.elementCnt; i += positionAccessor.componentLen) {
+            for (let i = 0; i < positionAccessor.elementCnt; i++) {
                 const position = Geometry.createPosition(positionAccessor, i, vec3Temp1);
                 boundMin = Vec3.min(boundMin, boundMin, position);
                 boundMax = Vec3.max(boundMax, boundMax, position);
@@ -94,26 +97,27 @@ export default class Geometry {
 
     public createNormalAccessor(indexPrimitive: number): Accessor {
         const normalList = Geometry.computeNormals(this.primitiveDatas[indexPrimitive]);
-        const metaData = { componentType: 5126, type: 3, count: normalList.length };
+        const metaData = { componentType: 5126, type: "VEC3", count: normalList.length };
         const dataView = new DataView(new ArrayBuffer(normalList.length * 3 * 4));
         for (let i = 0; i < normalList.length; i++) {
             const normal = normalList[i];
-            dataView.setFloat32(i * 3 + 0, normal.x);
-            dataView.setFloat32(i * 3 + 1, normal.y);
-            dataView.setFloat32(i * 3 + 2, normal.z);
+            dataView.setFloat32(i * 12 + 0, normal.x);
+            dataView.setFloat32(i * 12 + 4, normal.y);
+            dataView.setFloat32(i * 12 + 8, normal.z);
         }
         return new Accessor(metaData, {}, dataView.buffer);
     }
 
     public createTangentAccessor(indexPrimitive: number, normalizeAccessor: Accessor): Accessor {
         const tangentList = Geometry.computeTangents(this.primitiveDatas[indexPrimitive], normalizeAccessor);
-        const metaData = { componentType: 5126, type: 3, count: tangentList.length };
-        const dataView = new DataView(new ArrayBuffer(tangentList.length * 3 * 4));
+        const metaData = { componentType: 5126, type: "VEC4", count: tangentList.length };
+        const dataView = new DataView(new ArrayBuffer(tangentList.length * 4 * 4));
         for (let i = 0; i < tangentList.length; i++) {
-            const normal = tangentList[i];
-            dataView.setFloat32(i * 3 + 0, normal.x);
-            dataView.setFloat32(i * 3 + 1, normal.y);
-            dataView.setFloat32(i * 3 + 2, normal.z);
+            const tangent = tangentList[i];
+            dataView.setFloat32(i * 16 + 0, tangent.x, isLittleEndian);
+            dataView.setFloat32(i * 16 + 4, tangent.y, isLittleEndian);
+            dataView.setFloat32(i * 16 + 8, tangent.z, isLittleEndian);
+            dataView.setFloat32(i * 16 + 12, tangent.w, isLittleEndian);
         }
         return new Accessor(metaData, {}, dataView.buffer);
     }
@@ -171,7 +175,7 @@ export default class Geometry {
         const indicesAcccessor = primitiveData.indicesAccessor;
         const coordAccessor = primitiveData.attributeDatas.find(x => x.name == AttributeName.ATTR_TEX_COORD).accessor;
 
-        for (let i = 0; i < indicesAcccessor.elementCnt * indicesAcccessor.componentLen; i += 3) {
+        for (let i = 0; i < indicesAcccessor.elementCnt; i += 3) {
             const index1 = indicesAcccessor.data[i + 0];
             const index2 = indicesAcccessor.data[i + 1];
             const index3 = indicesAcccessor.data[i + 2];

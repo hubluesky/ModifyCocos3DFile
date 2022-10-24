@@ -4,7 +4,7 @@ import { ComponentTypeMap, ComponentVarMap }    from "./structs";
 type TBufferView = { byteOffset ?: number };
 type TAccessor   = { 
     componentType   : number, 
-    type            : number,
+    type            : string,
     count           : number,
     byteOffset     ?: number,
     min            ?: Array<number>,
