@@ -605,7 +605,7 @@ export class Vec3 {
     public set(x?: number, y?: number, z?: number): Vec3;
 
     public set(x?: number | Vec3, y?: number, z?: number) {
-        if (x && typeof x === 'object') {
+        if (x instanceof Vec3) {
             this.x = x.x;
             this.y = x.y;
             this.z = x.z;

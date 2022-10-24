@@ -1,5 +1,4 @@
 import { AttributeName } from "./Cocos";
-import { CocosMeshMeta } from "./CocosMesh";
 import Accessor from "./gltf2Parser/Accessor";
 import { Mesh, Primitive } from "./gltf2Parser/Mesh";
 import { Vec3 } from "./Vec3";
@@ -8,6 +7,8 @@ const vec3Temp1: Vec3 = new Vec3();
 const vec3Temp2: Vec3 = new Vec3();
 const vec3Temp3: Vec3 = new Vec3();
 const vec3Temp4: Vec3 = new Vec3();
+const vec3Temp5: Vec3 = new Vec3();
+const vec3Temp6: Vec3 = new Vec3();
 
 type ObjectInclude<T, E> = { [k in keyof T]: T[k] extends E ? k : never }[keyof T];
 type PrimitiveKeys = Exclude<ObjectInclude<Primitive, Accessor | null>, "indices">;
@@ -32,7 +33,7 @@ interface PrimitiveData {
 }
 
 interface AttributeData {
-    type: AttributeName;
+    name: AttributeName;
     accessor: Accessor;
 }
 
@@ -51,30 +52,70 @@ export default class Geometry {
             for (const key in attributeMaps) {
                 const type = attributeMaps[key as PrimitiveKeys];
                 const accessor = primitive[key as PrimitiveKeys];
-                primitiveData.attributeDatas.push({ type, accessor });
+                primitiveData.attributeDatas.push({ name: type, accessor });
             }
-
-            // let attribute = attributes[j];
-            // let accessor = this.getAttributeList(attribute.name, primitive, 'accessor') as Accessor;
-            // if (accessor == null) continue;
-            // if (accessor.data == null) throw "";
-            // const vertexCount = accessor.elementCnt;
-            // const componentCount = accessor.componentLen;
-            // for (let iVertex = 0; iVertex < vertexCount; ++iVertex) {
-            //     let vertexArr: number[] = [];
-            //     for (let iComponent = 0; iComponent < componentCount; ++iComponent) {
-            //         const inputOffset = iVertex * componentCount + iComponent;
-            //         vertexArr.push(accessor.data![inputOffset]);
-            //     }
-            //     let attributeList = this.getAttributeList(attribute.name, primitive, 'attributeList') as number[][];
-            //     attributeList.push(vertexArr);
-            // }
-            // }
         }
     }
 
-    public converToCocosMesh(meta: CocosMeshMeta): void {
-        
+    public getBoundPositions(): { boundMin: Vec3, boundMax: Vec3 } {
+        let boundMin = new Vec3(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
+        let boundMax = new Vec3(Number.MIN_VALUE, Number.MIN_VALUE, Number.MIN_VALUE);
+        for (let primitive of this.primitiveDatas) {
+            const positionAccessor = primitive.attributeDatas.find(x => x.name == AttributeName.ATTR_POSITION).accessor;
+            for (let i = 0; i < positionAccessor.elementCnt; i += positionAccessor.componentLen) {
+                const position = Geometry.createPosition(positionAccessor, i, vec3Temp1);
+                boundMin = Vec3.min(boundMin, boundMin, position);
+                boundMax = Vec3.max(boundMax, boundMax, position);
+            }
+        }
+        return { boundMin, boundMax };
+    }
+
+    public getAttributeAccessor(indexPrimitive: number, attributeName: AttributeName): Accessor {
+        const attributeData = this.primitiveDatas[indexPrimitive].attributeDatas.find(x => x.name == attributeName);
+        if (attributeData.accessor == null) {
+            switch (attributeName) {
+                case AttributeName.ATTR_NORMAL: {
+                    attributeData.accessor = this.createNormalAccessor(indexPrimitive);
+                } break;
+                case AttributeName.ATTR_TANGENT: {
+                    let normalAccessor = this.primitiveDatas[indexPrimitive].attributeDatas.find(x => x.name == AttributeName.ATTR_NORMAL).accessor;
+                    if (normalAccessor == null)
+                        normalAccessor = this.getAttributeAccessor(indexPrimitive, AttributeName.ATTR_NORMAL);
+                    attributeData.accessor = this.createTangentAccessor(indexPrimitive, normalAccessor);
+                } break;
+                default:
+                    throw `不支持的属性类型${attributeName}`;
+            }
+        }
+
+        return attributeData.accessor;
+    }
+
+    public createNormalAccessor(indexPrimitive: number): Accessor {
+        const normalList = Geometry.computeNormals(this.primitiveDatas[indexPrimitive]);
+        const metaData = { componentType: 5126, type: 3, count: normalList.length };
+        const dataView = new DataView(new ArrayBuffer(normalList.length * 3 * 4));
+        for (let i = 0; i < normalList.length; i++) {
+            const normal = normalList[i];
+            dataView.setFloat32(i * 3 + 0, normal.x);
+            dataView.setFloat32(i * 3 + 1, normal.y);
+            dataView.setFloat32(i * 3 + 2, normal.z);
+        }
+        return new Accessor(metaData, {}, dataView.buffer);
+    }
+
+    public createTangentAccessor(indexPrimitive: number, normalizeAccessor: Accessor): Accessor {
+        const tangentList = Geometry.computeTangents(this.primitiveDatas[indexPrimitive], normalizeAccessor);
+        const metaData = { componentType: 5126, type: 3, count: tangentList.length };
+        const dataView = new DataView(new ArrayBuffer(tangentList.length * 3 * 4));
+        for (let i = 0; i < tangentList.length; i++) {
+            const normal = tangentList[i];
+            dataView.setFloat32(i * 3 + 0, normal.x);
+            dataView.setFloat32(i * 3 + 1, normal.y);
+            dataView.setFloat32(i * 3 + 2, normal.z);
+        }
+        return new Accessor(metaData, {}, dataView.buffer);
     }
 
     public static createUICoord(accessor: Accessor, index: number): UVCoord {
@@ -82,15 +123,15 @@ export default class Geometry {
         return { u: accessor.data[index + 0], v: accessor.data[index + 1] }
     }
 
-    public static createPosition(accessor: Accessor, index: number): Vec3 {
+    public static createPosition(accessor: Accessor, index: number, out: Vec3): Vec3 {
         index *= accessor.componentLen;
-        return new Vec3(accessor.data[index], accessor.data[index + 1], accessor.data[index + 2]);
+        return out.set(accessor.data[index], accessor.data[index + 1], accessor.data[index + 2]);
     }
 
     public static computeNormals(primitiveData: PrimitiveData): Vec3[] {
         const normalList: Vec3[] = [];
 
-        const positionAccessor = primitiveData.attributeDatas.find(x => x.type == AttributeName.ATTR_POSITION).accessor;
+        const positionAccessor = primitiveData.attributeDatas.find(x => x.name == AttributeName.ATTR_POSITION).accessor;
         for (let i = 0; i < positionAccessor.elementCnt; i++)
             normalList.push(new Vec3());
 
@@ -101,9 +142,9 @@ export default class Geometry {
             const index2 = indicesAcccessor.data[i + 1];
             const index3 = indicesAcccessor.data[i + 2];
 
-            const vertex1 = Geometry.createPosition(positionAccessor, index1);
-            const vertex2 = Geometry.createPosition(positionAccessor, index2);
-            const vertex3 = Geometry.createPosition(positionAccessor, index3);
+            const vertex1 = Geometry.createPosition(positionAccessor, index1, vec3Temp4);
+            const vertex2 = Geometry.createPosition(positionAccessor, index2, vec3Temp5);
+            const vertex3 = Geometry.createPosition(positionAccessor, index3, vec3Temp6);
 
             const dir1 = Vec3.subtract(vec3Temp1, vertex2, vertex1);
             const dir2 = Vec3.subtract(vec3Temp2, vertex3, vertex1);
@@ -120,24 +161,24 @@ export default class Geometry {
         return normalList;
     }
 
-    public computeTangents(primitiveData: PrimitiveData, normalList: Vec3[]): Vec4[] {
+    public static computeTangents(primitiveData: PrimitiveData, normalizeAccessor: Accessor): Vec4[] {
         const tangentList: Vec4[] = [];
 
-        const positionAccessor = primitiveData.attributeDatas.find(x => x.type == AttributeName.ATTR_POSITION).accessor;
+        const positionAccessor = primitiveData.attributeDatas.find(x => x.name == AttributeName.ATTR_POSITION).accessor;
         for (let i = 0; i < positionAccessor.elementCnt; i++)
             tangentList.push(new Vec4());
 
         const indicesAcccessor = primitiveData.indicesAccessor;
-        const coordAccessor = primitiveData.attributeDatas.find(x => x.type == AttributeName.ATTR_TEX_COORD).accessor;
+        const coordAccessor = primitiveData.attributeDatas.find(x => x.name == AttributeName.ATTR_TEX_COORD).accessor;
 
-        for (let i = 0; i < indicesAcccessor.elementCnt * indicesAcccessor.componentLen; i += indicesAcccessor.componentLen) {
+        for (let i = 0; i < indicesAcccessor.elementCnt * indicesAcccessor.componentLen; i += 3) {
             const index1 = indicesAcccessor.data[i + 0];
             const index2 = indicesAcccessor.data[i + 1];
             const index3 = indicesAcccessor.data[i + 2];
 
-            const vertex1 = Geometry.createPosition(positionAccessor, index1);
-            const vertex2 = Geometry.createPosition(positionAccessor, index2);
-            const vertex3 = Geometry.createPosition(positionAccessor, index3);
+            const vertex1 = Geometry.createPosition(positionAccessor, index1, vec3Temp4);
+            const vertex2 = Geometry.createPosition(positionAccessor, index2, vec3Temp5);
+            const vertex3 = Geometry.createPosition(positionAccessor, index3, vec3Temp6);
 
             const dir1 = Vec3.subtract(vec3Temp1, vertex2, vertex1);
             const dir2 = Vec3.subtract(vec3Temp2, vertex3, vertex1);
@@ -168,9 +209,9 @@ export default class Geometry {
             const tangent5 = Vec3.add(vec3Temp2, tangent2, uDir3);
             const tangent6 = Vec3.add(vec3Temp3, tangent3, uDir3);
 
-            const normal1 = normalList[index1];
-            const normal2 = normalList[index2];
-            const normal3 = normalList[index3];
+            const normal1 = Geometry.createPosition(normalizeAccessor, index1, vec3Temp4);
+            const normal2 = Geometry.createPosition(normalizeAccessor, index2, vec3Temp5);
+            const normal3 = Geometry.createPosition(normalizeAccessor, index3, vec3Temp6);
             tangent1.w = Vec3.dot(Vec3.cross(vec3Temp1, normal1, tangent4), tangent1) < 0.0 ? -1 : 1;
             tangent2.w = Vec3.dot(Vec3.cross(vec3Temp2, normal2, tangent5), tangent2) < 0.0 ? -1 : 1;
             tangent3.w = Vec3.dot(Vec3.cross(vec3Temp3, normal3, tangent6), tangent3) < 0.0 ? -1 : 1;

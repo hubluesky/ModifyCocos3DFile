@@ -13,7 +13,7 @@ export function fbxToGltf(input: string, out: string) {
     process.spawnSync(toolPath, [input, "--out", out]);
 }
 
-export function parseGltf(url: string) {
+export function loadGltf(url: string) {
     switch (url.slice(-4).toLocaleLowerCase()) {
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         case 'gltf':
@@ -39,5 +39,5 @@ export function parseGltf(url: string) {
 export function readFBXToGltf(filename: string): Gltf2Parser | null {
     const gltfPath = `./${filename}/${filename}.gltf`;
     fbxToGltf(filename + ".fbx", gltfPath);
-    return parseGltf(gltfPath);
+    return loadGltf(gltfPath);
 }
