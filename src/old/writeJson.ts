@@ -2,7 +2,7 @@ import path from "path";
 import * as fs from 'fs';
 import { Geometry } from "./geometry.js";
 import { attributes } from "./config.js";
-import { AttributeName, FormatInfos } from "./cocos.js";
+import { AttributeName, FormatInfos } from "./Cocos.js";
 import { Mesh } from "./gltf2parser/Gltf2Parser";
 import { Skin } from "./gltf2parser/Gltf2Parser";
 

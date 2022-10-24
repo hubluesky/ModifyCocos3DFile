@@ -1,4 +1,4 @@
-import { AttributeName, FormatInfos, getComponentByteLength, getWriter } from "./cocos.js";
+import { AttributeName, FormatInfos, getComponentByteLength, getWriter } from "./Cocos.js";
 import { attributes } from "./config.js";
 import { Geometry } from "./geometry.js";
 import * as fs from 'fs';

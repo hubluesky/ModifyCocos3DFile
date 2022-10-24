@@ -1,5 +1,5 @@
-import { Attribute, FormatInfos, getIndexStrideCtor, getOffset, getReader, getTypedArrayConstructor, ISubMesh, IVertexBundle, TypedArray } from "./cocos";
-import { Vec3 } from "./vec3";
+import { Attribute, FormatInfos, getIndexStrideCtor, getOffset, getReader, getTypedArrayConstructor, ISubMesh, IVertexBundle, TypedArray } from "./Cocos";
+import { Vec3 } from "./Vec3";
 
 export class CocosMeshMeta {
     public readonly primitives: ISubMesh[];
