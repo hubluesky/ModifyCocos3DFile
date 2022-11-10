@@ -53,6 +53,6 @@ export function readFBXToGltf(filename: string): Gltf2Parser | null {
     fs.mkdirSync(path.dirname(gltfPath), { recursive: true });
     fbxToGltf(filename, gltfPath);
     const gltf = loadGltf(gltfPath);
-    fs.rmdirSync(`./temp/${gltfName}`, { recursive: true });
+    // fs.rmdirSync(`./temp/${gltfName}`, { recursive: true });
     return gltf;
 }

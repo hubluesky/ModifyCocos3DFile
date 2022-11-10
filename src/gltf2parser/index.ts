@@ -101,9 +101,9 @@ class Gltf2Parser{
             //------------------------------------------------------
             if( p.indices       != undefined ) prim.indices    = this.parseAccessor( p.indices );
 
-            if( attr.POSITION && this.isAccessorInterleaved( attr.POSITION ) ){
-                prim.interleaved = new InterleavedBuffer( attr, this.json, this.bin );
-            }else{
+            // if( attr.POSITION && this.isAccessorInterleaved( attr.POSITION ) ){
+            //     prim.interleaved = new InterleavedBuffer( attr, this.json, this.bin );
+            // }else{
                 if( attr.POSITION   != undefined ) prim.position   = this.parseAccessor( attr.POSITION );
                 if( attr.NORMAL     != undefined ) prim.normal     = this.parseAccessor( attr.NORMAL );
                 if( attr.TANGENT    != undefined ) prim.tangent    = this.parseAccessor( attr.TANGENT );
@@ -112,7 +112,7 @@ class Gltf2Parser{
                 if( attr.JOINTS_0   != undefined ) prim.joints_0   = this.parseAccessor( attr.JOINTS_0 );
                 if( attr.WEIGHTS_0  != undefined ) prim.weights_0  = this.parseAccessor( attr.WEIGHTS_0 );
                 if( attr.COLOR_0    != undefined ) prim.color_0    = this.parseAccessor( attr.COLOR_0 );
-            }
+            // }
 
             //------------------------------------------------------
             mesh.primitives.push( prim );

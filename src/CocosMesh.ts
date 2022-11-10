@@ -76,5 +76,7 @@ export default class CocosMesh {
             const ibo = new Ctor(arrayBuffer, indexView.offset, indexView.count);
             this.primitives.push(ibo);
         }
+
+        console.assert(meshMeta.primitives.length == meshMeta.vertexBundles.length, meshMeta.primitives.length, meshMeta.vertexBundles.length);
     }
 }

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import path from 'path';
-import { FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './Cocos';
+import { AttributeName, FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './Cocos';
 import { CocosMeshMeta } from "./CocosMesh";
 import Geometry from "./Geometry";
 
@@ -24,7 +24,8 @@ export default class CocosModelWriter {
         let size = 0;
         for (let i = 0; i < meshMeta.vertexBundles.length; i++) {
             const vb = meshMeta.vertexBundles[i];
-            vb.view.count = geometry.primitiveDatas[i].attributeDatas[i].accessor.elementCnt;
+            const accessor = geometry.getAttributeAccessor(i, AttributeName.ATTR_POSITION);
+            vb.view.count = accessor.elementCnt;
             vb.view.length = vb.view.count * vb.view.stride;
             vb.view.offset = size;
             size += vb.view.length;
@@ -52,24 +53,26 @@ export default class CocosModelWriter {
                 const view = new DataView(arrayBuffer, vertexBundle.view.offset + getOffset(vertexBundle.attributes, ia));
                 const writer = getWriter(view, format)!;
                 console.assert(writer != null);
-                const vertexCount = vertexBundle.view.count;
-                const componentCount = FormatInfos[format].count;
 
                 const attributeData = geometry.getAttributeAccessor(iv, name);
-
-                const stride = vertexBundle.view.stride;
+                // const stride = vertexBundle.view.stride;
+                const outputStride = vertexBundle.view.stride;
                 const outputComponentByteLength = getComponentByteLength(format);
-                let text = "";
-                for (let iVertex = 0; iVertex < vertexCount; ++iVertex) {
-                    for (let iComponent = 0; iComponent < componentCount; ++iComponent) {
-                        const inputOffset = iVertex + iComponent;
-                        const outputOffset = stride * iVertex + outputComponentByteLength * iComponent;
-                        // console.log(name, iVertex, iComponent, attributeData.data[inputOffset]);
-                        text += "\t" + attributeData.data[inputOffset];
+                // let text = "\n";
+                for (let iVertex = 0; iVertex < attributeData.elementCnt; iVertex++) {
+                    for (let iComponent = 0; iComponent < attributeData.componentLen; iComponent++) {
+                        const inputOffset = attributeData.componentLen * iVertex + iComponent;
+                        const outputOffset = outputStride * iVertex + outputComponentByteLength * iComponent;
+                        
+                        // text += attributeData.data[inputOffset] + ",";
                         writer(outputOffset, attributeData.data[inputOffset]);
                     }
+                    // text += "\n";
                 }
-                console.log(name, componentCount, text);
+                // if (name == AttributeName.ATTR_POSITION) {
+                //     console.log(name, attributeData.elementCnt, attributeData.componentLen, text);
+                //     console.log("attributeData", attributeData.data);
+                // }
             }
         }
 
@@ -94,6 +97,7 @@ export default class CocosModelWriter {
         const bound = geometry.getBoundPositions();
         meshMeta.minPosition = bound.boundMin;
         meshMeta.maxPosition = bound.boundMax;
+        console.log("bound", bound.boundMin, bound.boundMax);
         return arrayBuffer;
     }
 }

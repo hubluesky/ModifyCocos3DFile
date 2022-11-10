@@ -1,0 +1,211 @@
+{
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 224,
+      "max": [
+        1.2891497611999512,
+        3.2673749923706055,
+        0.3062437176704407
+      ],
+      "min": [
+        -0.24996061623096466,
+        -0.004608729388564825,
+        -0.293007493019104
+      ],
+      "name": "YeZiShu_Material0/POSITION",
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 12,
+      "componentType": 5126,
+      "count": 224,
+      "name": "YeZiShu_Material0/NORMAL",
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 24,
+      "componentType": 5126,
+      "count": 224,
+      "name": "YeZiShu_Material0/TEXCOORD_0",
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 32,
+      "componentType": 5126,
+      "count": 224,
+      "name": "YeZiShu_Material0/TEXCOORD_1",
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5125,
+      "count": 807,
+      "name": "YeZiShu_Material0/INDICES",
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 308,
+      "max": [
+        2.294358015060425,
+        3.9141881465911865,
+        1.2165989875793457
+      ],
+      "min": [
+        -0.0066384985111653805,
+        2.5075347423553467,
+        -1.359055519104004
+      ],
+      "name": "YeZiShu_Material0/POSITION",
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 12,
+      "componentType": 5126,
+      "count": 308,
+      "name": "YeZiShu_Material0/NORMAL",
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 24,
+      "componentType": 5126,
+      "count": 308,
+      "name": "YeZiShu_Material0/TEXCOORD_0",
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 32,
+      "componentType": 5126,
+      "count": 308,
+      "name": "YeZiShu_Material0/TEXCOORD_1",
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5125,
+      "count": 1230,
+      "name": "YeZiShu_Material0/INDICES",
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "copyright": "Copyright (c) 2018-2020 Chukong Technologies Inc.",
+    "generator": "FBX-glTF-conv",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 8960,
+      "byteStride": 40,
+      "name": "YeZiShu_Material0",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 3228,
+      "byteOffset": 8960
+    },
+    {
+      "buffer": 0,
+      "byteLength": 12320,
+      "byteOffset": 12188,
+      "byteStride": 40,
+      "name": "YeZiShu_Material0",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 4920,
+      "byteOffset": 24508
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 29428,
+      "uri": "YeZiShu.bin"
+    }
+  ],
+  "extras": {
+    "FBX-glTF-conv": {
+      "animationFrameRate": 30.0
+    }
+  },
+  "materials": [
+    {
+      "name": "YeZiShu01",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.501960813999176,
+          0.3529411852359772,
+          0.1764705926179886,
+          1.0
+        ],
+        "metallicFactor": 0.4000000059604645,
+        "roughnessFactor": 0.7071067690849304
+      }
+    },
+    {
+      "name": "YeZiShu02",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.33725491166114807,
+          0.6666666865348816,
+          0.0784313753247261,
+          1.0
+        ],
+        "metallicFactor": 0.4000000059604645,
+        "roughnessFactor": 0.7071067690849304
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "YeZiShu_Material0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TEXCOORD_0": 2,
+            "TEXCOORD_1": 3
+          },
+          "indices": 4,
+          "material": 0
+        },
+        {
+          "attributes": {
+            "NORMAL": 6,
+            "POSITION": 5,
+            "TEXCOORD_0": 7,
+            "TEXCOORD_1": 8
+          },
+          "indices": 9,
+          "material": 1
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "YeZiShu"
+    }
+  ],
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}

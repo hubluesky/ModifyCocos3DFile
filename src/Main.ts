@@ -9,15 +9,16 @@ import Geometry from "./Geometry";
 // const reader = new CocosModelReader("./sourceMesh/Quad2");
 // console.log("reader", reader.mesh);
 
-// const metaData = CocosModelReader.readMeshMeta("./assets/cocos/model_cow.json");
-// const gltf = readFBXToGltf("./assets/fbx/ff.FBX");
-// const gltf = readFBXToGltf("./assets/fbx/model_tiger.FBX");
+const metaData = CocosModelReader.readMeshMeta("E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model/YeZiShu/YeZiShu_Material0.json");
 // const gltf = loadGltf("./assets/gltf/model_cow/model_cow.gltf");
-const metaData = CocosModelReader.readMeshMeta("./assets/cocos/Quad.json");
-const gltf = loadGltf("./assets/gltf/Quad/Quad.gltf");
+const gltf = readFBXToGltf("./assets/fbx/YeZiShu.FBX");
 const geometry = new Geometry(gltf.getMesh(0), gltf.getSkin(0));
-const write = new CocosModelWriter("./assets/out/Quad/Quad", metaData, geometry);
-// const write = new CocosModelWriter("./assets/out/Quad/Quad", metaData, geometry);
+const write = new CocosModelWriter("./assets/out/YeZiShu/YeZiShu_Material0", metaData, geometry);
+
+// const metaData = CocosModelReader.readMeshMeta("E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model/box/Cube.json");
+// const gltf = loadGltf("./assets/gltf/box/box.gltf");
+// const geometry = new Geometry(gltf.getMesh(0), gltf.getSkin(0));
+// const write = new CocosModelWriter("./assets/out/box/Cube", metaData, geometry);
 
 // console.log("shit of ts-node");
 debugger;
