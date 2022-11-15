@@ -63,6 +63,7 @@ export default class CocosMesh {
                 this.bundles[iv].attributeValues[ia] = { attribute: vertexBundle.attributes[ia], data: storage };
                 for (let iVertex = 0; iVertex < vertexCount; iVertex++) {
                     for (let iComponent = 0; iComponent < componentCount; iComponent++) {
+
                         storage[componentCount * iVertex + iComponent] = reader(inputStride * iVertex + storage.BYTES_PER_ELEMENT * iComponent);
                     }
                 }
@@ -70,6 +71,7 @@ export default class CocosMesh {
             }
         }
 
+        
         for (const primitive of meshMeta.primitives) {
             const indexView = primitive.indexView!;
             const Ctor = getIndexStrideCtor(indexView.stride);
@@ -77,6 +79,8 @@ export default class CocosMesh {
             this.primitives.push(ibo);
         }
 
+        console.log(this.bundles);
+        
         console.assert(meshMeta.primitives.length == meshMeta.vertexBundles.length, meshMeta.primitives.length, meshMeta.vertexBundles.length);
     }
 }

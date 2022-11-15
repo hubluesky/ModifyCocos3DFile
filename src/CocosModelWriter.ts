@@ -29,6 +29,7 @@ export default class CocosModelWriter {
             vb.view.length = vb.view.count * vb.view.stride;
             vb.view.offset = size;
             size += vb.view.length;
+            console.log(size, 'size');
         }
         for (let p = 0; p < meshMeta.primitives.length; p++) {
             const indexView = meshMeta.primitives[p].indexView;
@@ -63,6 +64,7 @@ export default class CocosModelWriter {
                     for (let iComponent = 0; iComponent < attributeData.componentLen; iComponent++) {
                         const inputOffset = attributeData.componentLen * iVertex + iComponent;
                         const outputOffset = outputStride * iVertex + outputComponentByteLength * iComponent;
+                       
                         
                         // text += attributeData.data[inputOffset] + ",";
                         writer(outputOffset, attributeData.data[inputOffset]);
