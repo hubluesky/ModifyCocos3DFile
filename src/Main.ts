@@ -20,7 +20,7 @@ const reader = new CocosModelReader("./assets/cocos/model_cow");
 // const gltf = readFBXToGltf("./assets/fbx/YeZiShu.FBX");
 // const metaData = CocosModelReader.readMeshMeta("E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model/box/Cube.json");
 // const gltf = loadGltf("./assets/gltf/box/box.gltf");
-// const geometry = new Geometry(gltf.getMesh(0), gltf.getSkin(0));
+// const geometry = new Geometry(gltf.get Mesh(0), gltf.getSkin(0));
 // const write = new CocosModelWriter("./assets/out/box/Cube", metaData, geometry);
 
 // console.log("shit of ts-node");

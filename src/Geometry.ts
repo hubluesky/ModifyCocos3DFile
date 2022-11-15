@@ -77,7 +77,6 @@ export default class Geometry {
 
     public getAttributeAccessor(indexPrimitive: number, attributeName: AttributeName): Accessor {
         const attributeData = this.primitiveDatas[indexPrimitive].attributeDatas.find(x => x.name == attributeName);
-        console.log(attributeData);
         
         if (attributeData.accessor == null) {
             switch (attributeName) {
@@ -93,10 +92,6 @@ export default class Geometry {
                 default:
                     throw `不支持的属性类型${attributeName}`;
             }
-        }
-        if(attributeName==attributeMaps.joints_0){
-            console.log(attributeData.accessor.data);
-
         }
         
         return attributeData.accessor;
