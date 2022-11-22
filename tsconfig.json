@@ -10,7 +10,7 @@
     "strict": false,
     "allowJs": true,
     "declaration": false,
-    "noImplicitAny": true,
+    // "noImplicitAny": true,
     "skipLibCheck": true
   },
   "exclude": [

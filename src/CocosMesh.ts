@@ -1,21 +1,21 @@
+import { ReadonlyVec3 } from "gl-matrix";
 import { Attribute, FormatInfos, getIndexStrideCtor, getOffset, getReader, getTypedArrayConstructor, ISubMesh, IVertexBundle, TypedArray } from "./Cocos";
-import { Vec3 } from "./Vec3";
 
 export class CocosMeshMeta {
     public readonly primitives: ISubMesh[];
     public readonly vertexBundles: IVertexBundle[];
     public readonly jointMaps?: number[][];
-    public set minPosition(v: Vec3) {
+    public set minPosition(v: ReadonlyVec3) {
         const minPositionArray: number[] = this.getBin()[3];
-        minPositionArray[1] = v.x;
-        minPositionArray[2] = v.y;
-        minPositionArray[3] = v.z;
+        minPositionArray[1] = v[0];
+        minPositionArray[2] = v[1];
+        minPositionArray[3] = v[2];
     }
-    public set maxPosition(v: Vec3) {
+    public set maxPosition(v: ReadonlyVec3) {
         const maxPositionArray: number[] = this.getBin()[6];
-        maxPositionArray[1] = v.x;
-        maxPositionArray[2] = v.y;
-        maxPositionArray[3] = v.z;
+        maxPositionArray[1] = v[0];
+        maxPositionArray[2] = v[1];
+        maxPositionArray[3] = v[2];
     }
 
     private _data: any;
@@ -55,22 +55,22 @@ export default class CocosMesh {
                 const reader = getReader(view, format)!;
                 console.assert(reader != null);
                 const vertexCount = vertexBundle.view.count;
-                const inputStride = vertexBundle.view.stride;
+                const vertexStride = vertexBundle.view.stride;
                 const componentCount = FormatInfos[format].count;
 
                 const StorageConstructor = getTypedArrayConstructor(FormatInfos[format]);
                 const storage = new StorageConstructor(vertexCount * componentCount);
                 this.bundles[iv].attributeValues[ia] = { attribute: vertexBundle.attributes[ia], data: storage };
+
                 for (let iVertex = 0; iVertex < vertexCount; iVertex++) {
                     for (let iComponent = 0; iComponent < componentCount; iComponent++) {
-                        storage[componentCount * iVertex + iComponent] = reader(inputStride * iVertex + storage.BYTES_PER_ELEMENT * iComponent);
+                        const inputIndex = iVertex * vertexStride + storage.BYTES_PER_ELEMENT * iComponent;
+                        storage[componentCount * iVertex + iComponent] = reader(inputIndex);
                     }
                 }
-
             }
         }
 
-        
         for (const primitive of meshMeta.primitives) {
             const indexView = primitive.indexView!;
             const Ctor = getIndexStrideCtor(indexView.stride);
@@ -78,7 +78,6 @@ export default class CocosMesh {
             this.primitives.push(ibo);
         }
 
-        
         console.assert(meshMeta.primitives.length == meshMeta.vertexBundles.length, meshMeta.primitives.length, meshMeta.vertexBundles.length);
     }
 }

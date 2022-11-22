@@ -24,8 +24,8 @@ export default class CocosModelWriter {
         let size = 0;
         for (let i = 0; i < meshMeta.vertexBundles.length; i++) {
             const vb = meshMeta.vertexBundles[i];
-            const accessor = geometry.getAttributeAccessor(i, AttributeName.ATTR_POSITION);
-            vb.view.count = accessor.elementCnt;
+            const typeArray = geometry.getAttributeAccessor(i, AttributeName.ATTR_POSITION);
+            vb.view.count = typeArray.length / 3;
             vb.view.length = vb.view.count * vb.view.stride;
             vb.view.offset = size;
             size += vb.view.length;
@@ -33,9 +33,9 @@ export default class CocosModelWriter {
         for (let p = 0; p < meshMeta.primitives.length; p++) {
             const indexView = meshMeta.primitives[p].indexView;
             if (indexView == null) continue;
-            const indices = geometry.primitiveDatas[p].indicesAccessor;
+            const indices = geometry.primitiveDatas[p].indices;
             indexView.offset = size;
-            indexView.count = indices.elementCnt;
+            indexView.count = indices.length;
             indexView.length = indexView.count * indexView.stride;
             size += indexView.length;
         }
@@ -49,31 +49,23 @@ export default class CocosModelWriter {
         for (let iv = 0; iv < meshMeta.vertexBundles.length; iv++) {
             const vertexBundle = meshMeta.vertexBundles[iv];
             for (let ia = 0; ia < vertexBundle.attributes.length; ia++) {
-                const { format, name } = vertexBundle.attributes[ia];
-                const view = new DataView(arrayBuffer, vertexBundle.view.offset + getOffset(vertexBundle.attributes, ia));
-                const writer = getWriter(view, format)!;
+                const { format, name, } = vertexBundle.attributes[ia];
+
+                const writer = getWriter(new DataView(arrayBuffer, vertexBundle.view.offset + getOffset(vertexBundle.attributes, ia)), format)!;
                 console.assert(writer != null);
 
-                const attributeData = geometry.getAttributeAccessor(iv, name);
-                // const stride = vertexBundle.view.stride;
                 const outputStride = vertexBundle.view.stride;
+                const componentCount = FormatInfos[format].count;
                 const outputComponentByteLength = getComponentByteLength(format);
-                // let text = "\n";
-                for (let iVertex = 0; iVertex < attributeData.elementCnt; iVertex++) {
-                    for (let iComponent = 0; iComponent < attributeData.componentLen; iComponent++) {
-                        const inputOffset = attributeData.componentLen * iVertex + iComponent;
+                const typeArray = geometry.getAttributeAccessor(iv, name);
+                const vertexCount = typeArray.length / componentCount;
+                for (let iVertex = 0; iVertex < vertexCount; iVertex++) {
+                    for (let iComponent = 0; iComponent < componentCount; iComponent++) {
+                        const inputOffset = componentCount * iVertex + iComponent;
                         const outputOffset = outputStride * iVertex + outputComponentByteLength * iComponent;
-                       
-                        
-                        // text += attributeData.data[inputOffset] + ",";
-                        writer(outputOffset, attributeData.data[inputOffset]);
+                        writer(outputOffset, typeArray[inputOffset]);
                     }
-                    // text += "\n";
                 }
-                // if (name == AttributeName.ATTR_POSITION) {
-                //     console.log(name, attributeData.elementCnt, attributeData.componentLen, text);
-                //     console.log("attributeData", attributeData.data);
-                // }
             }
         }
 
@@ -84,21 +76,22 @@ export default class CocosModelWriter {
             const Ctor = getIndexStrideCtor(indexView.stride);
             const ibo = new Ctor(arrayBuffer, indexView.offset, indexView.count);
 
-            const indicesAccessor = geometry.primitiveDatas[p].indicesAccessor;
-            for (let i = 0; i < indicesAccessor.elementCnt; i++) {
-                ibo[i] = indicesAccessor.data[i];
+            const indicesArray = geometry.primitiveDatas[p].indices;
+            for (let i = 0; i < indicesArray.length; i++) {
+                ibo[i] = indicesArray[i];
             }
 
             if (meshMeta.jointMaps != null) {
                 if (meshMeta.jointMaps[p] != null && geometry.primitiveDatas[p].joints != null)
                     meshMeta.jointMaps[p] = geometry.primitiveDatas[p].joints;
             }
+
+            console.log("indicesArray", indicesArray);
         }
 
         const bound = geometry.getBoundPositions();
         meshMeta.minPosition = bound.boundMin;
         meshMeta.maxPosition = bound.boundMax;
-        console.log("bound", bound.boundMin, bound.boundMax);
         return arrayBuffer;
     }
 }
