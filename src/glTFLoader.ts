@@ -1321,7 +1321,7 @@ export module glTFLoaderBasic {
 		const reader = new TypedArray(accessor.bufferView.data, accessor.byteOffset);
 		const componentCount = glTFLoaderBasic.accessorTypeToNumComponents(accessor.type);
 		const write = new TypedArray(new ArrayBuffer(accessor.count * componentCount * TypedArray.BYTES_PER_ELEMENT));
-		const inputStride = accessor.bufferView.byteStride  == 0 ? 1 : accessor.bufferView.byteStride / TypedArray.BYTES_PER_ELEMENT;
+		const inputStride = accessor.bufferView.byteStride  == 0 ? componentCount : accessor.bufferView.byteStride / TypedArray.BYTES_PER_ELEMENT;
 		for(let i = 0; i < accessor.count; i++) {
 			for(let c = 0; c < componentCount; c++) {
 				write[componentCount * i + c] = reader[i * inputStride + c];
