@@ -13,8 +13,8 @@ const attributeMaps: Record<PrimitiveKeys, AttributeName | null> = {
     "TEXCOORD_0": AttributeName.ATTR_TEX_COORD,
     "TEXCOORD_1": AttributeName.ATTR_TEX_COORD1,
     "TEXCOORD_2": AttributeName.ATTR_TEX_COORD2,
-    // "COLOR_0": AttributeName.ATTR_COLOR,
-    // "JOINTS_0": AttributeName.ATTR_JOINTS,
+    "COLOR_0": AttributeName.ATTR_COLOR,
+    "JOINTS_0": AttributeName.ATTR_JOINTS,
     "WEIGHTS_0": AttributeName.ATTR_WEIGHTS,
 };
 
@@ -41,13 +41,11 @@ export default class Geometry {
             const indices = glTFLoaderBasic.accessorToTypeArray(primitive.indices);
             const primitiveData: PrimitiveData = { attributeDatas: [], indices, joints, boundingBox: primitive.boundingBox };
             this.primitiveDatas.push(primitiveData);
-            console.log("indices", indices);
             for (const key in primitive.attributes) {
                 const type = attributeMaps[key as PrimitiveKeys];
                 const accessor = primitive.attributes[key as PrimitiveKeys];
                 const data = glTFLoaderBasic.accessorToTypeArray(accessor);
                 primitiveData.attributeDatas.push({ name: type, data });
-                console.log(type, data);
             }
         }
     }
@@ -100,36 +98,38 @@ export default class Geometry {
 
     public createNormalTypeArray(indexPrimitive: number): TypeArray {
         const normalList = Geometry.computeNormals(this.primitiveDatas[indexPrimitive]);
-        const componentSize = 3 * Float32Array.BYTES_PER_ELEMENT;
-        const typeArray = new Float32Array(new ArrayBuffer(normalList.length * componentSize));
+        const componentCount = 3;
+        const typeArray = new Float32Array(new ArrayBuffer(normalList.length * componentCount * Float32Array.BYTES_PER_ELEMENT));
         for (let i = 0; i < normalList.length; i++) {
             const normal = normalList[i];
-            typeArray[i * componentSize + 0 * Float32Array.BYTES_PER_ELEMENT] = normal[0];
-            typeArray[i * componentSize + 1 * Float32Array.BYTES_PER_ELEMENT] = normal[1];
-            typeArray[i * componentSize + 2 * Float32Array.BYTES_PER_ELEMENT] = normal[2];
+            typeArray[i * componentCount + 0] = normal[0];
+            typeArray[i * componentCount + 1] = normal[1];
+            typeArray[i * componentCount + 2] = normal[2];
         }
         return typeArray;
     }
 
     public createTangentAccessor(indexPrimitive: number, normalArray: TypeArray): TypeArray {
         const tangentList = Geometry.computeTangents(this.primitiveDatas[indexPrimitive], normalArray);
-        const componentSize = 4 * Float32Array.BYTES_PER_ELEMENT;
-        const typeArray = new Float32Array(new ArrayBuffer(tangentList.length * componentSize));
+        const componentCount = 4;
+        const typeArray = new Float32Array(new ArrayBuffer(tangentList.length * componentCount * Float32Array.BYTES_PER_ELEMENT));
         for (let i = 0; i < tangentList.length; i++) {
             const tangent = tangentList[i];
-            typeArray[i * componentSize + 0 * Float32Array.BYTES_PER_ELEMENT] = tangent[0];
-            typeArray[i * componentSize + 1 * Float32Array.BYTES_PER_ELEMENT] = tangent[1];
-            typeArray[i * componentSize + 2 * Float32Array.BYTES_PER_ELEMENT] = tangent[2];
-            typeArray[i * componentSize + 3 * Float32Array.BYTES_PER_ELEMENT] = tangent[3];
+            typeArray[i * componentCount + 0] = tangent[0];
+            typeArray[i * componentCount + 1] = tangent[1];
+            typeArray[i * componentCount + 2] = tangent[2];
+            typeArray[i * componentCount + 3] = tangent[3];
         }
         return typeArray;
     }
 
     public static createVector2(array: TypeArray, index: number, out: vec2): vec2 {
+        index *= 2;
         return vec2.set(out, array[index], array[index + 1]);
     }
 
     public static createVector3(array: TypeArray, index: number, out: vec3): vec3 {
+        index *= 3;
         return vec3.set(out, array[index], array[index + 1], array[index + 2]);
     }
 
@@ -150,7 +150,7 @@ export default class Geometry {
         const vec3Temp5 = vec3.create();
         const vec3Temp6 = vec3.create();
 
-        for (let i = 0; i < indicesArray.length; i++) {
+        for (let i = 0; i < indicesArray.length; i += 3) {
             const index1 = indicesArray[i + 0];
             const index2 = indicesArray[i + 1];
             const index3 = indicesArray[i + 2];
@@ -275,6 +275,7 @@ export default class Geometry {
         const tangentList: vec4[] = [];
         for (let i = 0; i < vertexCount; i++) {
             const normal = Geometry.createVector3(normalArray, i, vec3Temp1);
+            vec3.normalize(normal, normal);
             const normal2 = vec3.clone(normal);
             const t = tan1[i];
             // Gram-Schmidt orthogonalize

@@ -23,8 +23,8 @@ import { GLTFLoader, glTFLoaderBasic } from "./glTFLoader";
 // const geometry = new Geometry(gltf.getMesh(0), gltf.getSkin(0));
 // const write = new CocosModelWriter("./assets/out/Quad/Quad", metaData, geometry);
 
-const filename = "Cube";
-const meshname = "Cube";
+const filename = "model_cow";
+const meshname = "model_cow";
 const reader = new CocosModelReader(`E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model/${filename}/${meshname}`);
 
 for (const primitive of reader.mesh.primitives) {
@@ -47,7 +47,7 @@ const metaData = CocosModelReader.readMeshMeta(`E:/workspace/Cocos/ReplaceModelT
 // const geometry = new Geometry(gltf.getMesh(0), gltf.getSkin(0));
 // const write = new CocosModelWriter("./assets/out/diaoxiang/diaoxiang", metaData, geometry);
 
-const gltf = await readFBXToGltf(`./temp/${filename}/${filename}.gltf`);
+const gltf = await readFBXToGltf(`./assets/fbx/${filename}.fbx`);
 const geometry = new Geometry(gltf);
 const write = new CocosModelWriter(`./assets/out/${filename}/${meshname}`, metaData, geometry);
 // console.log("indices", glTFLoaderBasic.getAccessorData(primitive.indices));

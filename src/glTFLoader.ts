@@ -544,7 +544,7 @@ class Mesh {
 }
 export class MeshPrimitive {
 	attributesID			: {POSITION ?: GLTFID , NORMAL ?: GLTFID, TEXCOORD_0 ?: GLTFID};
-	attributes				: {POSITION ?: Accessor , NORMAL ?: Accessor, TANGENT ?: Accessor, TEXCOORD_0 ?: Accessor, TEXCOORD_1 ?: Accessor, TEXCOORD_2 ?: Accessor, WEIGHTS_0?: Accessor};
+	attributes				: {POSITION ?: Accessor , NORMAL ?: Accessor, TANGENT ?: Accessor, TEXCOORD_0 ?: Accessor, TEXCOORD_1 ?: Accessor, TEXCOORD_2 ?: Accessor, WEIGHTS_0?: Accessor, COLOR_0?:Accessor, JOINTS_0?:Accessor};
 	indicesID				:  GLTFID;
 	indices					:  Accessor;
 	material				:  Material;
@@ -1099,7 +1099,7 @@ export class GLTFLoader {
 						this.glTF.scenes[i].nodes[j].traverseTwoFunction(
 							(node: Node, parent: Node) => {
 								if (parent !== null) {
-									mat4.multiply(nodeMatrices[node.nodeID], nodeMatrices[parent.nodeID], node.modelMatrix)
+									nodeMatrices[node.nodeID] = mat4.multiply(nodeMatrices[node.nodeID] ?? mat4.create(), nodeMatrices[parent.nodeID], node.modelMatrix)
 								} else {
 									nodeMatrices[node.nodeID] = mat4.clone(node.modelMatrix);
 								}

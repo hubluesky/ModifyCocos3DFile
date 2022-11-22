@@ -49,7 +49,7 @@ export default class CocosModelWriter {
         for (let iv = 0; iv < meshMeta.vertexBundles.length; iv++) {
             const vertexBundle = meshMeta.vertexBundles[iv];
             for (let ia = 0; ia < vertexBundle.attributes.length; ia++) {
-                const { format, name, } = vertexBundle.attributes[ia];
+                const { format, name } = vertexBundle.attributes[ia];
 
                 const writer = getWriter(new DataView(arrayBuffer, vertexBundle.view.offset + getOffset(vertexBundle.attributes, ia)), format)!;
                 console.assert(writer != null);
@@ -66,6 +66,7 @@ export default class CocosModelWriter {
                         writer(outputOffset, typeArray[inputOffset]);
                     }
                 }
+                console.log(name, typeArray);
             }
         }
 
