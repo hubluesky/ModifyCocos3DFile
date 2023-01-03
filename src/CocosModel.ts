@@ -1,4 +1,4 @@
-import { ReadonlyVec3 } from "gl-matrix";
+import { mat4, ReadonlyMat4, ReadonlyVec3 } from "gl-matrix";
 import { Attribute, FormatInfos, getIndexStrideCtor, getOffset, getReader, getTypedArrayConstructor, ISubMesh, IVertexBundle, TypedArray } from "./Cocos";
 
 export class CocosMeshMeta {
@@ -41,7 +41,55 @@ interface VertexBundle {
     readonly attributeValues: AttributeValue[];
 }
 
-export default class CocosMesh {
+interface JointData {
+    readonly name: string;
+    readonly parent: JointData;
+}
+
+export class CocosSkeletonMeta {
+    public readonly joints: string[];
+    public readonly bindposes: ArrayLike<number>[];
+
+    private _data: any;
+    public get data() { return this._data; }
+
+    private getBin() { return this.data[5][0]; }
+
+    public constructor(jsonText: string) {
+        this._data = JSON.parse(jsonText);
+        const bin = this.getBin();
+        this.joints = bin[3];
+        this.bindposes = bin[4][0];
+    }
+
+    public clone(): CocosSkeletonMeta {
+        return new CocosSkeletonMeta(JSON.stringify(this.data));
+    }
+}
+
+export class CocosSkeleton {
+    public readonly joints: string[];
+    public readonly bindPoses: mat4[];
+    public constructor(joints: readonly JointData[], bindPoses: ReadonlyMat4[]) {
+        this.joints = new Array<string>(joints.length);
+        for (let i = 0; i < joints.length; i++)
+            this.joints[i] = CocosSkeleton.getJointPathName(joints[i]);
+        this.bindPoses = new Array<mat4>(bindPoses.length);
+        for (let i = 0; i < bindPoses.length; i++)
+            this.bindPoses[i] = mat4.clone(bindPoses[i]);
+    }
+
+    private static getJointPathName(joint: JointData): string {
+        let name = joint.name;
+        while (joint.parent != null) {
+            name = joint.parent.name + "/" + name;
+            joint = joint.parent;
+        }
+        return name;
+    }
+}
+
+export class CocosMesh {
     public readonly bundles: VertexBundle[] = [];
     public readonly primitives: TypedArray[] = [];
 

@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import CocosMesh, { CocosMeshMeta } from "./CocosMesh";
+import { CocosMesh, CocosMeshMeta, CocosSkeletonMeta } from "./CocosModel";
 import { readFileSync } from './Common';
 
 export default class CocosModelReader {
@@ -22,5 +22,10 @@ export default class CocosModelReader {
     public static readMeshMeta(filename: string): CocosMeshMeta {
         const text: string = fs.readFileSync(filename, "utf-8");
         return new CocosMeshMeta(text);
+    }
+
+    public static readSkeletonMeta(filename: string): CocosSkeletonMeta {
+        const text: string = fs.readFileSync(filename, "utf-8");
+        return new CocosSkeletonMeta(text);
     }
 }

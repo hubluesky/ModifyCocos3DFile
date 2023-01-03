@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import path from 'path';
 import { AttributeName, FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './Cocos';
-import { CocosMeshMeta } from "./CocosMesh";
+import { CocosMeshMeta, CocosSkeleton, CocosSkeletonMeta } from "./CocosModel";
 import Geometry from "./Geometry";
 
 export default class CocosModelWriter {
@@ -10,14 +10,19 @@ export default class CocosModelWriter {
      * Cocos的模型文件写入
      * @param filename 模型文件路径，不带后缀
      */
-    public constructor(filename: string, meshMeta: CocosMeshMeta, geometry: Geometry) {
+    public constructor(filename: string, meshMeta: CocosMeshMeta, geometry: Geometry, skeletonMeta: CocosSkeletonMeta, skeleton: CocosSkeleton) {
         if (geometry.primitiveDatas.length != meshMeta.primitives.length)
             throw `子网络数量不匹配${geometry.primitiveDatas.length} ${meshMeta.primitives.length}`;
         const arrayBuffer = this.wirteModel(meshMeta, geometry);
-
+        
         fs.mkdirSync(path.dirname(filename), { recursive: true });
         fs.writeFileSync(filename + ".bin", Buffer.from(arrayBuffer), "binary");
-        fs.writeFileSync(filename + ".json", JSON.stringify(meshMeta.data), "utf-8");
+        fs.writeFileSync(filename + "@mesh.json", JSON.stringify(meshMeta.data), "utf-8");
+
+        if(skeletonMeta != null && skeleton != null) {
+            const skeletonMetaData = this.wirteSkeleton(skeletonMeta, skeleton);
+            fs.writeFileSync(filename + "@skeleton.json", JSON.stringify(skeletonMetaData), "utf-8");
+        }
     }
 
     private getArrayBufferSize(meshMeta: CocosMeshMeta, geometry: Geometry): number {
@@ -94,5 +99,18 @@ export default class CocosModelWriter {
         meshMeta.minPosition = bound.boundMin;
         meshMeta.maxPosition = bound.boundMax;
         return arrayBuffer;
+    }
+
+    private wirteSkeleton(meta: CocosSkeletonMeta, skeleton: CocosSkeleton): Object {
+        // const skeletonMeta = meta.clone();
+        meta.joints.length = 0;
+        for (let i = 0; i < skeleton.joints.length; i++)
+            meta.joints[i] = skeleton.joints[i];
+        const matrixType = meta.bindposes[0][0];
+        meta.bindposes.length = 0;
+        for (let i = 0; i < skeleton.bindPoses.length; i++) {
+            meta.bindposes[i] = new Array(matrixType, ...skeleton.bindPoses[i]);
+        }
+        return meta.data;
     }
 }

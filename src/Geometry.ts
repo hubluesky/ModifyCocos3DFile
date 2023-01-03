@@ -2,7 +2,6 @@ import { ReadonlyVec3, vec2, vec3, vec4 } from "gl-matrix";
 import { AttributeName } from "./Cocos";
 import { BoundingBox, GLTF, glTFLoaderBasic, MeshPrimitive } from "./glTFLoader";
 
-
 export type TypeArray = Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array;
 
 type PrimitiveKeys = keyof MeshPrimitive["attributes"];
