@@ -20,21 +20,34 @@ export function fbxToGltf(input: string, out: string) {
     child_process.spawnSync(toolPath, [input, "--out", out]);
 }
 
+/**
+ * FBX version 2019 or higher;
+ * @param input 
+ * @param out 
+ */
+export function fbxToGltf2(input: string, out: string) {
+    const toolPath = `./FBX2glTF/FBX2glTF-${process.platform}`;
+    console.log("fbxToGltf ", toolPath);
+    child_process.spawnSync(toolPath, ["--input", input, "--output", out]);
+}
+
+
 export function loadGltf(url: string): Promise<GLTF> {
     const loader = new GLTFLoader(null);
-    return loader.loadGLTF(url);;
+    return loader.loadGLTF(url);
 }
 
 /**
  * FBX version 2019 or higher;
  * @param filename fbx文件路径
  */
-export async function readFBXToGltf(filename: string): Promise<GLTF> {
+export async function readFBXToGltf(filename: string, removeTempFile: boolean = true): Promise<GLTF> {
     const gltfName = path.basename(filename, path.extname(filename));
     const gltfPath = `./temp/${gltfName}/${gltfName}.gltf`;
     fs.mkdirSync(path.dirname(gltfPath), { recursive: true });
-    fbxToGltf(filename, gltfPath);
+    fbxToGltf2(filename, gltfPath);
     const gltf = await loadGltf(gltfPath);
-    // fs.rmdirSync(`./temp/${gltfName}`, { recursive: true });
+    if (removeTempFile)
+        fs.rmdirSync(`./temp/${gltfName}`, { recursive: true });
     return gltf;
 }

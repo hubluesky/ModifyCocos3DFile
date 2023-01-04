@@ -239,36 +239,6 @@ export default class Geometry {
             vec3.add(tan2[index1], tan2[index1], tdir);
             vec3.add(tan2[index2], tan2[index2], tdir);
             vec3.add(tan2[index3], tan2[index3], tdir);
-
-            // const v1Coord = texcoord2.v - texcoord1.v;
-            // const v2Coord = texcoord3.v - texcoord1.v;
-
-            // const scaleVDir1 = Vec3.multiplyScalar(vec3Temp3, dir1, v2Coord);
-            // const scaleVDir2 = Vec3.multiplyScalar(vec3Temp4, dir2, v1Coord);
-            // const vDir3 = Vec3.subtract(vec3Temp3, scaleVDir1, scaleVDir2);
-            // vDir3.normalize();
-
-            // const tangent1 = tangentList[index1].add(vDir3);
-            // const tangent2 = tangentList[index2].add(vDir3);
-            // const tangent3 = tangentList[index3].add(vDir3);
-
-            // // 计算切线的第四个分量 w
-            // const u1Coord = texcoord2.u - texcoord1.u;
-            // const u2Coord = texcoord3.u - texcoord1.u;
-            // const scaleUDir1 = Vec3.multiplyScalar(vec3Temp3, dir1, u2Coord);
-            // const scaleUDir2 = Vec3.multiplyScalar(vec3Temp4, dir2, u1Coord);
-            // const uDir3 = Vec3.subtract(scaleUDir1, scaleUDir1, scaleUDir2);
-
-            // const tangent4 = Vec3.add(vec3Temp1, tangent1, uDir3);
-            // const tangent5 = Vec3.add(vec3Temp2, tangent2, uDir3);
-            // const tangent6 = Vec3.add(vec3Temp3, tangent3, uDir3);
-
-            // const normal1 = Geometry.createPosition(normalizeAccessor, index1, vec3Temp4);
-            // const normal2 = Geometry.createPosition(normalizeAccessor, index2, vec3Temp5);
-            // const normal3 = Geometry.createPosition(normalizeAccessor, index3, vec3Temp6);
-            // tangent1.w = Vec3.dot(Vec3.cross(vec3Temp1, normal1, tangent4), tangent1) < 0.0 ? -1 : 1;
-            // tangent2.w = Vec3.dot(Vec3.cross(vec3Temp2, normal2, tangent5), tangent2) < 0.0 ? -1 : 1;
-            // tangent3.w = Vec3.dot(Vec3.cross(vec3Temp3, normal3, tangent6), tangent3) < 0.0 ? -1 : 1;
         }
 
         const tangentList: vec4[] = [];

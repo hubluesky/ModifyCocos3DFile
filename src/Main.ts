@@ -51,7 +51,7 @@ const metaData = CocosModelReader.readMeshMeta(`${filePath}/${filename}/${meshna
 // const write = new CocosModelWriter("./assets/out/diaoxiang/diaoxiang", metaData, geometry);
 
 // const gltf = await loadGltf(`./assets/gltf//${replaceName}/${replaceName}.gltf`);
-const gltf = await readFBXToGltf(`./assets/fbx/${replaceName}.fbx`);
+const gltf = await readFBXToGltf(`./assets/fbx/${replaceName}.fbx`, false);
 let skeleton: CocosSkeleton;
 let skeletonMeta: CocosSkeletonMeta;
 if (gltf.skins?.length == 1) {

@@ -71,7 +71,7 @@ export default class CocosModelWriter {
                         writer(outputOffset, typeArray[inputOffset]);
                     }
                 }
-                console.log(name, typeArray);
+                // console.log(name, typeArray);
             }
         }
 
@@ -91,8 +91,6 @@ export default class CocosModelWriter {
                 if (meshMeta.jointMaps[p] != null && geometry.primitiveDatas[p].joints != null)
                     meshMeta.jointMaps[p] = geometry.primitiveDatas[p].joints;
             }
-
-            console.log("indicesArray", indicesArray);
         }
 
         const bound = geometry.getBoundPositions();

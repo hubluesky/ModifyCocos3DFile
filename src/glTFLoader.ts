@@ -1220,7 +1220,7 @@ export class GLTFLoader {
 				}
 				for (const [bufferID, buffer] of bufferPromises.entries()) {
 					this.glTF.buffers[bufferID] = await buffer;
-					console.log(`image ${bufferID} complete`); 
+					// console.log(`image ${bufferID} complete`); 
 				}
 			}
 			resolve(true);
