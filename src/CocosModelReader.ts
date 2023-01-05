@@ -24,6 +24,10 @@ export default class CocosModelReader {
         return new CocosMeshMeta(text);
     }
 
+    public static isFileExist(filename: string): boolean {
+        return fs.existsSync(filename);
+    }
+
     public static readSkeletonMeta(filename: string): CocosSkeletonMeta {
         const text: string = fs.readFileSync(filename, "utf-8");
         return new CocosSkeletonMeta(text);

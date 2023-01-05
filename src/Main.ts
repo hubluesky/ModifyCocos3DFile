@@ -25,9 +25,9 @@ import { GLTFLoader, glTFLoaderBasic } from "./glTFLoader";
 // const geometry = new Geometry(gltf.getMesh(0), gltf.getSkin(0));
 // const write = new CocosModelWriter("./assets/out/Quad/Quad", metaData, geometry);
 
-const filename = "model_cow";
-const meshname = "model_cow";
-const replaceName = "model_tiger";
+const filename = "Quad1";
+const meshname = "Quad1_Material0";
+const replaceName = "YeZiShu";
 // const reader = new CocosModelReader(`E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model/${filename}/${meshname}`);
 
 // for (const primitive of reader.mesh.primitives) {
@@ -39,7 +39,7 @@ const replaceName = "model_tiger";
 //     }
 // }
 console.warn("------------------------------------------------")
-const filePath = "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model";
+const filePath = "D:/cocos/ReplaceModelTest/build/web-mobile/resource/model";
 const metaData = CocosModelReader.readMeshMeta(`${filePath}/${filename}/${meshname}@mesh.json`);
 // const gltf = loadGltf("./assets/gltf/model_cow/model_cow.gltf");
 // const gltf = readFBXToGltf(`./assets/fbx/${filename}.fbx`);
@@ -55,8 +55,9 @@ const metaData = CocosModelReader.readMeshMeta(`${filePath}/${filename}/${meshna
 const gltf = await readFBXToGltf(`./assets/fbx/${replaceName}.fbx`, false);
 let skeleton: CocosSkeleton;
 let skeletonMeta: CocosSkeletonMeta;
-if (gltf.skins?.length == 1) {
-    skeletonMeta = CocosModelReader.readSkeletonMeta(`${filePath}/${filename}/${meshname}@skeleton.json`);
+const skeletonFilename = `${filePath}/${filename}/${meshname}@skeleton.json`;
+if (gltf.skins?.length == 1 && CocosModelReader.isFileExist(skeletonFilename)) {
+    skeletonMeta = CocosModelReader.readSkeletonMeta(skeletonFilename);
     const skin = gltf.skins[0];
     skeleton = new CocosSkeleton(skin.joints, skin.inverseBindMatrix);
 }
