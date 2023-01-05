@@ -1,4 +1,5 @@
 
+import path from "path";
 import { CocosSkeleton, CocosSkeletonMeta } from "./CocosModel";
 import CocosModelReader from "./CocosModelReader";
 import CocosModelWriter from "./CocosModelWriter";
@@ -60,7 +61,7 @@ if (gltf.skins?.length == 1) {
     skeleton = new CocosSkeleton(skin.joints, skin.inverseBindMatrix);
 }
 const geometry = new Geometry(gltf);
-const write = new CocosModelWriter(`./assets/out/${filename}/${meshname}`, metaData, geometry, skeletonMeta, skeleton);
+const write = new CocosModelWriter(`./temp/out/${filename}/${meshname}`, metaData, geometry, skeletonMeta, skeleton);
 // console.log("indices", glTFLoaderBasic.getAccessorData(primitive.indices));
 // console.log("positions", glTFLoaderBasic.getAccessorData(primitive.attributes.POSITION));
 // const positionAccessor = primitive.attributes.POSITION;
@@ -69,4 +70,5 @@ const write = new CocosModelWriter(`./assets/out/${filename}/${meshname}`, metaD
 // console.log("normals", glTFLoaderBasic.getAccessorData(primitive.attributes.NORMAL));
 // console.log("texcoords", glTFLoaderBasic.getAccessorData(primitive.attributes.TEXCOORD_0));
 
-debugger;
+// debugger;
+console.log("转换完毕，输出目录:", path.join(process.cwd(), `/temp/out/${filename}`));

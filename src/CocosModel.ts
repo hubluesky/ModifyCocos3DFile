@@ -50,6 +50,7 @@ interface JointData {
 export class CocosSkeletonMeta {
     public readonly joints: string[];
     public readonly bindposes: ArrayLike<number>[];
+    public readonly bindposesValueType: ArrayLike<number>[];
 
     private _data: any;
     public get data() { return this._data; }
@@ -61,6 +62,7 @@ export class CocosSkeletonMeta {
         const bin = this.getBin();
         console.assert(bin != null, "skeleton meta文件格式不正确");
         this.joints = bin[3];
+        this.bindposesValueType = bin[4];
         this.bindposes = bin[4][0];
     }
 

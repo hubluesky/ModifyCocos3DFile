@@ -43,11 +43,11 @@ export function loadGltf(url: string): Promise<GLTF> {
  */
 export async function readFBXToGltf(filename: string, removeTempFile: boolean = true): Promise<GLTF> {
     const gltfName = path.basename(filename, path.extname(filename));
-    const gltfPath = `./temp/${gltfName}/${gltfName}.gltf`;
+    const gltfPath = `./temp/fbx2gltf/${gltfName}/${gltfName}.gltf`;
     fs.mkdirSync(path.dirname(gltfPath), { recursive: true });
-    fbxToGltf2(filename, gltfPath);
+    fbxToGltf(filename, gltfPath);
     const gltf = await loadGltf(gltfPath);
     if (removeTempFile)
-        fs.rmdirSync(`./temp/${gltfName}`, { recursive: true });
+        fs.rmdirSync(`./temp/fbx2gltf/${gltfName}`, { recursive: true });
     return gltf;
 }

@@ -14,12 +14,12 @@ export default class CocosModelWriter {
         if (geometry.primitiveDatas.length != meshMeta.primitives.length)
             throw `子网络数量不匹配${geometry.primitiveDatas.length} ${meshMeta.primitives.length}`;
         const arrayBuffer = this.wirteModel(meshMeta, geometry);
-        
+
         fs.mkdirSync(path.dirname(filename), { recursive: true });
         fs.writeFileSync(filename + ".bin", Buffer.from(arrayBuffer), "binary");
         fs.writeFileSync(filename + "@mesh.json", JSON.stringify(meshMeta.data), "utf-8");
 
-        if(skeletonMeta != null && skeleton != null) {
+        if (skeletonMeta != null && skeleton != null) {
             const skeletonMetaData = this.wirteSkeleton(skeletonMeta, skeleton);
             fs.writeFileSync(filename + "@skeleton.json", JSON.stringify(skeletonMetaData), "utf-8");
         }
@@ -106,9 +106,12 @@ export default class CocosModelWriter {
             meta.joints[i] = skeleton.joints[i];
         const matrixType = meta.bindposes[0][0];
         meta.bindposes.length = 0;
-        for (let i = 0; i < skeleton.bindPoses.length; i++) {
+        for (let i = 0; i < skeleton.bindPoses.length; i++)
             meta.bindposes[i] = new Array(matrixType, ...skeleton.bindPoses[i]);
-        }
+        const bindPosesValueType = meta.bindposesValueType[1];
+        meta.bindposesValueType.length = 1;
+        for (let i = 1; i < skeleton.bindPoses.length + 1; i++)
+            meta.bindposesValueType[i] = bindPosesValueType;
         return meta.data;
     }
 }
