@@ -4,8 +4,8 @@ import { BoundingBox, GLTF, glTFLoaderBasic, MeshPrimitive } from "./glTFLoader"
 
 export type TypeArray = Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array;
 
-type PrimitiveKeys = keyof MeshPrimitive["attributes"];
-const attributeMaps: Record<PrimitiveKeys, AttributeName | null> = {
+type GltfPrimitiveKeys = keyof MeshPrimitive["attributes"];
+const gltfAttributeMaps: Record<GltfPrimitiveKeys, AttributeName | null> = {
     "POSITION": AttributeName.ATTR_POSITION,
     "NORMAL": AttributeName.ATTR_NORMAL,
     "TANGENT": AttributeName.ATTR_TANGENT,
@@ -32,21 +32,23 @@ interface AttributeData {
 export default class Geometry {
     public readonly primitiveDatas: PrimitiveData[] = [];
 
-    public constructor(gltf: GLTF) {
+    public static creatFromGLTF(gltf: GLTF): Geometry {
         if (gltf.meshes.length > 1) throw `不支持多个Mesh`;
         const mesh = gltf.meshes[0];
+        const geometry = new Geometry();
         const joints: number[] = gltf.skins == null || gltf.skins.length == 0 ? null : gltf.skins[0].joints.map(x => x.nodeID);
         for (const primitive of mesh.primitives) {
             const indices = glTFLoaderBasic.accessorToTypeArray(primitive.indices);
             const primitiveData: PrimitiveData = { attributeDatas: [], indices, joints, boundingBox: primitive.boundingBox };
-            this.primitiveDatas.push(primitiveData);
+            geometry.primitiveDatas.push(primitiveData);
             for (const key in primitive.attributes) {
-                const type = attributeMaps[key as PrimitiveKeys];
-                const accessor = primitive.attributes[key as PrimitiveKeys];
+                const type = gltfAttributeMaps[key as GltfPrimitiveKeys];
+                const accessor = primitive.attributes[key as GltfPrimitiveKeys];
                 const data = glTFLoaderBasic.accessorToTypeArray(accessor);
                 primitiveData.attributeDatas.push({ name: type, data });
             }
         }
+        return geometry;
     }
 
     public getBoundPositions(): { boundMin: ReadonlyVec3, boundMax: ReadonlyVec3 } {

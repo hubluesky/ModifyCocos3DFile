@@ -5,6 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Node Server",
+            "program": "${workspaceFolder}/dist/NodeServer.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
             "name": "ts-node",
             "type": "node",
             "request": "launch",

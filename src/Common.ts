@@ -31,6 +31,16 @@ export function fbxToGltf2(input: string, out: string) {
     child_process.spawnSync(toolPath, ["--input", input, "--output", out]);
 }
 
+export async function loadGltfFiles(gltfUrl: string, binUrls: string[]): Promise<GLTF> {
+    const loader = new GLTFLoader(null);
+    const json = await loader.loadJson(gltfUrl);
+    const binFiles: { name: string, buffer: ArrayBuffer }[] = [];
+    for (const url of binUrls) {
+        const buffer = await loader.loadArrayBuffer(url);
+        binFiles.push({ name: path.basename(url), buffer });
+    }
+    return loader.loadGLTFFromData(json, binFiles);
+}
 
 export function loadGltf(url: string): Promise<GLTF> {
     const loader = new GLTFLoader(null);

@@ -4,323 +4,323 @@ import { vec3, mat4, quat } from "gl-matrix";
 type GLTFID = number;
 
 enum MeshPrimitiveType {
-	POINTS							= 0,
-	LINES							= 1,
-	LINE_LOOP						= 2,
-	LINE_STRIP						= 3,
-	TRIANGLES						= 4,
-	TRIANGLE_STRIP					= 5,
-	TRIANGLE_FAN					= 6
+	POINTS = 0,
+	LINES = 1,
+	LINE_LOOP = 2,
+	LINE_STRIP = 3,
+	TRIANGLES = 4,
+	TRIANGLE_STRIP = 5,
+	TRIANGLE_FAN = 6
 }
 
-enum AccessorComponentType { 
-	GL_BYTE 						= 5120, 
-	GL_UNSIGNED_BYTE				= 5121,
-	GL_SHORT						= 5122,
-	GL_UNSIGNED_SHORT				= 5123,
-	GL_INT							= 5124,
-	GL_UNSIGNED_INT					= 5125,
-	GL_FLOAT						= 5126
+enum AccessorComponentType {
+	GL_BYTE = 5120,
+	GL_UNSIGNED_BYTE = 5121,
+	GL_SHORT = 5122,
+	GL_UNSIGNED_SHORT = 5123,
+	GL_INT = 5124,
+	GL_UNSIGNED_INT = 5125,
+	GL_FLOAT = 5126
 };
 
 enum AccessorSparseIndicesComponentType {
-	GL_UNSIGNED_BYTE				= 5121,
-	GL_UNSIGNED_SHORT				= 5123,
-	GL_UNSIGNED_INT					= 5125
+	GL_UNSIGNED_BYTE = 5121,
+	GL_UNSIGNED_SHORT = 5123,
+	GL_UNSIGNED_INT = 5125
 }
 
 enum BufferViewTarget {
-	ARRAY_BUFFER					= 34962,
-	ELEMENT_ARRAY_BUFFER			= 34963
+	ARRAY_BUFFER = 34962,
+	ELEMENT_ARRAY_BUFFER = 34963
 }
 
 enum SamplerMagnificationFilter {
-	NEAREST							= 9728,
-	LINEAR							= 9729
+	NEAREST = 9728,
+	LINEAR = 9729
 }
 
 enum SamplerMinificationFilter {
-	NEAREST							= 9728,
-	LINEAR							= 9729,
-	NEAREST_MIPMAP_NEAREST			= 9984,
-	LINEAR_MIPMAP_NEAREST			= 9985,
-	NEAREST_MIPMAP_LINEAR			= 9986,
-	LINEAR_MIPMAP_LINEAR			= 9987
+	NEAREST = 9728,
+	LINEAR = 9729,
+	NEAREST_MIPMAP_NEAREST = 9984,
+	LINEAR_MIPMAP_NEAREST = 9985,
+	NEAREST_MIPMAP_LINEAR = 9986,
+	LINEAR_MIPMAP_LINEAR = 9987
 }
 
 enum SamplerWrappingMode {
-	CLAMP_TO_EDGE					= 33071,
-	MIRRORED_REPEAT					= 33648,
-	REPEAT							= 10497
+	CLAMP_TO_EDGE = 33071,
+	MIRRORED_REPEAT = 33648,
+	REPEAT = 10497
 }
 
 interface AssetBase {
-	copyright	?: string;
-	generator	?: string;
-	version		:  string;
-	minVersion	?: string;
-	extensions	?: any;
-	extras		?: any;
+	copyright?: string;
+	generator?: string;
+	version: string;
+	minVersion?: string;
+	extensions?: any;
+	extras?: any;
 }
 interface SceneBase {
-	nodes		:  GLTFID[];
-	name		?: string;
-	extensions	?: any;
-	extras		?: any;
+	nodes: GLTFID[];
+	name?: string;
+	extensions?: any;
+	extras?: any;
 }
 interface NodeBase {
-	camera		?: GLTFID;
-	children	?: GLTFID[];
-	skin		?: GLTFID;
-	matrix		:  mat4;
-	mesh		?: GLTFID;
-	translation	?: vec3;
-	rotation	?: quat;
-	scale		?: vec3;
-	weights		?: number[];
-	name		?: string;
-	extensions	?: any;
-	extras		?: any;
+	camera?: GLTFID;
+	children?: GLTFID[];
+	skin?: GLTFID;
+	matrix: mat4;
+	mesh?: GLTFID;
+	translation?: vec3;
+	rotation?: quat;
+	scale?: vec3;
+	weights?: number[];
+	name?: string;
+	extensions?: any;
+	extras?: any;
 }
 interface MeshBase {
-	primitives	:  MeshPrimitiveBase[];
-	weights		?: number[];
-	name		?: string;
-	extensions	?: any;
-	extras		?: any;
+	primitives: MeshPrimitiveBase[];
+	weights?: number[];
+	name?: string;
+	extensions?: any;
+	extras?: any;
 }
 interface MeshPrimitiveBase {
-	attributes	:  {POSITION ?: GLTFID, NORMAL ?: GLTFID, TEXCOORD_0 ?: GLTFID};
-	indices		?: GLTFID;
-	material	?: GLTFID;
-	mode		?: MeshPrimitiveType;
-	targets		?: {POSITION ?: GLTFID, NORMAL ?: GLTFID, TANGENT ?: GLTFID}[];
-	extensions	?: any;
-	extras		?: any;
+	attributes: { POSITION?: GLTFID, NORMAL?: GLTFID, TEXCOORD_0?: GLTFID };
+	indices?: GLTFID;
+	material?: GLTFID;
+	mode?: MeshPrimitiveType;
+	targets?: { POSITION?: GLTFID, NORMAL?: GLTFID, TANGENT?: GLTFID }[];
+	extensions?: any;
+	extras?: any;
 }
 interface AccessorBase {
-	bufferView		?: GLTFID;
-	byteOffset		?: number;
-	componentType	:  AccessorComponentType;
-	normalized		?: boolean;
-	count			:  number;
-	type			:  "SCALAR" | "VEC2" | "VEC3" | "VEC4" | "MAT2" | "MAT3" | "MAT4";
-	max				?: number[];
-	min				?: number[];
-	sparse			?: AccessorSparseBase;
-	name			?: string;
-	extensions		?: any;
-	extras			?: any;
+	bufferView?: GLTFID;
+	byteOffset?: number;
+	componentType: AccessorComponentType;
+	normalized?: boolean;
+	count: number;
+	type: "SCALAR" | "VEC2" | "VEC3" | "VEC4" | "MAT2" | "MAT3" | "MAT4";
+	max?: number[];
+	min?: number[];
+	sparse?: AccessorSparseBase;
+	name?: string;
+	extensions?: any;
+	extras?: any;
 }
 interface AccessorSparseBase {
-	count			:  number;
-	indices			:  AccessorSparseIndicesBase;
-	values			:  AccessorSparseValuesBase;
-	extensions		?: any;
-	extras			?: any;
+	count: number;
+	indices: AccessorSparseIndicesBase;
+	values: AccessorSparseValuesBase;
+	extensions?: any;
+	extras?: any;
 }
 interface AccessorSparseIndicesBase {
-	bufferView		:  GLTFID;
-	byteOffset		?: number;
-	componentType	:  AccessorSparseIndicesComponentType;
-	extensions		?: any;
-	extras			?: any;
+	bufferView: GLTFID;
+	byteOffset?: number;
+	componentType: AccessorSparseIndicesComponentType;
+	extensions?: any;
+	extras?: any;
 }
 interface AccessorSparseValuesBase {
-	bufferView		:  GLTFID;
-	byteOffset		?: number;
-	extensions		?: any;
-	extras			?: any;
+	bufferView: GLTFID;
+	byteOffset?: number;
+	extensions?: any;
+	extras?: any;
 }
 interface BufferViewBase {
-	buffer		:  GLTFID;
-	byteOffset	?: number;
-	byteLength	:  number;
-	byteStride	?: number;
-	target		?: BufferViewTarget;
-	name		?: string;
-	extensions	?: any;
-	extras		?: any;
+	buffer: GLTFID;
+	byteOffset?: number;
+	byteLength: number;
+	byteStride?: number;
+	target?: BufferViewTarget;
+	name?: string;
+	extensions?: any;
+	extras?: any;
 }
 interface BufferBase {
-	uri			?: string;
-	byteLength	:  number;
-	name		?: string;
-	extensions	?: any;
-	extras		?: any;
+	uri?: string;
+	byteLength: number;
+	name?: string;
+	extensions?: any;
+	extras?: any;
 }
 interface AnimationBase {
-	channels		:  AnimationChannelBase[];
-	samplers		:  AnimationSamplerBase[];
-	name			?: string;
-	extensions		?: any;
-	extras			?: any;
+	channels: AnimationChannelBase[];
+	samplers: AnimationSamplerBase[];
+	name?: string;
+	extensions?: any;
+	extras?: any;
 }
-interface AnimationChannelBase {	
-	sampler		:  GLTFID;
-	target		:  AnimationChannelTargetBase;
-	extensions	?: any;
-	extras		?: any;
+interface AnimationChannelBase {
+	sampler: GLTFID;
+	target: AnimationChannelTargetBase;
+	extensions?: any;
+	extras?: any;
 }
-interface AnimationChannelTargetBase{
-	node		?: GLTFID;
-	path		:  "translation" | "rotation" | "scale" | "weights";
-	extensions	?: any;
-	extras		?: any;
+interface AnimationChannelTargetBase {
+	node?: GLTFID;
+	path: "translation" | "rotation" | "scale" | "weights";
+	extensions?: any;
+	extras?: any;
 }
 interface AnimationSamplerBase {
-	input			:  GLTFID;
-	interpolation	?: "LINEAR" | "STEP" | "CUBICSPLINE";
-	output			:  GLTFID;
-	extensions		?: any;
-	extras			?: any;
+	input: GLTFID;
+	interpolation?: "LINEAR" | "STEP" | "CUBICSPLINE";
+	output: GLTFID;
+	extensions?: any;
+	extras?: any;
 }
-interface CameraBase{
-	orthographic	?: CameraOrthographicBase;
-	perspective		?: CameraPerspectiveBase;
-	type			:  "perspective" | "orthographic";
-	name			?: string;
-	extensions		?: any;
-	extras			?: any;
+interface CameraBase {
+	orthographic?: CameraOrthographicBase;
+	perspective?: CameraPerspectiveBase;
+	type: "perspective" | "orthographic";
+	name?: string;
+	extensions?: any;
+	extras?: any;
 }
 interface CameraOrthographicBase {
-	xmag		:  number;
-	ymag		:  number;
-	zfar		:  number;
-	znear		:  number;
-	extensions	?: any;
-	extras		?: any;
+	xmag: number;
+	ymag: number;
+	zfar: number;
+	znear: number;
+	extensions?: any;
+	extras?: any;
 }
 interface CameraPerspectiveBase {
-	aspectRatio	?: number;
-	yfov		:  number;
-	zfar		?: number;
-	znear		:  number;
-	extensions	?: any;
-	extras		?: any;
+	aspectRatio?: number;
+	yfov: number;
+	zfar?: number;
+	znear: number;
+	extensions?: any;
+	extras?: any;
 }
 interface TextureBase {
-	sampler		?: GLTFID;
-	source		?: GLTFID;
-	name		?: string;
-	extensions	?: any;
-	extras		?: any;
+	sampler?: GLTFID;
+	source?: GLTFID;
+	name?: string;
+	extensions?: any;
+	extras?: any;
 }
 interface ImageBase {
-	uri			?: string;
-	mimeType	?: "image/jpeg" | "image/png";
-	bufferView	?: GLTFID;
-	name		?: string;
-	extensions	?: any;
-	extras		?: any;
+	uri?: string;
+	mimeType?: "image/jpeg" | "image/png";
+	bufferView?: GLTFID;
+	name?: string;
+	extensions?: any;
+	extras?: any;
 }
 interface SamplerBase {
-	magFilter	:  SamplerMagnificationFilter;
-	minFilter	:  SamplerMinificationFilter;
-	wrapS		:  SamplerWrappingMode;
-	wrapT		:  SamplerWrappingMode;
-	name		?: string;
-	extensions	?: any;
-	extras		?: any;
+	magFilter: SamplerMagnificationFilter;
+	minFilter: SamplerMinificationFilter;
+	wrapS: SamplerWrappingMode;
+	wrapT: SamplerWrappingMode;
+	name?: string;
+	extensions?: any;
+	extras?: any;
 }
 interface MaterialBase {
-	name					?: string;
-	extensions				?: any;
-	extras					?: any;
-	pbrMetallicRoughness	?: MaterialPbrMetallicRoughnessBase;
-	normalTexture			?: MaterialNormalTextureInfoBase;
-	occlusionTexture		?: MaterialOcclusionTextureInfoBase;
-	emissiveTexture			?: TextureInfoBase;
-	emissiveFactor			?: number[];
-	alphaMode				?: "OPAQUE" | "MASK" | "BLEND";
-	alphaCutoff				?: number;
-	doubleSided				?: boolean;
+	name?: string;
+	extensions?: any;
+	extras?: any;
+	pbrMetallicRoughness?: MaterialPbrMetallicRoughnessBase;
+	normalTexture?: MaterialNormalTextureInfoBase;
+	occlusionTexture?: MaterialOcclusionTextureInfoBase;
+	emissiveTexture?: TextureInfoBase;
+	emissiveFactor?: number[];
+	alphaMode?: "OPAQUE" | "MASK" | "BLEND";
+	alphaCutoff?: number;
+	doubleSided?: boolean;
 }
 interface MaterialPbrMetallicRoughnessBase {
-	baseColorFactor				:  number[];
-	baseColorTexture			:  TextureInfoBase;
-	metallicFactor				:  number;
-	roughnessFactor				:  number;
-	metallicRoughnessTexture	:  TextureInfoBase;
-	extensions					?: any;
-	extras						?: any;
+	baseColorFactor: number[];
+	baseColorTexture: TextureInfoBase;
+	metallicFactor: number;
+	roughnessFactor: number;
+	metallicRoughnessTexture: TextureInfoBase;
+	extensions?: any;
+	extras?: any;
 }
 interface MaterialNormalTextureInfoBase {
-	index		?: any;
-	texCoord	?: any;
-	scale		?: number;
-	extensions	?: any;
-	extras		?: any;
+	index?: any;
+	texCoord?: any;
+	scale?: number;
+	extensions?: any;
+	extras?: any;
 }
 interface MaterialOcclusionTextureInfoBase {
-	index		?: any;
-	texCoord	?: any;
-	strength	?: number;
-	extensions	?: any;
-	extras		?: any;
+	index?: any;
+	texCoord?: any;
+	strength?: number;
+	extensions?: any;
+	extras?: any;
 }
 interface TextureInfoBase {
-	index		:  GLTFID;
-	texCoord	?: number;
-	extensions	?: any;
-	extras		?: any;
+	index: GLTFID;
+	texCoord?: number;
+	extensions?: any;
+	extras?: any;
 }
 interface SkinBase {
-	inverseBindMatrices	?: GLTFID;
-	skeleton			?: GLTFID;
-	joints				:  GLTFID[];
-	name				?: string;
-	extensions			?: any;
-	extras				?: any;
+	inverseBindMatrices?: GLTFID;
+	skeleton?: GLTFID;
+	joints: GLTFID[];
+	name?: string;
+	extensions?: any;
+	extras?: any;
 }
 interface GLTFBase {
-	asset				:  AssetBase;
-	scenes				?: SceneBase[];
-	scene				?: GLTFID;
-	nodes				?: NodeBase[];
-	meshes				?: MeshBase[];
-	accessors			?: AccessorBase[];
-	bufferViews			?: BufferViewBase[];
-	buffers				?: BufferBase[];
-	animations			?: AnimationBase[];
-	cameras				?: CameraBase[];
-	textures			?: TextureBase[];
-	images				?: ImageBase[];
-	samplers			?: SamplerBase[];
-	materials			?: MaterialBase[];
-	skins				?: SkinBase[];
-	extensions			?: any;
-	extensionsRequired	?: string[];
-	extensionsUsed		?: string[];
-	extras				?: any;
+	asset: AssetBase;
+	scenes?: SceneBase[];
+	scene?: GLTFID;
+	nodes?: NodeBase[];
+	meshes?: MeshBase[];
+	accessors?: AccessorBase[];
+	bufferViews?: BufferViewBase[];
+	buffers?: BufferBase[];
+	animations?: AnimationBase[];
+	cameras?: CameraBase[];
+	textures?: TextureBase[];
+	images?: ImageBase[];
+	samplers?: SamplerBase[];
+	materials?: MaterialBase[];
+	skins?: SkinBase[];
+	extensions?: any;
+	extensionsRequired?: string[];
+	extensionsUsed?: string[];
+	extras?: any;
 }
 interface BoundingBoxBase {
-	min			:  vec3;
-	max			:  vec3;
-	transform	:  mat4;
+	min: vec3;
+	max: vec3;
+	transform: mat4;
 }
 class Scene {
-	nodes		:  Node[];
-	name		:  string;
-	extensions	:  any;
-	extras		:  any;
-	boundingBox	:  BoundingBox;
-	constructor (sceneBase: SceneBase, gltf: GLTF) {
+	nodes: Node[];
+	name: string;
+	extensions: any;
+	extras: any;
+	boundingBox: BoundingBox;
+	constructor(sceneBase: SceneBase, gltf: GLTF) {
 		const length = sceneBase.nodes.length;
 		this.nodes = [];
 		for (let i = 0; i < length; i++) {
 			this.nodes.push(gltf.nodes[sceneBase.nodes[i]]);
 		}
-		this.name			= (sceneBase.name		!== undefined) ? sceneBase.name			: null;
-		this.extensions		= (sceneBase.extensions	!== undefined) ? sceneBase.extensions	: null;
-		this.extras			= (sceneBase.extras		!== undefined) ? sceneBase.extras		: null;
-		this.boundingBox	=  null;
+		this.name = (sceneBase.name !== undefined) ? sceneBase.name : null;
+		this.extensions = (sceneBase.extensions !== undefined) ? sceneBase.extensions : null;
+		this.extras = (sceneBase.extras !== undefined) ? sceneBase.extras : null;
+		this.boundingBox = null;
 	};
 };
 export class BoundingBox {
-	min			:  vec3;
-	max			:  vec3;
-	transform	:  mat4;
+	min: vec3;
+	max: vec3;
+	transform: mat4;
 	constructor(min?: vec3, max?: vec3, isClone?: boolean) {
 		min = min || vec3.fromValues(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY);
 		max = max || vec3.fromValues(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
@@ -340,41 +340,41 @@ export class BoundingBox {
 	calculateTransform(): void {
 		// transform from a unit cube whose min = (0, 0, 0) and max = (1, 1, 1)
 		// scale
-		this.transform[0]	= this.max[0] - this.min[0];
-		this.transform[5]	= this.max[1] - this.min[1];
-		this.transform[10]	= this.max[2] - this.min[2];
+		this.transform[0] = this.max[0] - this.min[0];
+		this.transform[5] = this.max[1] - this.min[1];
+		this.transform[10] = this.max[2] - this.min[2];
 		// translate
-		this.transform[12]	= this.min[0];
-		this.transform[13]	= this.min[1];
-		this.transform[14]	= this.min[2];
+		this.transform[12] = this.min[0];
+		this.transform[13] = this.min[1];
+		this.transform[14] = this.min[2];
 	};
 }
 class Accessor {
-	bufferView		:  BufferView;
-	byteOffset		:  number;
-	componentType	:  AccessorComponentType;
-	normalized		:  boolean;
-	count			:  number;
-	type			:  "SCALAR" | "VEC2" | "VEC3" | "VEC4" | "MAT2" | "MAT3" | "MAT4";
-	max				:  number[];
-	min				:  number[];
-	sparse			:  AccessorSparseBase;
-	name			:  string;
-	extensions		:  any;
-	extras			:  any;
+	bufferView: BufferView;
+	byteOffset: number;
+	componentType: AccessorComponentType;
+	normalized: boolean;
+	count: number;
+	type: "SCALAR" | "VEC2" | "VEC3" | "VEC4" | "MAT2" | "MAT3" | "MAT4";
+	max: number[];
+	min: number[];
+	sparse: AccessorSparseBase;
+	name: string;
+	extensions: any;
+	extras: any;
 	constructor(accessorBase: AccessorBase, bufferView: BufferView) {
-		this.bufferView 	=  bufferView;
-		this.byteOffset		= (accessorBase.byteOffset	!== undefined) ? accessorBase.byteOffset	: 0;
-		this.componentType	=  accessorBase.componentType;
-		this.normalized		= (accessorBase.normalized	!== undefined) ? accessorBase.normalized	: false;
-		this.count			=  accessorBase.count;
-		this.type			=  accessorBase.type;
-		this.max			=  accessorBase.max;
-		this.min			=  accessorBase.min;
-		this.sparse			= (accessorBase.sparse		!== undefined) ? accessorBase.sparse		: null;
-		this.name			= (accessorBase.name		!== undefined) ? accessorBase.name			: null;
-		this.extensions		= (accessorBase.extensions	!== undefined) ? accessorBase.extensions	: null;
-		this.extras			= (accessorBase.extras		!== undefined) ? accessorBase.extras		: null;
+		this.bufferView = bufferView;
+		this.byteOffset = (accessorBase.byteOffset !== undefined) ? accessorBase.byteOffset : 0;
+		this.componentType = accessorBase.componentType;
+		this.normalized = (accessorBase.normalized !== undefined) ? accessorBase.normalized : false;
+		this.count = accessorBase.count;
+		this.type = accessorBase.type;
+		this.max = accessorBase.max;
+		this.min = accessorBase.min;
+		this.sparse = (accessorBase.sparse !== undefined) ? accessorBase.sparse : null;
+		this.name = (accessorBase.name !== undefined) ? accessorBase.name : null;
+		this.extensions = (accessorBase.extensions !== undefined) ? accessorBase.extensions : null;
+		this.extras = (accessorBase.extras !== undefined) ? accessorBase.extras : null;
 	}
 	prepareVertexAttribute(gl: WebGL2RenderingContext, location: number): void {
 		gl.vertexAttribPointer(
@@ -389,30 +389,30 @@ class Accessor {
 	}
 }
 class BufferView {
-	buffer		:  WebGLBuffer;
-	byteOffset	:  number;
-	byteLength	:  number;
-	byteStride	:  number;
-	target		:  BufferViewTarget;
-	name		:  string;
-	extensions	:  any;
-	extras		:  any;
-	data		:  ArrayBuffer;
+	buffer: WebGLBuffer;
+	byteOffset: number;
+	byteLength: number;
+	byteStride: number;
+	target: BufferViewTarget;
+	name: string;
+	extensions: any;
+	extras: any;
+	data: ArrayBuffer;
 	constructor(bufferViewBase: BufferViewBase, bufferData: ArrayBuffer) {
-		this.buffer		=  null;
-		this.byteOffset = (bufferViewBase.byteOffset	!== undefined) ? bufferViewBase.byteOffset	: 0;
-		this.byteLength =  bufferViewBase.byteLength;
-		this.byteStride = (bufferViewBase.byteStride	!== undefined) ? bufferViewBase.byteStride	: 0;
-		this.target		= (bufferViewBase.target		!== undefined) ? bufferViewBase.target		: 0;
-		this.name		= (bufferViewBase.name			!== undefined) ? bufferViewBase.name		: null;
-		this.extensions	= (bufferViewBase.extensions	!== undefined) ? bufferViewBase.extensions	: null;
-		this.extras		= (bufferViewBase.extras		!== undefined) ? bufferViewBase.extras		: null;
-		this.data		=  bufferData.slice(this.byteOffset, this.byteOffset + this.byteLength);
+		this.buffer = null;
+		this.byteOffset = (bufferViewBase.byteOffset !== undefined) ? bufferViewBase.byteOffset : 0;
+		this.byteLength = bufferViewBase.byteLength;
+		this.byteStride = (bufferViewBase.byteStride !== undefined) ? bufferViewBase.byteStride : 0;
+		this.target = (bufferViewBase.target !== undefined) ? bufferViewBase.target : 0;
+		this.name = (bufferViewBase.name !== undefined) ? bufferViewBase.name : null;
+		this.extensions = (bufferViewBase.extensions !== undefined) ? bufferViewBase.extensions : null;
+		this.extras = (bufferViewBase.extras !== undefined) ? bufferViewBase.extras : null;
+		this.data = bufferData.slice(this.byteOffset, this.byteOffset + this.byteLength);
 	}
 	createBuffer(gl: WebGL2RenderingContext): void {
 		this.buffer = gl.createBuffer()
 	}
-	bindData(gl:WebGL2RenderingContext): void {
+	bindData(gl: WebGL2RenderingContext): void {
 		const target = this.target || BufferViewTarget.ARRAY_BUFFER
 		gl.bindBuffer(target, this.buffer);
 		gl.bufferData(target, this.data, gl.STATIC_DRAW);
@@ -420,71 +420,71 @@ class BufferView {
 	}
 }
 class Camera {
-	orthographic	:  CameraOrthographicBase;
-	perspective		:  CameraPerspectiveBase;
-	type			:  "perspective" | "orthographic";
-	name			:  string;
-	extensions		:  any;
-	extras			:  any;
+	orthographic: CameraOrthographicBase;
+	perspective: CameraPerspectiveBase;
+	type: "perspective" | "orthographic";
+	name: string;
+	extensions: any;
+	extras: any;
 	constructor(cameraBase: CameraBase) {
-		this.orthographic	= (cameraBase.orthographic	!== undefined) ? cameraBase.orthographic: null;
-		this.perspective	= (cameraBase.perspective	!== undefined) ? cameraBase.perspective	: null;
-		this.type 			=  cameraBase.type;
-		this.name			= (cameraBase.name			!== undefined) ? cameraBase.name		: null;
-		this.extensions		= (cameraBase.extensions	!== undefined) ? cameraBase.extensions	: null;
-		this.extras			= (cameraBase.extras		!== undefined) ? cameraBase.extras		: null;
+		this.orthographic = (cameraBase.orthographic !== undefined) ? cameraBase.orthographic : null;
+		this.perspective = (cameraBase.perspective !== undefined) ? cameraBase.perspective : null;
+		this.type = cameraBase.type;
+		this.name = (cameraBase.name !== undefined) ? cameraBase.name : null;
+		this.extensions = (cameraBase.extensions !== undefined) ? cameraBase.extensions : null;
+		this.extras = (cameraBase.extras !== undefined) ? cameraBase.extras : null;
 	}
 }
 export class Node {
-	camera		:  GLTFID;
-	children	:  Node[];
-	skin		:  Skin;
-	translation	:  vec3;
-	rotation	:  quat;
-	scale		:  vec3;
-	matrix		:  mat4;
-	mesh		:  Mesh;
-	weights		:  number[];
-	name		:  string;
-	extensions	:  any;
-	extras		:  any;
-	nodeID		:  GLTFID;
-	childrenID	:  GLTFID[];
-	parent		:  Node;	
-	skinLink	:  SkinLink;
-	modelMatrix	:  mat4;
-	worldMatrix	:  mat4;
-	aabb		:  BoundingBox;
-	bvh			:  BoundingBox;
+	camera: GLTFID;
+	children: Node[];
+	skin: Skin;
+	translation: vec3;
+	rotation: quat;
+	scale: vec3;
+	matrix: mat4;
+	mesh: Mesh;
+	weights: number[];
+	name: string;
+	extensions: any;
+	extras: any;
+	nodeID: GLTFID;
+	childrenID: GLTFID[];
+	parent: Node;
+	skinLink: SkinLink;
+	modelMatrix: mat4;
+	worldMatrix: mat4;
+	aabb: BoundingBox;
+	bvh: BoundingBox;
 	constructor(nodeBase: NodeBase, nodeID: GLTFID, currentLoader: GLTFLoader) {
-		this.camera			= (nodeBase.camera		!== undefined) ? nodeBase.camera		: null;
-		this.children		=  [];
-		this.skin			=  null;
-		this.translation	= (nodeBase.translation	!== undefined) ? nodeBase.translation	: vec3.create();
-		this.rotation		= (nodeBase.rotation	!== undefined) ? nodeBase.rotation		: quat.create();
-		this.scale			= (nodeBase.scale		!== undefined) ? nodeBase.scale			: vec3.fromValues(1.0, 1.0, 1.0);
-		this.matrix			= (nodeBase.matrix		!== undefined) ? mat4.clone(nodeBase.matrix) : mat4.fromRotationTranslationScale(mat4.create(), this.rotation, this.translation, this.scale);
-		this.mesh			= (nodeBase.mesh		!== undefined) ? currentLoader.glTF.meshes[nodeBase.mesh] : null;
-		this.weights		= (nodeBase.weights		!== undefined) ? nodeBase.weights		: null;
-		this.name			= (nodeBase.name		!== undefined) ? nodeBase.name			: null;
-		this.extensions		= (nodeBase.extensions	!== undefined) ? nodeBase.extensions	: null;
-		this.extras			= (nodeBase.extras		!== undefined) ? nodeBase.extras		: null;
-		this.nodeID			=  nodeID;
-		this.childrenID		= (nodeBase.children	!== undefined) ? nodeBase.children		: [];
-		this.parent			=  null;
-		this.modelMatrix	=  mat4.clone(this.matrix);
-		this.worldMatrix	=  mat4.clone(this.matrix);
+		this.camera = (nodeBase.camera !== undefined) ? nodeBase.camera : null;
+		this.children = [];
+		this.skin = null;
+		this.translation = (nodeBase.translation !== undefined) ? nodeBase.translation : vec3.create();
+		this.rotation = (nodeBase.rotation !== undefined) ? nodeBase.rotation : quat.create();
+		this.scale = (nodeBase.scale !== undefined) ? nodeBase.scale : vec3.fromValues(1.0, 1.0, 1.0);
+		this.matrix = (nodeBase.matrix !== undefined) ? mat4.clone(nodeBase.matrix) : mat4.fromRotationTranslationScale(mat4.create(), this.rotation, this.translation, this.scale);
+		this.mesh = (nodeBase.mesh !== undefined) ? currentLoader.glTF.meshes[nodeBase.mesh] : null;
+		this.weights = (nodeBase.weights !== undefined) ? nodeBase.weights : null;
+		this.name = (nodeBase.name !== undefined) ? nodeBase.name : null;
+		this.extensions = (nodeBase.extensions !== undefined) ? nodeBase.extensions : null;
+		this.extras = (nodeBase.extras !== undefined) ? nodeBase.extras : null;
+		this.nodeID = nodeID;
+		this.childrenID = (nodeBase.children !== undefined) ? nodeBase.children : [];
+		this.parent = null;
+		this.modelMatrix = mat4.clone(this.matrix);
+		this.worldMatrix = mat4.clone(this.matrix);
 		if (nodeBase.extensions !== undefined) {
 			if (nodeBase.extensions.gl_avatar !== undefined && currentLoader.enableGLAvatar === true) {
-				const linkedSkinID 	: number	= currentLoader._glTF.extensions.gl_avatar.skins[nodeBase.extensions.gl_avatar.skin.name];
-				const linkedSkin	: Skin		= currentLoader.skeletonGLTF.skins[linkedSkinID];
+				const linkedSkinID: number = currentLoader._glTF.extensions.gl_avatar.skins[nodeBase.extensions.gl_avatar.skin.name];
+				const linkedSkin: Skin = currentLoader.skeletonGLTF.skins[linkedSkinID];
 				this.skinLink = new SkinLink(linkedSkin, currentLoader.glTF, nodeBase.extensions.gl_avatar.skin.inverseBindMatrices);
 			} else {
 				this.skinLink = null;
 			}
 		}
-		this.aabb			= null;
-		this.bvh			= new BoundingBox();
+		this.aabb = null;
+		this.bvh = new BoundingBox();
 	};
 	traverse(traverseFunction: Function, parent?: Node): void {
 		parent = (parent === undefined) ? null : parent;
@@ -510,21 +510,21 @@ export class Node {
 	};
 }
 class Mesh {
-	primitives	:  MeshPrimitive[];
-	weights		:  number[];
-	name		:  string;
-	extensions	:  any;
-	extras		:  any;
-	boundingBox	:  BoundingBox;
-	meshID		:  number;
+	primitives: MeshPrimitive[];
+	weights: number[];
+	name: string;
+	extensions: any;
+	extras: any;
+	boundingBox: BoundingBox;
+	meshID: number;
 	constructor(meshBase: MeshBase, meshID: number, currentLoader: GLTFLoader) {
-		this.primitives		=  [];
-		this.weights		= (meshBase.weights		!== undefined) ? meshBase.weights		: null;
-		this.name			= (meshBase.name		!== undefined) ? meshBase.name			: null;
-		this.extensions		= (meshBase.extensions	!== undefined) ? meshBase.extensions	: null;
-		this.extras			= (meshBase.extras		!== undefined) ? meshBase.extras		: null;
-		this.boundingBox	=  null;
-		let  primitiveBase : MeshPrimitiveBase, primitive : MeshPrimitive;
+		this.primitives = [];
+		this.weights = (meshBase.weights !== undefined) ? meshBase.weights : null;
+		this.name = (meshBase.name !== undefined) ? meshBase.name : null;
+		this.extensions = (meshBase.extensions !== undefined) ? meshBase.extensions : null;
+		this.extras = (meshBase.extras !== undefined) ? meshBase.extras : null;
+		this.boundingBox = null;
+		let primitiveBase: MeshPrimitiveBase, primitive: MeshPrimitive;
 		for (let i = 0; i < meshBase.primitives.length; i++) {
 			primitiveBase = meshBase.primitives[i];
 			primitive = new MeshPrimitive(primitiveBase, currentLoader.glTF, currentLoader);
@@ -539,27 +539,27 @@ class Mesh {
 		if (this.boundingBox) {
 			this.boundingBox.calculateTransform();
 		}
-		this.meshID			=  meshID;
+		this.meshID = meshID;
 	}
 }
 export class MeshPrimitive {
-	attributesID			: {POSITION ?: GLTFID , NORMAL ?: GLTFID, TEXCOORD_0 ?: GLTFID};
-	attributes				: {POSITION ?: Accessor , NORMAL ?: Accessor, TANGENT ?: Accessor, TEXCOORD_0 ?: Accessor, TEXCOORD_1 ?: Accessor, TEXCOORD_2 ?: Accessor, WEIGHTS_0?: Accessor, COLOR_0?:Accessor, JOINTS_0?:Accessor};
-	indicesID				:  GLTFID;
-	indices					:  Accessor;
-	material				:  Material;
-	mode					:  MeshPrimitiveType;
-	targetsID				: {POSITION ?: GLTFID, NORMAL ?: GLTFID, TANGENT ?: GLTFID}[];
-	targets					: {POSITION ?: Accessor, NORMAL ?: Accessor, TANGENT ?: Accessor}[];
-	extensions				:  any;
-	extras					:  any;
-	drawIndices				:  Accessor;
-	vertexArray				:  ArrayBuffer;
-	vertexBuffer			:  ArrayBuffer;
-	shader					:  WebGLShader;
-	boundingBox				:  BoundingBox;
+	attributesID: { POSITION?: GLTFID, NORMAL?: GLTFID, TEXCOORD_0?: GLTFID };
+	attributes: { POSITION?: Accessor, NORMAL?: Accessor, TANGENT?: Accessor, TEXCOORD_0?: Accessor, TEXCOORD_1?: Accessor, TEXCOORD_2?: Accessor, WEIGHTS_0?: Accessor, COLOR_0?: Accessor, JOINTS_0?: Accessor };
+	indicesID: GLTFID;
+	indices: Accessor;
+	material: Material;
+	mode: MeshPrimitiveType;
+	targetsID: { POSITION?: GLTFID, NORMAL?: GLTFID, TANGENT?: GLTFID }[];
+	targets: { POSITION?: Accessor, NORMAL?: Accessor, TANGENT?: Accessor }[];
+	extensions: any;
+	extras: any;
+	drawIndices: Accessor;
+	vertexArray: ArrayBuffer;
+	vertexBuffer: ArrayBuffer;
+	shader: WebGLShader;
+	boundingBox: BoundingBox;
 	constructor(primitiveBase: MeshPrimitiveBase, gltf: GLTF, currentLoader: GLTFLoader) {
-		this.attributesID =  primitiveBase.attributes;
+		this.attributesID = primitiveBase.attributes;
 		if (primitiveBase.extensions !== undefined) {
 			if (primitiveBase.extensions.gl_avatar !== undefined && currentLoader.enableGLAvatar === true) {
 				if (primitiveBase.extensions.gl_avatar.attributes) {
@@ -569,7 +569,7 @@ export class MeshPrimitive {
 				}
 			}
 		}
-		this.attributes = {POSITION : null , NORMAL : null, TEXCOORD_0 : null};
+		this.attributes = { POSITION: null, NORMAL: null, TEXCOORD_0: null };
 		for (let attributeName in this.attributesID) {
 			this.attributes[attributeName] = gltf.accessors[this.attributesID[attributeName]];
 		}
@@ -587,45 +587,45 @@ export class MeshPrimitive {
 			}
 		}
 
-		this.indicesID	= (primitiveBase.indices	!== undefined) ? primitiveBase.indices		: null;
+		this.indicesID = (primitiveBase.indices !== undefined) ? primitiveBase.indices : null;
 		if (this.indicesID !== null) {
-			this.indices		= gltf.accessors[this.indicesID];
+			this.indices = gltf.accessors[this.indicesID];
 		} else {
-			this.drawIndices	= gltf.accessors[this.attributesID.POSITION];
+			this.drawIndices = gltf.accessors[this.attributesID.POSITION];
 		}
 
-		this.material	= (primitiveBase.material	!== undefined) ? gltf.materials[primitiveBase.material] : null;
-		this.mode		= (primitiveBase.mode		!== undefined) ? primitiveBase.mode			: MeshPrimitiveType.TRIANGLES;
-		this.targetsID	= (primitiveBase.targets	!== undefined) ? primitiveBase.targets		: null;
+		this.material = (primitiveBase.material !== undefined) ? gltf.materials[primitiveBase.material] : null;
+		this.mode = (primitiveBase.mode !== undefined) ? primitiveBase.mode : MeshPrimitiveType.TRIANGLES;
+		this.targetsID = (primitiveBase.targets !== undefined) ? primitiveBase.targets : null;
 		for (let targetID in this.targetsID) {
-			const currentTarget = {POSITION : null , NORMAL : null, TEXCOORD_0 : null};
+			const currentTarget = { POSITION: null, NORMAL: null, TEXCOORD_0: null };
 			// for (let attributeName in targetID) {
 			// 	this.targets
 			// }
 		}
-		this.extensions	= (primitiveBase.extensions	!== undefined) ? primitiveBase.extensions	: null;
-		this.extras		= (primitiveBase.extras		!== undefined) ? primitiveBase.extras		: null;
+		this.extensions = (primitiveBase.extensions !== undefined) ? primitiveBase.extensions : null;
+		this.extras = (primitiveBase.extras !== undefined) ? primitiveBase.extras : null;
 
 
-		this.vertexArray	= null;
-		this.vertexBuffer	= null;
-		this.shader			= null;
+		this.vertexArray = null;
+		this.vertexBuffer = null;
+		this.shader = null;
 	}
 }
 class Texture {
-	sampler		:  Sampler;
-	source		:  ImageBitmap | ImageData | HTMLImageElement;
-	name		:  string;
-	extensions	:  any;
-	extras		:  any;
-	texture		:  WebGLTexture;
+	sampler: Sampler;
+	source: ImageBitmap | ImageData | HTMLImageElement;
+	name: string;
+	extensions: any;
+	extras: any;
+	texture: WebGLTexture;
 	constructor(textureBase: TextureBase, currentLoader: GLTFLoader) {
-		this.sampler	= (textureBase.sampler		!== undefined) ? currentLoader.glTF.samplers[textureBase.sampler]	: null;
-		this.source		= (textureBase.sampler		!== undefined) ? currentLoader.glTF.images[textureBase.source]		: null;
-		this.name		= (textureBase.name			!== undefined) ? textureBase.name			: null;
-		this.extensions	= (textureBase.extensions	!== undefined) ? textureBase.extensions		: null;
-		this.extras		= (textureBase.extras		!== undefined) ? textureBase.extras			: null;
-		this.texture	= null;
+		this.sampler = (textureBase.sampler !== undefined) ? currentLoader.glTF.samplers[textureBase.sampler] : null;
+		this.source = (textureBase.sampler !== undefined) ? currentLoader.glTF.images[textureBase.source] : null;
+		this.name = (textureBase.name !== undefined) ? textureBase.name : null;
+		this.extensions = (textureBase.extensions !== undefined) ? textureBase.extensions : null;
+		this.extras = (textureBase.extras !== undefined) ? textureBase.extras : null;
+		this.texture = null;
 	}
 	createTexture(gl: WebGL2RenderingContext): void {
 		this.texture = gl.createTexture();
@@ -643,26 +643,26 @@ class Texture {
 	}
 }
 class Sampler {
-	magFilter	:  SamplerMagnificationFilter;
-	minFilter	:  SamplerMinificationFilter;
-	wrapS		:  SamplerWrappingMode;
-	wrapT		:  SamplerWrappingMode;
-	name		:  string;
-	extensions	:  any;
-	extras		:  any;
+	magFilter: SamplerMagnificationFilter;
+	minFilter: SamplerMinificationFilter;
+	wrapS: SamplerWrappingMode;
+	wrapT: SamplerWrappingMode;
+	name: string;
+	extensions: any;
+	extras: any;
 	// FIXME: 
 	// 当前版本typescipt不支持接口WebGLSampler 等待升级
 	// sampler		:  WebGLSampler;
-	sampler		:  any;
+	sampler: any;
 	constructor(samplerBase: SamplerBase) {
-		this.magFilter	= (samplerBase.magFilter	!== undefined) ? samplerBase.magFilter	: null;
-		this.minFilter	= (samplerBase.minFilter	!== undefined) ? samplerBase.minFilter	: null;
-		this.wrapS		= (samplerBase.wrapS		!== undefined) ? samplerBase.wrapS		: SamplerWrappingMode.REPEAT;
-		this.wrapT		= (samplerBase.wrapT		!== undefined) ? samplerBase.wrapT		: SamplerWrappingMode.REPEAT;
-		this.name		= (samplerBase.name			!== undefined) ? samplerBase.name		: null;
-		this.extensions	= (samplerBase.extensions	!== undefined) ? samplerBase.extensions	: null;
-		this.extras		= (samplerBase.extras		!== undefined) ? samplerBase.extras		: null;
-		this.sampler	= null;
+		this.magFilter = (samplerBase.magFilter !== undefined) ? samplerBase.magFilter : null;
+		this.minFilter = (samplerBase.minFilter !== undefined) ? samplerBase.minFilter : null;
+		this.wrapS = (samplerBase.wrapS !== undefined) ? samplerBase.wrapS : SamplerWrappingMode.REPEAT;
+		this.wrapT = (samplerBase.wrapT !== undefined) ? samplerBase.wrapT : SamplerWrappingMode.REPEAT;
+		this.name = (samplerBase.name !== undefined) ? samplerBase.name : null;
+		this.extensions = (samplerBase.extensions !== undefined) ? samplerBase.extensions : null;
+		this.extras = (samplerBase.extras !== undefined) ? samplerBase.extras : null;
+		this.sampler = null;
 	}
 	createSampler(gl: WebGL2RenderingContext) {
 		this.sampler = gl.createSampler();
@@ -681,126 +681,126 @@ class Sampler {
 	}
 }
 class TextureInfo {
-	index		:  GLTFID;
-	texCoord	:  number;
-	extensions	:  any;
-	extras		:  any;
+	index: GLTFID;
+	texCoord: number;
+	extensions: any;
+	extras: any;
 	constructor(textureInfoBase: TextureInfoBase) {
-		this.index		= textureInfoBase.index;
-		this.texCoord	= (textureInfoBase.texCoord		!== undefined) ? textureInfoBase.texCoord	: 0 ;
-		this.extensions	= (textureInfoBase.extensions	!== undefined) ? textureInfoBase.extensions	: null;
-		this.extras		= (textureInfoBase.extras		!== undefined) ? textureInfoBase.extras		: null;
+		this.index = textureInfoBase.index;
+		this.texCoord = (textureInfoBase.texCoord !== undefined) ? textureInfoBase.texCoord : 0;
+		this.extensions = (textureInfoBase.extensions !== undefined) ? textureInfoBase.extensions : null;
+		this.extras = (textureInfoBase.extras !== undefined) ? textureInfoBase.extras : null;
 	}
 }
 class Material {
-	name					:  string;
-	extensions				:  any;
-	extras					:  any;
-	pbrMetallicRoughness	:  MaterialPbrMetallicRoughness;
-	normalTexture			:  MaterialNormalTextureInfo;
-	occlusionTexture		:  MaterialOcclusionTextureInfo;
-	emissiveTexture			:  TextureInfo;
-	emissiveFactor			:  number[];
-	alphaMode				:  "OPAQUE" | "MASK" | "BLEND";
-	alphaCutoff				:  number;
-	doubleSided				:  boolean;
+	name: string;
+	extensions: any;
+	extras: any;
+	pbrMetallicRoughness: MaterialPbrMetallicRoughness;
+	normalTexture: MaterialNormalTextureInfo;
+	occlusionTexture: MaterialOcclusionTextureInfo;
+	emissiveTexture: TextureInfo;
+	emissiveFactor: number[];
+	alphaMode: "OPAQUE" | "MASK" | "BLEND";
+	alphaCutoff: number;
+	doubleSided: boolean;
 	constructor(materialBase: MaterialBase) {
-		this.name					= (materialBase.name					!== undefined) ? materialBase.name				: null;
-		this.extensions				= (materialBase.extensions				!== undefined) ? materialBase.extensions		: null;
-		this.extras					= (materialBase.extras					!== undefined) ? materialBase.extras			: null;
-		this.pbrMetallicRoughness	= (materialBase.pbrMetallicRoughness	!== undefined) ? new MaterialPbrMetallicRoughness(materialBase.pbrMetallicRoughness) : new MaterialPbrMetallicRoughness({
-			baseColorFactor				: [1, 1, 1, 1],
-			baseColorTexture			: null,
-			metallicFactor				: 1,
-			roughnessFactor				: 1,
-			metallicRoughnessTexture	: null,
+		this.name = (materialBase.name !== undefined) ? materialBase.name : null;
+		this.extensions = (materialBase.extensions !== undefined) ? materialBase.extensions : null;
+		this.extras = (materialBase.extras !== undefined) ? materialBase.extras : null;
+		this.pbrMetallicRoughness = (materialBase.pbrMetallicRoughness !== undefined) ? new MaterialPbrMetallicRoughness(materialBase.pbrMetallicRoughness) : new MaterialPbrMetallicRoughness({
+			baseColorFactor: [1, 1, 1, 1],
+			baseColorTexture: null,
+			metallicFactor: 1,
+			roughnessFactor: 1,
+			metallicRoughnessTexture: null,
 		});
-		this.normalTexture			= (materialBase.normalTexture			!== undefined) ? new MaterialNormalTextureInfo(materialBase.normalTexture)		: null;
-		this.occlusionTexture		= (materialBase.occlusionTexture		!== undefined) ? new MaterialOcclusionTextureInfo(materialBase.occlusionTexture)	: null;
-		this.emissiveTexture		= (materialBase.emissiveTexture			!== undefined) ? new TextureInfo(materialBase.emissiveTexture)					: null;
-		this.emissiveFactor			= (materialBase.emissiveFactor			!== undefined) ? materialBase.emissiveFactor	: [0, 0, 0];
-		this.alphaMode				= (materialBase.alphaMode				!== undefined) ? materialBase.alphaMode			: "OPAQUE";
-		this.alphaCutoff			= (materialBase.alphaCutoff				!== undefined) ? materialBase.alphaCutoff		: 0.5;
-		this.doubleSided			= !!materialBase.doubleSided;
+		this.normalTexture = (materialBase.normalTexture !== undefined) ? new MaterialNormalTextureInfo(materialBase.normalTexture) : null;
+		this.occlusionTexture = (materialBase.occlusionTexture !== undefined) ? new MaterialOcclusionTextureInfo(materialBase.occlusionTexture) : null;
+		this.emissiveTexture = (materialBase.emissiveTexture !== undefined) ? new TextureInfo(materialBase.emissiveTexture) : null;
+		this.emissiveFactor = (materialBase.emissiveFactor !== undefined) ? materialBase.emissiveFactor : [0, 0, 0];
+		this.alphaMode = (materialBase.alphaMode !== undefined) ? materialBase.alphaMode : "OPAQUE";
+		this.alphaCutoff = (materialBase.alphaCutoff !== undefined) ? materialBase.alphaCutoff : 0.5;
+		this.doubleSided = !!materialBase.doubleSided;
 	}
 }
 class MaterialPbrMetallicRoughness {
-	baseColorFactor				:  number[];
-	baseColorTexture			:  TextureInfoBase;
-	metallicFactor				:  number;
-	roughnessFactor				:  number;
-	metallicRoughnessTexture	:  TextureInfoBase;
-	extensions					:  any;
-	extras						:  any;
+	baseColorFactor: number[];
+	baseColorTexture: TextureInfoBase;
+	metallicFactor: number;
+	roughnessFactor: number;
+	metallicRoughnessTexture: TextureInfoBase;
+	extensions: any;
+	extras: any;
 	constructor(materialPbrMetallicRoughnessBase: MaterialPbrMetallicRoughnessBase) {
-		this.baseColorFactor			= (materialPbrMetallicRoughnessBase.baseColorFactor				!== undefined) ? materialPbrMetallicRoughnessBase.baseColorFactor	: [1, 1, 1, 1];
-		this.baseColorTexture			= (materialPbrMetallicRoughnessBase.baseColorTexture			!== undefined) ? new TextureInfo(materialPbrMetallicRoughnessBase.baseColorTexture): null;
-		this.metallicFactor				= (materialPbrMetallicRoughnessBase.metallicFactor				!== undefined) ? materialPbrMetallicRoughnessBase.metallicFactor	: 1;
-		this.roughnessFactor			= (materialPbrMetallicRoughnessBase.roughnessFactor				!== undefined) ? materialPbrMetallicRoughnessBase.roughnessFactor	: 1;
-		this.metallicRoughnessTexture	= (materialPbrMetallicRoughnessBase.metallicRoughnessTexture	!== undefined) ? new TextureInfo(materialPbrMetallicRoughnessBase.metallicRoughnessTexture): null;
-		this.extensions					= (materialPbrMetallicRoughnessBase.extensions					!== undefined) ? materialPbrMetallicRoughnessBase.extensions		: null;
-		this.extras						= (materialPbrMetallicRoughnessBase.extras						!== undefined) ? materialPbrMetallicRoughnessBase.extras			: null;
+		this.baseColorFactor = (materialPbrMetallicRoughnessBase.baseColorFactor !== undefined) ? materialPbrMetallicRoughnessBase.baseColorFactor : [1, 1, 1, 1];
+		this.baseColorTexture = (materialPbrMetallicRoughnessBase.baseColorTexture !== undefined) ? new TextureInfo(materialPbrMetallicRoughnessBase.baseColorTexture) : null;
+		this.metallicFactor = (materialPbrMetallicRoughnessBase.metallicFactor !== undefined) ? materialPbrMetallicRoughnessBase.metallicFactor : 1;
+		this.roughnessFactor = (materialPbrMetallicRoughnessBase.roughnessFactor !== undefined) ? materialPbrMetallicRoughnessBase.roughnessFactor : 1;
+		this.metallicRoughnessTexture = (materialPbrMetallicRoughnessBase.metallicRoughnessTexture !== undefined) ? new TextureInfo(materialPbrMetallicRoughnessBase.metallicRoughnessTexture) : null;
+		this.extensions = (materialPbrMetallicRoughnessBase.extensions !== undefined) ? materialPbrMetallicRoughnessBase.extensions : null;
+		this.extras = (materialPbrMetallicRoughnessBase.extras !== undefined) ? materialPbrMetallicRoughnessBase.extras : null;
 	}
 }
 class MaterialNormalTextureInfo {
-	index		:  any;
-	texCoord	:  any;
-	scale		:  number;
-	extensions	:  any;
-	extras		:  any;
+	index: any;
+	texCoord: any;
+	scale: number;
+	extensions: any;
+	extras: any;
 	constructor(materialNormalTextureInfoBase: MaterialNormalTextureInfoBase) {
-		this.index		= (materialNormalTextureInfoBase.index		!== undefined) ? materialNormalTextureInfoBase.index		: 0;
-		this.texCoord	= (materialNormalTextureInfoBase.texCoord	!== undefined) ? materialNormalTextureInfoBase.texCoord		: 0;
-		this.scale		= (materialNormalTextureInfoBase.scale		!== undefined) ? materialNormalTextureInfoBase.scale		: 1;
-		this.extensions	= (materialNormalTextureInfoBase.extensions	!== undefined) ? materialNormalTextureInfoBase.extensions	: null;
-		this.extras		= (materialNormalTextureInfoBase.extras		!== undefined) ? materialNormalTextureInfoBase.extras		: null;
+		this.index = (materialNormalTextureInfoBase.index !== undefined) ? materialNormalTextureInfoBase.index : 0;
+		this.texCoord = (materialNormalTextureInfoBase.texCoord !== undefined) ? materialNormalTextureInfoBase.texCoord : 0;
+		this.scale = (materialNormalTextureInfoBase.scale !== undefined) ? materialNormalTextureInfoBase.scale : 1;
+		this.extensions = (materialNormalTextureInfoBase.extensions !== undefined) ? materialNormalTextureInfoBase.extensions : null;
+		this.extras = (materialNormalTextureInfoBase.extras !== undefined) ? materialNormalTextureInfoBase.extras : null;
 	}
 }
 class MaterialOcclusionTextureInfo {
-	index		:  any;
-	texCoord	:  any;
-	strength	:  number;
-	extensions	:  any;
-	extras		:  any;
+	index: any;
+	texCoord: any;
+	strength: number;
+	extensions: any;
+	extras: any;
 	constructor(materialOcclusionTextureInfoBase: MaterialOcclusionTextureInfoBase) {
-		this.index		= (materialOcclusionTextureInfoBase.index		!== undefined) ? materialOcclusionTextureInfoBase.index			: 0;
-		this.texCoord	= (materialOcclusionTextureInfoBase.texCoord	!== undefined) ? materialOcclusionTextureInfoBase.texCoord		: 0;
-		this.strength	= (materialOcclusionTextureInfoBase.strength	!== undefined) ? materialOcclusionTextureInfoBase.strength		: 1;
-		this.extensions	= (materialOcclusionTextureInfoBase.extensions	!== undefined) ? materialOcclusionTextureInfoBase.extensions	: null;
-		this.extras		= (materialOcclusionTextureInfoBase.extras		!== undefined) ? materialOcclusionTextureInfoBase.extras		: null;
+		this.index = (materialOcclusionTextureInfoBase.index !== undefined) ? materialOcclusionTextureInfoBase.index : 0;
+		this.texCoord = (materialOcclusionTextureInfoBase.texCoord !== undefined) ? materialOcclusionTextureInfoBase.texCoord : 0;
+		this.strength = (materialOcclusionTextureInfoBase.strength !== undefined) ? materialOcclusionTextureInfoBase.strength : 1;
+		this.extensions = (materialOcclusionTextureInfoBase.extensions !== undefined) ? materialOcclusionTextureInfoBase.extensions : null;
+		this.extras = (materialOcclusionTextureInfoBase.extras !== undefined) ? materialOcclusionTextureInfoBase.extras : null;
 	}
 }
 class Skin {
-	inverseBindMatrices				:  Accessor;
-	skeleton						:  Node;
-	joints							:  Node[];
-	name							:  string;
-	extensions						:  any;
-	extras							:  any;
-	isLink							:  boolean;
-	inverseBindMatricesData			:  Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array;
-	inverseBindMatrix				:  mat4[];
+	inverseBindMatrices: Accessor;
+	skeleton: Node;
+	joints: Node[];
+	name: string;
+	extensions: any;
+	extras: any;
+	isLink: boolean;
+	inverseBindMatricesData: Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array;
+	inverseBindMatrix: mat4[];
 	constructor(skinBase: SkinBase, gltf: GLTF) {
-		this.inverseBindMatrices	= (skinBase.inverseBindMatrices	!== undefined) ? gltf.accessors[skinBase.inverseBindMatrices]	: null;
-		this.skeleton				= (skinBase.skeleton			!== undefined) ? gltf.nodes[skinBase.skeleton]					: null;
-		this.joints					=  [];
+		this.inverseBindMatrices = (skinBase.inverseBindMatrices !== undefined) ? gltf.accessors[skinBase.inverseBindMatrices] : null;
+		this.skeleton = (skinBase.skeleton !== undefined) ? gltf.nodes[skinBase.skeleton] : null;
+		this.joints = [];
 		for (let i = 0; i < skinBase.joints.length; i++) {
 			this.joints.push(gltf.nodes[skinBase.joints[i]]);
-		}		
-		this.name					= (skinBase.name				!== undefined) ? skinBase.name				: null;
-		this.extensions				= (skinBase.extensions			!== undefined) ? skinBase.extensions		: null;
-		this.extras					= (skinBase.extras				!== undefined) ? skinBase.extras			: null;
-		this.isLink					=  false;
+		}
+		this.name = (skinBase.name !== undefined) ? skinBase.name : null;
+		this.extensions = (skinBase.extensions !== undefined) ? skinBase.extensions : null;
+		this.extras = (skinBase.extras !== undefined) ? skinBase.extras : null;
+		this.isLink = false;
 		if (this.inverseBindMatrices) {
 			this.inverseBindMatricesData = glTFLoaderBasic.getAccessorData(this.inverseBindMatrices);
 			this.inverseBindMatrix = [];
-			for(let i = 0; i < this.inverseBindMatricesData.length; i += 16) {
+			for (let i = 0; i < this.inverseBindMatricesData.length; i += 16) {
 				this.inverseBindMatrix.push(
 					mat4.fromValues(
-						this.inverseBindMatricesData[i],		this.inverseBindMatricesData[i + 1],	this.inverseBindMatricesData[i + 2],	this.inverseBindMatricesData[i + 3],
-						this.inverseBindMatricesData[i + 4],	this.inverseBindMatricesData[i + 5],	this.inverseBindMatricesData[i + 6],	this.inverseBindMatricesData[i + 7],
-						this.inverseBindMatricesData[i + 8],	this.inverseBindMatricesData[i + 9],	this.inverseBindMatricesData[i + 10],	this.inverseBindMatricesData[i + 11],
-						this.inverseBindMatricesData[i + 12],	this.inverseBindMatricesData[i + 13],	this.inverseBindMatricesData[i + 14],	this.inverseBindMatricesData[i + 15],
+						this.inverseBindMatricesData[i], this.inverseBindMatricesData[i + 1], this.inverseBindMatricesData[i + 2], this.inverseBindMatricesData[i + 3],
+						this.inverseBindMatricesData[i + 4], this.inverseBindMatricesData[i + 5], this.inverseBindMatricesData[i + 6], this.inverseBindMatricesData[i + 7],
+						this.inverseBindMatricesData[i + 8], this.inverseBindMatricesData[i + 9], this.inverseBindMatricesData[i + 10], this.inverseBindMatricesData[i + 11],
+						this.inverseBindMatricesData[i + 12], this.inverseBindMatricesData[i + 13], this.inverseBindMatricesData[i + 14], this.inverseBindMatricesData[i + 15],
 					)
 				);
 			}
@@ -808,37 +808,37 @@ class Skin {
 	}
 }
 class SkinLink {
-	inverseBindMatrices				:  Accessor;
-	skeleton						:  Node;
-	joints							:  Node[];
-	name							:  string;
-	extensions						:  any;
-	extras							:  any;
-	isLink							:  boolean
-	inverseBindMatricesData			:  Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array;
-	inverseBindMatrix				:  mat4[];
+	inverseBindMatrices: Accessor;
+	skeleton: Node;
+	joints: Node[];
+	name: string;
+	extensions: any;
+	extras: any;
+	isLink: boolean
+	inverseBindMatricesData: Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array;
+	inverseBindMatrix: mat4[];
 	constructor(linkedSkin: Skin, gltf: GLTF, inverseBindMatricesAccessorID?: number) {
 		if (!gltf.skins) {
 			gltf.skins = [];
 		}
 		gltf.skins.push(this);
-		this.inverseBindMatrices	= (inverseBindMatricesAccessorID	!== undefined) ? gltf.accessors[inverseBindMatricesAccessorID]	: null;
-		this.skeleton				=  linkedSkin.skeleton;
-		this.joints					=  linkedSkin.joints;		
-		this.name					=  linkedSkin.name;
-		this.extensions				=  linkedSkin.extensions;
-		this.extras					=  linkedSkin.extras;
-		this.isLink					=  true;
+		this.inverseBindMatrices = (inverseBindMatricesAccessorID !== undefined) ? gltf.accessors[inverseBindMatricesAccessorID] : null;
+		this.skeleton = linkedSkin.skeleton;
+		this.joints = linkedSkin.joints;
+		this.name = linkedSkin.name;
+		this.extensions = linkedSkin.extensions;
+		this.extras = linkedSkin.extras;
+		this.isLink = true;
 		if (this.inverseBindMatrices) {
 			this.inverseBindMatricesData = glTFLoaderBasic.getAccessorData(this.inverseBindMatrices);
 			this.inverseBindMatrix = [];
-			for(let i = 0; i < this.inverseBindMatricesData.length; i += 16) {
+			for (let i = 0; i < this.inverseBindMatricesData.length; i += 16) {
 				this.inverseBindMatrix.push(
 					mat4.fromValues(
-						this.inverseBindMatricesData[i],		this.inverseBindMatricesData[i + 1],	this.inverseBindMatricesData[i + 2],	this.inverseBindMatricesData[i + 3],
-						this.inverseBindMatricesData[i + 4],	this.inverseBindMatricesData[i + 5],	this.inverseBindMatricesData[i + 6],	this.inverseBindMatricesData[i + 7],
-						this.inverseBindMatricesData[i + 8],	this.inverseBindMatricesData[i + 9],	this.inverseBindMatricesData[i + 10],	this.inverseBindMatricesData[i + 11],
-						this.inverseBindMatricesData[i + 12],	this.inverseBindMatricesData[i + 13],	this.inverseBindMatricesData[i + 14],	this.inverseBindMatricesData[i + 15],
+						this.inverseBindMatricesData[i], this.inverseBindMatricesData[i + 1], this.inverseBindMatricesData[i + 2], this.inverseBindMatricesData[i + 3],
+						this.inverseBindMatricesData[i + 4], this.inverseBindMatricesData[i + 5], this.inverseBindMatricesData[i + 6], this.inverseBindMatricesData[i + 7],
+						this.inverseBindMatricesData[i + 8], this.inverseBindMatricesData[i + 9], this.inverseBindMatricesData[i + 10], this.inverseBindMatricesData[i + 11],
+						this.inverseBindMatricesData[i + 12], this.inverseBindMatricesData[i + 13], this.inverseBindMatricesData[i + 14], this.inverseBindMatricesData[i + 15],
 					)
 				);
 			}
@@ -846,11 +846,11 @@ class SkinLink {
 	}
 }
 export class Animation {
-	samplers		:  AnimationSampler[];
-	channels		:  AnimationChannel[];
-	name			:  string;
-	extensions		:  any;
-	extras			:  any;
+	samplers: AnimationSampler[];
+	channels: AnimationChannel[];
+	name: string;
+	extensions: any;
+	extras: any;
 	constructor(animationBase: AnimationBase, gltf: GLTF) {
 		this.samplers = [];
 		for (let i = 0; i < animationBase.samplers.length; i++) {
@@ -860,65 +860,65 @@ export class Animation {
 		for (let i = 0; i < animationBase.channels.length; i++) {
 			this.channels.push(new AnimationChannel(animationBase.channels[i], this));
 		}
-		this.name					= (animationBase.name				!== undefined) ? animationBase.name				: null;
-		this.extensions				= (animationBase.extensions			!== undefined) ? animationBase.extensions		: null;
-		this.extras					= (animationBase.extras				!== undefined) ? animationBase.extras			: null;
+		this.name = (animationBase.name !== undefined) ? animationBase.name : null;
+		this.extensions = (animationBase.extensions !== undefined) ? animationBase.extensions : null;
+		this.extras = (animationBase.extras !== undefined) ? animationBase.extras : null;
 	}
 }
 export class AnimationChannel {
-	sampler		:  AnimationSampler;
-	target		:  AnimationChannelTarget;
-	extensions	:  any;
-	extras		:  any;
+	sampler: AnimationSampler;
+	target: AnimationChannelTarget;
+	extensions: any;
+	extras: any;
 	constructor(animationChannelBase: AnimationChannelBase, animation: Animation) {
-		this.sampler	=  animation.samplers[animationChannelBase.sampler];
-		this.target		=  new AnimationChannelTarget(animationChannelBase.target);
-		this.extensions	= (animationChannelBase.extensions	!== undefined) ? animationChannelBase.extensions	: null;
-		this.extras		= (animationChannelBase.extras		!== undefined) ? animationChannelBase.extras		: null;
+		this.sampler = animation.samplers[animationChannelBase.sampler];
+		this.target = new AnimationChannelTarget(animationChannelBase.target);
+		this.extensions = (animationChannelBase.extensions !== undefined) ? animationChannelBase.extensions : null;
+		this.extras = (animationChannelBase.extras !== undefined) ? animationChannelBase.extras : null;
 	}
 }
 class AnimationChannelTarget {
-	node		:  Node;
-	path		:  "translation" | "rotation" | "scale" | "weights";
-	extensions	:  any;
-	extras		:  any;
-	nodeID		:  GLTFID;
+	node: Node;
+	path: "translation" | "rotation" | "scale" | "weights";
+	extensions: any;
+	extras: any;
+	nodeID: GLTFID;
 	constructor(animationChannelTargetBase: AnimationChannelTargetBase) {
 		//id, to be hooked up to object later
-		this.nodeID		=  animationChannelTargetBase.node;
-		this.path		=  animationChannelTargetBase.path;
-		this.extensions	= (animationChannelTargetBase.extensions	!== undefined) ? animationChannelTargetBase.extensions	: null;
-		this.extras		= (animationChannelTargetBase.extras		!== undefined) ? animationChannelTargetBase.extras		: null;
+		this.nodeID = animationChannelTargetBase.node;
+		this.path = animationChannelTargetBase.path;
+		this.extensions = (animationChannelTargetBase.extensions !== undefined) ? animationChannelTargetBase.extensions : null;
+		this.extras = (animationChannelTargetBase.extras !== undefined) ? animationChannelTargetBase.extras : null;
 	}
 }
 export class AnimationSampler {
-	input				:  Accessor;
-	interpolation		:  "LINEAR" | "STEP" | "CUBICSPLINE";
-	output				:  Accessor;
-	extensions			:  any;
-	extras				:  any;
-	keyFrameIndices		:  Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array;
-	keyFrameRaw			:  Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array;
-	keyFrames			:  {src: Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array, dst: Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array};
-	currentIndex		:  number;
-	startTime			:  number;
-	endTime				:  number;
-	duration			:  number;
+	input: Accessor;
+	interpolation: "LINEAR" | "STEP" | "CUBICSPLINE";
+	output: Accessor;
+	extensions: any;
+	extras: any;
+	keyFrameIndices: Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array;
+	keyFrameRaw: Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array;
+	keyFrames: { src: Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array, dst: Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array };
+	currentIndex: number;
+	startTime: number;
+	endTime: number;
+	duration: number;
 	constructor(animationSamplerBase: AnimationSamplerBase, gltf: GLTF) {
-		this.input				=  gltf.accessors[animationSamplerBase.input]; 
-		this.interpolation		= (animationSamplerBase.interpolation	!== undefined) ? animationSamplerBase.interpolation : "LINEAR";
-		this.output				=  gltf.accessors[animationSamplerBase.output];
-		this.extensions			= (animationSamplerBase.extensions		!== undefined) ? animationSamplerBase.extensions	: null;
-		this.extras				= (animationSamplerBase.extras			!== undefined) ? animationSamplerBase.extras		: null;
-		this.keyFrameIndices	=  glTFLoaderBasic.getAccessorData(this.input);
-		this.keyFrameRaw		=  glTFLoaderBasic.getAccessorData(this.output);
-		this.keyFrames			= {src: null, dst: null};
-		this.currentIndex		= 0;
-		this.startTime			= this.keyFrameIndices[0];
-		this.endTime			= this.keyFrameIndices[this.keyFrameIndices.length - 1];
-		this.duration			= this.endTime - this.startTime;
+		this.input = gltf.accessors[animationSamplerBase.input];
+		this.interpolation = (animationSamplerBase.interpolation !== undefined) ? animationSamplerBase.interpolation : "LINEAR";
+		this.output = gltf.accessors[animationSamplerBase.output];
+		this.extensions = (animationSamplerBase.extensions !== undefined) ? animationSamplerBase.extensions : null;
+		this.extras = (animationSamplerBase.extras !== undefined) ? animationSamplerBase.extras : null;
+		this.keyFrameIndices = glTFLoaderBasic.getAccessorData(this.input);
+		this.keyFrameRaw = glTFLoaderBasic.getAccessorData(this.output);
+		this.keyFrames = { src: null, dst: null };
+		this.currentIndex = 0;
+		this.startTime = this.keyFrameIndices[0];
+		this.endTime = this.keyFrameIndices[this.keyFrameIndices.length - 1];
+		this.duration = this.endTime - this.startTime;
 	}
-	updateKeyFrames(time: number): void  {
+	updateKeyFrames(time: number): void {
 		while (this.currentIndex < this.keyFrameIndices.length - 2 && time >= this.keyFrameIndices[this.currentIndex + 1]) {
 			this.currentIndex++;
 		}
@@ -931,61 +931,61 @@ export class AnimationSampler {
 	}
 }
 export class GLTF {
-	asset				:  AssetBase;
-	scene				?: Scene;
-	scenes				?: Scene[];
-	nodes				?: Node[];
-	meshes				?: Mesh[];
-	accessors			?: Accessor[];
-	bufferViews			?: BufferView[];
-	buffers				?: ArrayBuffer[];
-	animations			?: Animation[];
-	cameras				?: Camera[];
-	textures			?: Texture[];
-	images				?: (ImageBitmap | ImageData | HTMLImageElement)[];
-	samplers			?: Sampler[];
-	materials			?: Material[];
-	skins				?: (Skin | SkinLink)[];
-	extensions			?: any;
-	extensionsUsed		?: string[];
-	extensionsRequired	?: string[];
-	extras				?: any;
+	asset: AssetBase;
+	scene?: Scene;
+	scenes?: Scene[];
+	nodes?: Node[];
+	meshes?: Mesh[];
+	accessors?: Accessor[];
+	bufferViews?: BufferView[];
+	buffers?: ArrayBuffer[];
+	animations?: Animation[];
+	cameras?: Camera[];
+	textures?: Texture[];
+	images?: (ImageBitmap | ImageData | HTMLImageElement)[];
+	samplers?: Sampler[];
+	materials?: Material[];
+	skins?: (Skin | SkinLink)[];
+	extensions?: any;
+	extensionsUsed?: string[];
+	extensionsRequired?: string[];
+	extras?: any;
 	constructor(glTFBase: GLTFBase) {
-		this.asset				=  glTFBase.asset;
-		this.scene				=  null;
-		this.scenes				= (glTFBase.scenes				!== undefined) ? []								: null;
-		this.nodes				= (glTFBase.nodes				!== undefined) ? []								: null;
-		this.meshes				= (glTFBase.meshes				!== undefined) ? []								: null;
-		this.accessors			= (glTFBase.accessors			!== undefined) ? []								: null;
-		this.bufferViews		= (glTFBase.bufferViews			!== undefined) ? []								: null;
-		this.buffers			= (glTFBase.buffers				!== undefined) ? []								: null;
-		this.animations			= (glTFBase.animations			!== undefined) ? []								: null;
-		this.cameras			= (glTFBase.cameras				!== undefined) ? []								: null;
-		this.textures			= (glTFBase.textures			!== undefined) ? []								: null;
-		this.images				= (glTFBase.images				!== undefined) ? []								: null;
-		this.samplers			= (glTFBase.samplers			!== undefined) ? []								: null;
-		this.materials			= (glTFBase.materials			!== undefined) ? []								: null;
-		this.skins				= (glTFBase.skins				!== undefined) ? []								: null;
-		this.extensions			= (glTFBase.extensions			!== undefined) ? glTFBase.extensions			: null;
-		this.extensionsUsed		= (glTFBase.extensionsUsed		!== undefined) ? glTFBase.extensionsUsed		: null;
-		this.extensionsRequired	= (glTFBase.extensionsRequired	!== undefined) ? glTFBase.extensionsRequired	: null;
-		this.extras				= (glTFBase.extras				!== undefined) ? glTFBase.extras				: null;
+		this.asset = glTFBase.asset;
+		this.scene = null;
+		this.scenes = (glTFBase.scenes !== undefined) ? [] : null;
+		this.nodes = (glTFBase.nodes !== undefined) ? [] : null;
+		this.meshes = (glTFBase.meshes !== undefined) ? [] : null;
+		this.accessors = (glTFBase.accessors !== undefined) ? [] : null;
+		this.bufferViews = (glTFBase.bufferViews !== undefined) ? [] : null;
+		this.buffers = (glTFBase.buffers !== undefined) ? [] : null;
+		this.animations = (glTFBase.animations !== undefined) ? [] : null;
+		this.cameras = (glTFBase.cameras !== undefined) ? [] : null;
+		this.textures = (glTFBase.textures !== undefined) ? [] : null;
+		this.images = (glTFBase.images !== undefined) ? [] : null;
+		this.samplers = (glTFBase.samplers !== undefined) ? [] : null;
+		this.materials = (glTFBase.materials !== undefined) ? [] : null;
+		this.skins = (glTFBase.skins !== undefined) ? [] : null;
+		this.extensions = (glTFBase.extensions !== undefined) ? glTFBase.extensions : null;
+		this.extensionsUsed = (glTFBase.extensionsUsed !== undefined) ? glTFBase.extensionsUsed : null;
+		this.extensionsRequired = (glTFBase.extensionsRequired !== undefined) ? glTFBase.extensionsRequired : null;
+		this.extras = (glTFBase.extras !== undefined) ? glTFBase.extras : null;
 	}
 }
 
 export class GLTFLoader {
-	_glTF					:  GLTFBase;
-	glTF					:  GLTF;
-	baseUri					:  string;
-	enableGLAvatar			:  boolean;
-	skeletonGLTF			:  GLTF;
-	gl						:  WebGL2RenderingContext;
+	_glTF: GLTFBase;
+	glTF: GLTF;
+	baseUri: string;
+	enableGLAvatar: boolean;
+	skeletonGLTF: GLTF;
+	gl: WebGL2RenderingContext;
 
 	constructor(gl: WebGL2RenderingContext) {
-		this.glTF				= null;
-		this.enableGLAvatar		= false;
-		this.skeletonGLTF		= null;
-		this.gl					= gl;
+		this.glTF = null;
+		this.enableGLAvatar = false;
+		this.skeletonGLTF = null;
+		this.gl = gl;
 	}
 	/**
 	 * Get base URL from the given URL
@@ -1020,19 +1020,19 @@ export class GLTFLoader {
 						if (bufferView.target !== BufferViewTarget.ELEMENT_ARRAY_BUFFER)
 							console.warn("BufferView " + primitive.indices + " should have a target equal to ELEMENT_ARRAY_BUFFER");
 					} else {
-						bufferView.target =  BufferViewTarget.ELEMENT_ARRAY_BUFFER;
+						bufferView.target = BufferViewTarget.ELEMENT_ARRAY_BUFFER;
 					}
 				}
 			})
 		})
 	}
-	private postProcess():void {
+	private postProcess(): void {
 		this.inferBufferViewTarget();
 		// 挂载 BufferView
 		if (this._glTF.bufferViews !== undefined) {
 			for (let i = 0; i < this._glTF.bufferViews.length; i++) {
 				const bufferView = new BufferView(this._glTF.bufferViews[i], this.glTF.buffers[this._glTF.bufferViews[i].buffer]);
-				if(this.gl) {
+				if (this.gl) {
 					bufferView.createBuffer(this.gl);
 					bufferView.bindData(this.gl);
 				}
@@ -1067,7 +1067,7 @@ export class GLTFLoader {
 		if (this._glTF.textures !== undefined) {
 			for (let i = 0; i < this._glTF.textures.length; i++) {
 				this.glTF.textures.push(new Texture(this._glTF.textures[i], this));
-				if(this.gl)
+				if (this.gl)
 					this.glTF.textures[i].createTexture(this.gl);
 			}
 		}
@@ -1077,7 +1077,7 @@ export class GLTFLoader {
 				this.glTF.meshes.push(new Mesh(this._glTF.meshes[i], i, this));
 			}
 		}
- 		// 挂载 Node
+		// 挂载 Node
 		if (this._glTF.nodes !== undefined) {
 			for (let i = 0; i < this._glTF.nodes.length; i++) {
 				this.glTF.nodes.push(new Node(this._glTF.nodes[i], i, this));
@@ -1094,7 +1094,7 @@ export class GLTFLoader {
 				for (let i = 0; i < this._glTF.scenes.length; i++) {
 					this.glTF.scenes[i] = new Scene(this._glTF.scenes[i], this.glTF);
 					this.glTF.scenes[i].boundingBox = new BoundingBox();
-					const nodeMatrices : mat4[] = new Array(this.glTF.nodes.length);
+					const nodeMatrices: mat4[] = new Array(this.glTF.nodes.length);
 					for (let j = 0; j < this.glTF.scenes[i].nodes.length; j++) {
 						this.glTF.scenes[i].nodes[j].traverseTwoFunction(
 							(node: Node, parent: Node) => {
@@ -1164,23 +1164,23 @@ export class GLTFLoader {
 				}
 			}
 		}
- 
+
 	}
 
 	public async loadJson(url: string): Promise<GLTFBase> {
-		return new Promise<GLTFBase>((resolve, reject)=> fs.readFile(url, { encoding: "utf8" }, (err, data)=> {
-			if(err != null) return reject(err);
-			 const json = JSON.parse(data);
-			 resolve(json);
+		return new Promise<GLTFBase>((resolve, reject) => fs.readFile(url, { encoding: "utf8" }, (err, data) => {
+			if (err != null) return reject(err);
+			const json = JSON.parse(data);
+			resolve(json);
 		}));
 	}
 
 	public async loadArrayBuffer(url: string): Promise<ArrayBuffer> {
-		return new Promise<ArrayBuffer>((resolve, reject)=> fs.readFile(url, { encoding: "binary" }, (err, data)=> {
-			if(err != null) return reject(err);
+		return new Promise<ArrayBuffer>((resolve, reject) => fs.readFile(url, { encoding: "binary" }, (err, data) => {
+			if (err != null) return reject(err);
 			const nb = Buffer.from(data, "binary");
 			const arrayBuffer = nb.buffer.slice(nb.byteOffset, nb.byteOffset + nb.byteLength);
-			 resolve(arrayBuffer);
+			resolve(arrayBuffer);
 		}));
 	}
 
@@ -1194,15 +1194,15 @@ export class GLTFLoader {
 			// 	}
 			// 	throw Error("LoadingError: Error occured in loading glTF JSON.");
 			// });
-			const glTFBase : GLTFBase = await this.loadJson(uri);
+			const glTFBase: GLTFBase = await this.loadJson(uri);
 			this._glTF = glTFBase;
 			this.glTF = new GLTF(glTFBase);
 		} catch (error) {
 			console.error(error);
 		}
-		const loadBuffer : Promise<boolean> = new Promise<boolean>(async (resolve) => {
+		const loadBuffer: Promise<boolean> = new Promise<boolean>(async (resolve) => {
 			if (this._glTF.buffers) {
-				const bufferPromises : Promise<ArrayBuffer>[] = [];
+				const bufferPromises: Promise<ArrayBuffer>[] = [];
 				for (const bufferInfo of this._glTF.buffers) {
 					try {
 						// bufferPromises.push(fetch (new Request(this.baseUri + bufferInfo.uri)
@@ -1216,7 +1216,7 @@ export class GLTFLoader {
 						bufferPromises.push(arrayBuffer);
 					} catch (error) {
 						console.error(error);
-					}	
+					}
 				}
 				for (const [bufferID, buffer] of bufferPromises.entries()) {
 					this.glTF.buffers[bufferID] = await buffer;
@@ -1255,6 +1255,20 @@ export class GLTFLoader {
 		this.postProcess();
 		return this.glTF;
 	}
+
+	public loadGLTFFromData(gltfJson: Object, buffers: { name: string, buffer: ArrayBuffer }[]): GLTF {
+		this._glTF = gltfJson as GLTFBase;
+		this.glTF = new GLTF(this._glTF);
+
+		for (const bufferData of buffers) {
+			const bufferID = this._glTF.buffers.findIndex(x => x.uri.endsWith(bufferData.name));
+			if (bufferID == -1) continue;
+			this.glTF.buffers[bufferID] = bufferData.buffer;
+		}
+
+		this.postProcess();
+		return this.glTF;
+	}
 }
 
 export module glTFLoaderBasic {
@@ -1267,15 +1281,15 @@ export module glTFLoaderBasic {
 	 * @param	{type} string The type of the given accessor
 	 * @returns	{number} The count of components
 	 */
-	export function accessorTypeToNumComponents(type : string): number {
+	export function accessorTypeToNumComponents(type: string): number {
 		const accessorMap = new Map<string, number>([
-			["SCALAR",	1],
-			["VEC2",	2],
-			["VEC3",	3],
-			["VEC4",	4],
-			["MAT2",	4],
-			["MAT3",	9],
-			["MAT4",	16]
+			["SCALAR", 1],
+			["VEC2", 2],
+			["VEC3", 3],
+			["VEC4", 4],
+			["MAT2", 4],
+			["MAT3", 9],
+			["MAT4", 16]
 		]);
 		if (accessorMap.has(type)) {
 			return accessorMap.get(type);
@@ -1310,9 +1324,9 @@ export module glTFLoaderBasic {
 	export function getAccessorData(accessor: Accessor): Int8Array | Uint8Array | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array {
 		const typedArray = glTFLoaderBasic.glTypeToTypedArray(accessor.componentType);
 		return new typedArray(
-			accessor.bufferView.data, 
-			accessor.byteOffset, 
-			
+			accessor.bufferView.data,
+			accessor.byteOffset,
+
 		);
 	}
 
@@ -1321,9 +1335,9 @@ export module glTFLoaderBasic {
 		const reader = new TypedArray(accessor.bufferView.data, accessor.byteOffset);
 		const componentCount = glTFLoaderBasic.accessorTypeToNumComponents(accessor.type);
 		const write = new TypedArray(new ArrayBuffer(accessor.count * componentCount * TypedArray.BYTES_PER_ELEMENT));
-		const inputStride = accessor.bufferView.byteStride  == 0 ? componentCount : accessor.bufferView.byteStride / TypedArray.BYTES_PER_ELEMENT;
-		for(let i = 0; i < accessor.count; i++) {
-			for(let c = 0; c < componentCount; c++) {
+		const inputStride = accessor.bufferView.byteStride == 0 ? componentCount : accessor.bufferView.byteStride / TypedArray.BYTES_PER_ELEMENT;
+		for (let i = 0; i < accessor.count; i++) {
+			for (let c = 0; c < componentCount; c++) {
 				write[componentCount * i + c] = reader[i * inputStride + c];
 			}
 		}
@@ -1332,13 +1346,13 @@ export module glTFLoaderBasic {
 }
 
 // get Axis-Aligned Bounding Boxes from Oriented Bounding Boxes
-function getAABBFromOBB(obb: BoundingBox, matrix: mat4): BoundingBox{
-	let transformRight		: vec3 = vec3.fromValues(matrix[0], matrix[1], matrix[2]);
-	let transformUp			: vec3 = vec3.fromValues(matrix[4], matrix[5], matrix[6]);
-	let transformBackward	: vec3 = vec3.fromValues(matrix[8], matrix[9], matrix[10]);
+function getAABBFromOBB(obb: BoundingBox, matrix: mat4): BoundingBox {
+	let transformRight: vec3 = vec3.fromValues(matrix[0], matrix[1], matrix[2]);
+	let transformUp: vec3 = vec3.fromValues(matrix[4], matrix[5], matrix[6]);
+	let transformBackward: vec3 = vec3.fromValues(matrix[8], matrix[9], matrix[10]);
 
-	let tmpVec3a 			: vec3 = vec3.create();
-	let tmpVec3b 			: vec3 = vec3.create();
+	let tmpVec3a: vec3 = vec3.create();
+	let tmpVec3b: vec3 = vec3.create();
 
 	let min = vec3.fromValues(matrix[12], matrix[13], matrix[14]);  // init with matrix translation
 	let max = vec3.clone(min);
@@ -1350,15 +1364,15 @@ function getAABBFromOBB(obb: BoundingBox, matrix: mat4): BoundingBox{
 	vec3.max(transformRight, tmpVec3a, tmpVec3b);
 	vec3.add(max, max, transformRight);
 
-	tmpVec3a			= vec3.scale(tmpVec3a, transformUp, obb.min[1]);
-	tmpVec3b 			= vec3.scale(tmpVec3b, transformUp, obb.max[1]);
+	tmpVec3a = vec3.scale(tmpVec3a, transformUp, obb.min[1]);
+	tmpVec3b = vec3.scale(tmpVec3b, transformUp, obb.max[1]);
 	vec3.min(transformUp, tmpVec3a, tmpVec3b);
 	vec3.add(min, min, transformUp);
 	vec3.max(transformUp, tmpVec3a, tmpVec3b);
 	vec3.add(max, max, transformUp);
 
-	tmpVec3a			= vec3.scale(tmpVec3a, transformBackward, obb.min[2]);
-	tmpVec3b 			= vec3.scale(tmpVec3b, transformBackward, obb.max[2]);
+	tmpVec3a = vec3.scale(tmpVec3a, transformBackward, obb.min[2]);
+	tmpVec3b = vec3.scale(tmpVec3b, transformBackward, obb.max[2]);
 	vec3.min(transformBackward, tmpVec3a, tmpVec3b);
 	vec3.add(min, min, transformBackward);
 	vec3.max(transformBackward, tmpVec3a, tmpVec3b);
