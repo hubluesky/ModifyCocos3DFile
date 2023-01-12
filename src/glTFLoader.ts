@@ -1186,41 +1186,18 @@ export class GLTFLoader {
 
 	public async loadGLTF(uri: string): Promise<GLTF> {
 		this.baseUri = this.getBaseUri(uri);
-		try {
-			// const glTFBase : GLTFBase = await fetch(new Request(uri)).then<any, GLTFBase>((response: Response) => {
-			// 	if (response.ok) {
-			// 		console.log(response)
-			// 		return response.json();
-			// 	}
-			// 	throw Error("LoadingError: Error occured in loading glTF JSON.");
-			// });
-			const glTFBase: GLTFBase = await this.loadJson(uri);
-			this._glTF = glTFBase;
-			this.glTF = new GLTF(glTFBase);
-		} catch (error) {
-			console.error(error);
-		}
+		const glTFBase: GLTFBase = await this.loadJson(uri);
+		this._glTF = glTFBase;
+		this.glTF = new GLTF(glTFBase);
 		const loadBuffer: Promise<boolean> = new Promise<boolean>(async (resolve) => {
 			if (this._glTF.buffers) {
 				const bufferPromises: Promise<ArrayBuffer>[] = [];
 				for (const bufferInfo of this._glTF.buffers) {
-					try {
-						// bufferPromises.push(fetch (new Request(this.baseUri + bufferInfo.uri)
-						// ).then((response: Response) => {
-						// 	if (response.ok) {
-						// 		return response.arrayBuffer();
-						// 	}
-						// 	throw Error("LoadingError: Error occured in loading buffers.");
-						// }));
-						const arrayBuffer = this.loadArrayBuffer(this.baseUri + bufferInfo.uri);
-						bufferPromises.push(arrayBuffer);
-					} catch (error) {
-						console.error(error);
-					}
+					const arrayBuffer = this.loadArrayBuffer(this.baseUri + bufferInfo.uri);
+					bufferPromises.push(arrayBuffer);
 				}
 				for (const [bufferID, buffer] of bufferPromises.entries()) {
 					this.glTF.buffers[bufferID] = await buffer;
-					// console.log(`image ${bufferID} complete`); 
 				}
 			}
 			resolve(true);

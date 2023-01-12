@@ -33,7 +33,7 @@ export default class Geometry {
     public readonly primitiveDatas: PrimitiveData[] = [];
 
     public static creatFromGLTF(gltf: GLTF): Geometry {
-        if (gltf.meshes.length > 1) throw `不支持多个Mesh`;
+        if (gltf.meshes.length > 1) throw `Multiple Mesh is not supported.`;
         const mesh = gltf.meshes[0];
         const geometry = new Geometry();
         const joints: number[] = gltf.skins == null || gltf.skins.length == 0 ? null : gltf.skins[0].joints.map(x => x.nodeID);
@@ -90,7 +90,7 @@ export default class Geometry {
                     this.primitiveDatas[indexPrimitive].attributeDatas.push(attributeData);
                 } break;
                 default:
-                    throw `不支持的属性类型${attributeName}`;
+                    throw new Error(`The ${attributeName} is not supported.`);
             }
         }
 
@@ -222,7 +222,7 @@ export default class Geometry {
             const r = 1.0 / (uv1[0] * uv2[1] - uv2[0] * uv1[1]);
 
             if (!isFinite(r)) {
-                console.warn(uv1, uv2);
+                // console.warn(uv1, uv2);
                 continue;
             }
 

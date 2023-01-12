@@ -26,7 +26,7 @@ export class CocosMeshMeta {
     public constructor(jsonText: string) {
         this._data = JSON.parse(jsonText);
         const bin = this.getBin()[0];
-        console.assert(bin != null, "Mesh Meta文件格式不正确");
+        console.assert(bin != null, "The mesh meta file format is incorrect.");
         this.primitives = bin["primitives"];
         this.vertexBundles = bin["vertexBundles"];
         this.jointMaps = bin["jointMaps"];
@@ -60,7 +60,7 @@ export class CocosSkeletonMeta {
     public constructor(jsonText: string) {
         this._data = JSON.parse(jsonText);
         const bin = this.getBin();
-        console.assert(bin != null, "skeleton meta文件格式不正确");
+        console.assert(bin != null, "The skeleton meta file format is incorrect.");
         this.joints = bin[3];
         this.bindposesValueType = bin[4];
         this.bindposes = bin[4][0];
@@ -131,6 +131,6 @@ export class CocosMesh {
             this.primitives.push(ibo);
         }
 
-        console.assert(meshMeta.primitives.length == meshMeta.vertexBundles.length, meshMeta.primitives.length, meshMeta.vertexBundles.length);
+        // console.assert(meshMeta.primitives.length == meshMeta.vertexBundles.length, meshMeta.primitives.length, meshMeta.vertexBundles.length);
     }
 }

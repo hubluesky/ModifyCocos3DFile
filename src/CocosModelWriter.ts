@@ -6,23 +6,26 @@ import Geometry from "./Geometry";
 
 export default class CocosModelWriter {
 
-    /**
-     * Cocos的模型文件写入
-     * @param filename 模型文件路径，不带后缀
-     */
-    public constructor(filename: string, meshMeta: CocosMeshMeta, geometry: Geometry, skeletonMeta: CocosSkeletonMeta, skeleton: CocosSkeleton) {
+    public wirteFiles(filename: string, meshMeta: CocosMeshMeta, geometry: Geometry, skeletonMeta: CocosSkeletonMeta, skeleton: CocosSkeleton): string[] {
         if (geometry.primitiveDatas.length != meshMeta.primitives.length)
-            throw `子网络数量不匹配${geometry.primitiveDatas.length} ${meshMeta.primitives.length}`;
+            throw new Error(`The number of submesh does no match ${meshMeta.primitives.length} ${geometry.primitiveDatas.length}`);
+
         const arrayBuffer = this.wirteModel(meshMeta, geometry);
+        const filesnames: string[] = [];
 
         fs.mkdirSync(path.dirname(filename), { recursive: true });
         fs.writeFileSync(filename + ".bin", Buffer.from(arrayBuffer), "binary");
         fs.writeFileSync(filename + "@mesh.json", JSON.stringify(meshMeta.data), "utf-8");
 
+        filesnames.push(filename + ".bin", filename + "@mesh.json");
+
         if (skeletonMeta != null && skeleton != null) {
             const skeletonMetaData = this.wirteSkeleton(skeletonMeta, skeleton);
             fs.writeFileSync(filename + "@skeleton.json", JSON.stringify(skeletonMetaData), "utf-8");
+
+            filesnames.push(filename + "@skeleton.json");
         }
+        return filesnames;
     }
 
     private getArrayBufferSize(meshMeta: CocosMeshMeta, geometry: Geometry): number {

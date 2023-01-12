@@ -1,10 +1,7 @@
 
 import path from "path";
-import { CocosSkeleton, CocosSkeletonMeta } from "./CocosModel";
-import CocosModelReader from "./CocosModelReader";
-import CocosModelWriter from "./CocosModelWriter";
-import { readFBXToGltf } from "./Common";
-import Geometry from "./Geometry";
+import child_process from "child_process";
+import { gltfToCocosFile, readFBXToGltf } from "./Common";
 import { glTFLoaderBasic } from "./glTFLoader";
 
 console.log("start main script");
@@ -14,7 +11,7 @@ async function logFbxData(filename: string) {
     const primitive = gltf.meshes[0].primitives[0];
     console.log("indices", glTFLoaderBasic.accessorToTypeArray(primitive.indices));
     console.log("positions", glTFLoaderBasic.accessorToTypeArray(primitive.attributes.POSITION));
-    
+
     // const positionAccessor = primitive.attributes.POSITION;
     // const TypedArray = glTFLoaderBasic.glTypeToTypedArray(positionAccessor.componentType);
     // const positionArray = new TypedArray(positionAccessor.bufferView.data);
@@ -24,23 +21,16 @@ async function logFbxData(filename: string) {
 
 // await logFbxData("Horse");
 
-async function translate(filename: string, meshname: string, replaceName: string, filePath: string) {
-    const metaData = CocosModelReader.readMeshMeta(`${filePath}/${filename}/${meshname}@mesh.json`);
-
+async function translate(filename: string, meshName: string, replaceName: string, filePath: string) {
     // const gltf = await loadGltf(`./assets/gltf//${replaceName}/${replaceName}.gltf`);
-    const gltf = await readFBXToGltf(`./assets/fbx/${replaceName}.fbx`, false);
-    let skeleton: CocosSkeleton;
-    let skeletonMeta: CocosSkeletonMeta;
-    const skeletonFilename = `${filePath}/${filename}/${meshname}@skeleton.json`;
-    if (gltf.skins?.length == 1 && CocosModelReader.isFileExist(skeletonFilename)) {
-        skeletonMeta = CocosModelReader.readSkeletonMeta(skeletonFilename);
-        const skin = gltf.skins[0];
-        skeleton = new CocosSkeleton(skin.joints, skin.inverseBindMatrix);
-    }
-    const geometry = Geometry.creatFromGLTF(gltf);
-    const write = new CocosModelWriter(`./temp/out/${filename}/${meshname}`, metaData, geometry, skeletonMeta, skeleton);
-    console.log("转换完毕，输出目录:", path.join(process.cwd(), `/temp/out/${filename}`));
+    const gltf = await readFBXToGltf(`./assets/fbx/${replaceName}.fbx`, true);
+    const meshMetaPath = `${filePath}/${filename}/${meshName}@mesh.json`;
+    const skeletonPath = `${filePath}/${filename}/${meshName}@skeleton.json`;
+    gltfToCocosFile(gltf, meshName, meshMetaPath, skeletonPath, `./temp/out/${filename}`);
+    const outPath = path.join(process.cwd(), `/temp/out/${filename}`);
+    console.log("Conversion completed, output directory:", outPath);
+    child_process.execSync(`start "" "${outPath}"`);
 }
 
-// await translate("model_cow", "model_cow", "model_tiger", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
+await translate("Quad", "quad.001", "YeZhiShu", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
 // debugger;
