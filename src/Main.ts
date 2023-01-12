@@ -32,5 +32,5 @@ async function translate(filename: string, meshName: string, replaceName: string
     child_process.execSync(`start "" "${outPath}"`);
 }
 
-await translate("Quad", "quad.001", "YeZhiShu", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
+await translate("model_cow", "model_cow", "model_tiger", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
 // debugger;

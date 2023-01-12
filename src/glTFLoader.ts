@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { vec3, mat4, quat } from "gl-matrix";
+import parseGLB from './Glb';
 
 type GLTFID = number;
 
@@ -976,7 +977,6 @@ export class GLTF {
 export class GLTFLoader {
 	_glTF: GLTFBase;
 	glTF: GLTF;
-	baseUri: string;
 	enableGLAvatar: boolean;
 	skeletonGLTF: GLTF;
 	gl: WebGL2RenderingContext;
@@ -1184,53 +1184,62 @@ export class GLTFLoader {
 		}));
 	}
 
-	public async loadGLTF(uri: string): Promise<GLTF> {
-		this.baseUri = this.getBaseUri(uri);
-		const glTFBase: GLTFBase = await this.loadJson(uri);
-		this._glTF = glTFBase;
-		this.glTF = new GLTF(glTFBase);
-		const loadBuffer: Promise<boolean> = new Promise<boolean>(async (resolve) => {
-			if (this._glTF.buffers) {
-				const bufferPromises: Promise<ArrayBuffer>[] = [];
-				for (const bufferInfo of this._glTF.buffers) {
-					const arrayBuffer = this.loadArrayBuffer(this.baseUri + bufferInfo.uri);
-					bufferPromises.push(arrayBuffer);
+	public async loadImages(baseUri: string) {
+		if (this._glTF.images == null) return;
+		const imagePromises: Promise<ImageBitmap>[] = [];
+		for (const imageInfo of this._glTF.images) {
+			imagePromises.push(fetch(new Request(baseUri + imageInfo.uri)
+			).then((response: Response) => {
+				if (response.ok) {
+					return response.blob();
 				}
-				for (const [bufferID, buffer] of bufferPromises.entries()) {
-					this.glTF.buffers[bufferID] = await buffer;
-				}
-			}
-			resolve(true);
-		});
-		// const loadImage : Promise<boolean> = new Promise<boolean>(async (resolve) => {
-		// 	if (this._glTF.images) {
-		// 		const imagePromises : Promise<ImageBitmap>[] = [];
-		// 		for (const imageInfo of this._glTF.images) {
-		// 			try {
-		// 				imagePromises.push(fetch (new Request(this.baseUri + imageInfo.uri)
-		// 				).then((response: Response) => {
-		// 					if (response.ok) {
-		// 						return response.blob();
-		// 					}
-		// 					throw Error("LoadingError: Error occured in loading images.");
-		// 				}).then((imageBlob: Blob) => {
-		// 					return createImageBitmap(imageBlob);
-		// 				}));
-		// 			} catch (error) {
-		// 				console.error(error);
-		// 			}	
-		// 		}
-		// 		for (const [imageID, image] of imagePromises.entries()) {
-		// 			this.glTF.images[imageID] = await image;
-		// 			console.log(`image ${imageID} complete`); 
-		// 		}
-		// 	}
-		// 	resolve(true);
-		// });
-		await loadBuffer;
-		// await loadImage;
+				throw Error("LoadingError: Error occured in loading images.");
+			}).then((imageBlob: Blob) => {
+				return createImageBitmap(imageBlob);
+			}));
+		}
+		for (const [imageID, image] of imagePromises.entries()) {
+			this.glTF.images[imageID] = await image;
+			console.log(`image ${imageID} complete`);
+		}
+	}
+
+	public parseGLTF(json: GLTFBase, bins: ArrayBuffer[]): GLTF {
+		this._glTF = json;
+		this.glTF = new GLTF(json);
+
+		for (const [bufferID, buffer] of bins.entries()) {
+			this.glTF.buffers[bufferID] = buffer;
+		}
+
 		this.postProcess();
 		return this.glTF;
+	}
+
+	public async loadGLTF(uri: string): Promise<GLTF> {
+		switch (uri.slice(-4).toLocaleLowerCase()) {
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			case 'gltf': {
+				const baseUri = this.getBaseUri(uri);
+				const glTFBase: GLTFBase = await this.loadJson(uri);
+				const buffers: ArrayBuffer[] = [];
+				if (glTFBase.buffers) {
+					for (const bufferInfo of glTFBase.buffers) {
+						const arrayBuffer = await this.loadArrayBuffer(baseUri + bufferInfo.uri);
+						buffers.push(arrayBuffer);
+					}
+				}
+				// this.loadImages(baseUri);
+				return this.parseGLTF(glTFBase, buffers);
+			}
+			//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			case '.glb': {
+				const arrayBuffer = await this.loadArrayBuffer(uri);
+				const tuple = await parseGLB(arrayBuffer);
+				return this.parseGLTF(tuple[0] as unknown as GLTFBase, [tuple[1]]);
+			}
+		}
+		return null;
 	}
 
 	public loadGLTFFromData(gltfJson: Object, buffers: { name: string, buffer: ArrayBuffer }[]): GLTF {
