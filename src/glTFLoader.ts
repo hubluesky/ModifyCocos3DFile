@@ -1186,21 +1186,24 @@ export class GLTFLoader {
 
 	public async loadImages(baseUri: string) {
 		if (this._glTF.images == null) return;
-		const imagePromises: Promise<ImageBitmap>[] = [];
+		const bitmapList: Promise<ImageBitmap>[] = [];
 		for (const imageInfo of this._glTF.images) {
-			imagePromises.push(fetch(new Request(baseUri + imageInfo.uri)
-			).then((response: Response) => {
-				if (response.ok) {
-					return response.blob();
-				}
-				throw Error("LoadingError: Error occured in loading images.");
-			}).then((imageBlob: Blob) => {
-				return createImageBitmap(imageBlob);
-			}));
+			const arrayBuffer = await this.loadArrayBuffer(baseUri + imageInfo.uri);
+			const blob = new Blob([arrayBuffer]);
+			const bitmap = createImageBitmap(blob);
+			bitmapList.push(bitmap);
+			// imagePromises.push(fetch(new Request(baseUri + imageInfo.uri)
+			// ).then((response: Response) => {
+			// 	if (response.ok) {
+			// 		return response.blob();
+			// 	}
+			// 	throw Error("LoadingError: Error occured in loading images.");
+			// }).then((imageBlob: Blob) => {
+			// 	return createImageBitmap(imageBlob);
+			// }));
 		}
-		for (const [imageID, image] of imagePromises.entries()) {
+		for (const [imageID, image] of bitmapList.entries()) {
 			this.glTF.images[imageID] = await image;
-			console.log(`image ${imageID} complete`);
 		}
 	}
 
