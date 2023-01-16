@@ -1,5 +1,15 @@
-import { mat4, ReadonlyMat4, ReadonlyVec3 } from "gl-matrix";
+import { mat4 } from "gl-matrix";
 import { Attribute, FormatInfos, getIndexStrideCtor, getOffset, getReader, getTypedArrayConstructor, ISubMesh, IVertexBundle, TypedArray } from "./Cocos";
+
+interface ArrayLike<T> {
+    readonly length: number;
+    readonly [n: number]: T;
+    /** Iterator */
+    [Symbol.iterator](): IterableIterator<T>;
+}
+
+export type ReadonlyVec3 = readonly [number, number, number] | ArrayLike<number>;
+export type ReadonlyMat4 = readonly [number, number, number, number, number, number, number, number, number, number, number, number, number, number, number, number] | ArrayLike<number>;
 
 export class CocosMeshMeta {
     public readonly primitives: ISubMesh[];
@@ -43,8 +53,8 @@ interface VertexBundle {
 }
 
 interface JointData {
-    readonly name: string;
-    readonly parent: JointData;
+    getName(): string;
+    getParent(): JointData | any;
 }
 
 export class CocosSkeletonMeta {
@@ -73,22 +83,27 @@ export class CocosSkeletonMeta {
 
 export class CocosSkeleton {
     public readonly joints: string[];
-    public readonly bindPoses: mat4[];
-    
-    public constructor(joints: readonly JointData[], bindPoses: ReadonlyMat4[]) {
+    public readonly bindPoses: ArrayLike<number>[];
+
+    public constructor(joints: readonly JointData[], bindPoses: ArrayLike<number>, componentSize: number = 16) {
         this.joints = new Array<string>(joints.length);
         for (let i = 0; i < joints.length; i++)
             this.joints[i] = CocosSkeleton.getJointPathName(joints[i]);
-        this.bindPoses = new Array<mat4>(bindPoses.length);
-        for (let i = 0; i < bindPoses.length; i++)
-            this.bindPoses[i] = mat4.clone(bindPoses[i]);
+
+        this.bindPoses = new Array(bindPoses.length / componentSize);
+        for (let i = 0; i < bindPoses.length / componentSize; i++) {
+            const mat4: number[] = [];
+            for (let j = 0; j < componentSize; j++)
+                mat4[j] = bindPoses[i * componentSize + j];
+            this.bindPoses[i] = mat4;
+        }
     }
 
     private static getJointPathName(joint: JointData): string {
-        let name = joint.name;
-        while (joint.parent != null) {
-            name = joint.parent.name + "/" + name;
-            joint = joint.parent;
+        let name = joint.getName();
+        while (joint.getParent().getName() != '') {
+            joint = joint.getParent();
+            name = joint.getName() + "/" + name;
         }
         return name;
     }

@@ -6,7 +6,7 @@ import archiver from "archiver";
 import { CocosSkeleton, CocosSkeletonMeta } from "./CocosModel";
 import CocosModelReader from "./CocosModelReader";
 import CocosModelWriter from "./CocosModelWriter";
-import { fbxToGltf2, gltfToCocosFile, loadGltf } from "./Common";
+import { fbxToGltf2, gltfToCocosFileOld, loadGltfOld } from "./Common";
 import Geometry from "./Geometry";
 import { GLTF } from "./glTFLoader";
 
@@ -68,9 +68,9 @@ function convertToCocosFile(fbx: Express.Multer.File, gltf: Express.Multer.File[
     }
 
     const meshName = path.basename(cocosMeta.originalname, path.extname(cocosMeta.originalname));
-    loadGltf(gltfUrl).then(gltf => {
+    loadGltfOld(gltfUrl).then(gltf => {
         try {
-            const filenames = gltfToCocosFile(gltf, meshName, cocosMeta.path, skeletonMeta?.path, `${outPath}/${meshName}`);
+            const filenames = gltfToCocosFileOld(gltf, meshName, cocosMeta.path, skeletonMeta?.path, `${outPath}/${meshName}`);
             callback?.(undefined, filenames);
         } catch (error) {
             callback?.(error, undefined);
