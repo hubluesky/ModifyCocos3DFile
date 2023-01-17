@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Upload fbx | gltf File to convert cocos model file</title>
+    <title>Upload fbx File to convert cocos model file</title>
     <style>
         body {
             text-align: center;
@@ -18,14 +18,10 @@
 
 <body>
     <h1>Upload files to Node.js Server</h1>
-    <form action="upload" method="post" enctype="multipart/form-data">
+    <form action="fbx2cocos" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="file">upload FBX</label>
             <input type="file" name="fbx" accept=".fbx">
-        </div>
-        <div class="form-group">
-            <label for="file">upload GLTF</label>
-            <input type="file" name="gltf" multiple="multiple" accept=".gltf, .bin">
         </div>
         <div class="form-group">
             <label for="file">upload Cocos Mesh Meta</label>

@@ -1,11 +1,8 @@
 
-import path from "path";
+import { Logger, NodeIO } from "@gltf-transform/core";
 import child_process from "child_process";
-import { computeAttributes, gltfToCocosFile, gltfToCocosFileOld, loadGltf, loadGltfOld, readFBXToGltf } from "./Common";
-import { glTFLoaderBasic } from "./glTFLoader";
-import { Logger } from "@gltf-transform/core";
-import Geometry from "./Geometry";
-import { AttributeName } from "./Cocos";
+import path from "path";
+import { computeAttributes, gltfToCocosFile, fbxToGLtf } from "./Common";
 
 console.log("start main script");
 
@@ -25,7 +22,7 @@ async function logFbxData(filename: string) {
 // await logFbxData("Horse");
 
 async function translate(filename: string, meshName: string, replaceName: string, filePath: string) {
-    const gltfPath = await readFBXToGltf(`./assets/fbx/${replaceName}.fbx`, true);
+    const gltfPath = await fbxToGLtf(`./assets/fbx/${replaceName}.fbx`);
     const meshMetaPath = `${filePath}/${filename}/${meshName}@mesh.json`;
     const skeletonPath = `${filePath}/${filename}/${meshName}@skeleton.json`;
     await gltfToCocosFile(gltfPath, meshMetaPath, skeletonPath, `./temp/out/${filename}`, meshName);
@@ -37,8 +34,8 @@ async function translate(filename: string, meshName: string, replaceName: string
 await translate("model_cow", "model_cow", "model_tiger", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
 
 async function testGltfTransform(filename: string, meshName: string, replaceName: string, filePath: string) {
-    const gltfPath = await readFBXToGltf(`./assets/fbx/${replaceName}.fbx`, true);
-    const doc = await loadGltf(gltfPath);
+    const gltfPath = await fbxToGLtf(`./assets/fbx/${replaceName}.fbx`);
+    const doc = await new NodeIO().read(gltfPath);
     const root = doc.getRoot();
     doc.setLogger(new Logger(Logger.Verbosity.DEBUG));
 
@@ -54,15 +51,6 @@ async function testGltfTransform(filename: string, meshName: string, replaceName
         const array = accessor.getArray();
         // console.log(semantic, array.length);
     }
-
-    console.log("Tangent1", primitive.getAttribute("TANGENT").getArray());
-    // console.log("indices", indicesAccessor.getArray()?.length);
-
-    const gltf = await loadGltfOld(gltfPath);
-    const geo = Geometry.creatFromGLTF(gltf);
-    const tangentArray3 = geo.getAttributeAccessor(0, AttributeName.ATTR_TANGENT);
-
-    console.log("Tangent2", tangentArray3);
 
     // const nodes = root.listNodes();
     // const joints = skin.listJoints();

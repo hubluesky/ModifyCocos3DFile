@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Node Server",
+            "name": "Launch Node Js Server",
             "program": "${workspaceFolder}/dist/NodeServer.js",
             "request": "launch",
             "skipFiles": [
@@ -14,15 +14,38 @@
             "type": "node"
         },
         {
-            "name": "ts-node",
+            "name": "Launch Node Ts Server",
             "type": "node",
             "request": "launch",
-            "args": ["src/Main.ts"],
+            "args": [
+                "src/NodeServer.ts"
+            ],
             // "runtimeArgs": ["-r", "ts-node/register"],
-            "runtimeArgs": ["--experimental-specifier-resolution=node", "--experimental-loader", "ts-node/esm"],
+            "runtimeArgs": [
+                "--experimental-specifier-resolution=node",
+                "--experimental-loader",
+                "ts-node/esm"
+            ],
             "cwd": "${workspaceRoot}",
             "protocol": "inspector",
             "internalConsoleOptions": "openOnSessionStart",
-          }
+        },
+        {
+            "name": "Launch Test",
+            "type": "node",
+            "request": "launch",
+            "args": [
+                "src/Main.ts"
+            ],
+            // "runtimeArgs": ["-r", "ts-node/register"],
+            "runtimeArgs": [
+                "--experimental-specifier-resolution=node",
+                "--experimental-loader",
+                "ts-node/esm"
+            ],
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector",
+            "internalConsoleOptions": "openOnSessionStart",
+        }
     ]
 }

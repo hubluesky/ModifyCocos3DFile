@@ -1,14 +1,9 @@
+import archiver from "archiver";
 import express from "express";
 import fs from "fs";
 import multer from "multer";
 import path from "path";
-import archiver from "archiver";
-import { CocosSkeleton, CocosSkeletonMeta } from "./CocosModel";
-import CocosModelReader from "./CocosModelReader";
-import CocosModelWriter from "./CocosModelWriter";
-import { fbxToGltf2, gltfToCocosFileOld, loadGltfOld } from "./Common";
-import Geometry from "./Geometry";
-import { GLTF } from "./glTFLoader";
+import { facebookFbxToGltf, gltfToCocosFile } from "./Common";
 
 const PORT = process.env.PORT || 8077;
 const fbx2gltfPath = "temp/fbx2gltf";
@@ -24,58 +19,40 @@ const fieldNames = {
 
 // process.env.UV_THREADPOOL_SIZE = "20";
 
-function checkFiles(fbx: Express.Multer.File, gltf: Express.Multer.File[], cocosMeta: Express.Multer.File, skeletonMeta: Express.Multer.File): string {
+function checkCocosFiles(cocosMeta: Express.Multer.File, skeletonMeta: Express.Multer.File): string {
     if (cocosMeta == null) return "Please upload cocos meta file.";
     if (cocosMeta.mimetype != "application/json") return "The cocos meta file must be a json";
     if (skeletonMeta != null && skeletonMeta.mimetype != "application/json") return "The cocos skeleton meta file must be a json";
-    if (fbx == null && gltf == null) return "Please upload fbx or gltf file";
-    if (gltf != null) {
-        const extname = path.extname(gltf[0].originalname).toLowerCase();
-        if (extname == "glb") {
-            if (gltf.length != 1) return "The glb file must only one file";
-        } else if (extname == "gltf") {
-            if (gltf.length >= 2) return "The gltf file must have .bin files";
-            const extname2 = path.extname(gltf[1].originalname).toLowerCase();
-            if (extname2 != "bin") return `The gltf must have .bin files instead of .${extname2}`;
-        } else if (extname == "bin") {
-            if (gltf.length >= 2) return "The gltf file must have .gltf file";
-            const gltfFileIndex = gltf.findIndex(x => x.originalname.toLowerCase().endsWith("gltf"));
-            if (gltfFileIndex == -1) return "The gltf must have .gltf file";
-            const bin = gltf[0];
-            gltf[0] = gltf[gltfFileIndex];
-            gltf[gltfFileIndex] = bin;
-        }
+}
+
+function checkFbxFiles(fbx: Express.Multer.File): string {
+    if (fbx == null) return "Please upload fbx file";
+}
+
+function checkGltfFiles(gltf: Express.Multer.File[]): string {
+    if (gltf == null) return "Please upload gltf files";
+    const extname = path.extname(gltf[0].originalname).toLowerCase();
+    if (extname == ".glb") {
+        if (gltf.length != 1) return "The glb file must only one file";
+    } else if (extname == ".gltf") {
+        if (gltf.length >= 2) return "The gltf file must have .bin files";
+        const extname2 = path.extname(gltf[1].originalname).toLowerCase();
+        if (extname2 != ".bin") return `The gltf must have .bin files instead of .${extname2}`;
+    } else if (extname == ".bin") {
+        if (gltf.length < 2) return "The gltf file must have .gltf file";
+        const gltfFileIndex = gltf.findIndex(x => x.originalname.toLowerCase().endsWith(".gltf"));
+        if (gltfFileIndex == -1) return "The gltf must have .gltf file";
+        const bin = gltf[0];
+        gltf[0] = gltf[gltfFileIndex];
+        gltf[gltfFileIndex] = bin;
     }
 }
 
-function convertToCocosFile(fbx: Express.Multer.File, gltf: Express.Multer.File[], cocosMeta: Express.Multer.File, skeletonMeta: Express.Multer.File, callback?: (error: string, filenames: string[]) => void): void {
-    let gltfUrl: string;
-    if (fbx != null) {
-        try {
-            const gltfName = path.basename(fbx.originalname, path.extname(fbx.originalname));
-            gltfUrl = `${fbx2gltfPath}/${gltfName}/${gltfName}.gltf`;
-            fbxToGltf2(fbx.path, gltfUrl);
-        } catch (error) {
-            callback?.(error, undefined);
-        }
-    } else if (gltf != null) {
-        const filename = gltf[0].originalname;
-        const gltfName = path.basename(filename, path.extname(filename));
-        const gltfPath = `${fbx2gltfPath}/${gltfName}`;
-        gltfUrl = path.join(gltfPath, filename);
-        for (const gltfFile of gltf)
-            fs.renameSync(gltfFile.path, path.join(gltfPath, gltfFile.originalname));
-    }
-
-    const meshName = path.basename(cocosMeta.originalname, path.extname(cocosMeta.originalname));
-    loadGltfOld(gltfUrl).then(gltf => {
-        try {
-            const filenames = gltfToCocosFileOld(gltf, meshName, cocosMeta.path, skeletonMeta?.path, `${outPath}/${meshName}`);
-            callback?.(undefined, filenames);
-        } catch (error) {
-            callback?.(error, undefined);
-        }
-    });
+function convertToCocosFile(gltfUrl: string, cocosMeta: Express.Multer.File, skeletonMeta: Express.Multer.File): Promise<string[]> {
+    let index = cocosMeta.originalname.lastIndexOf("@");
+    if (index == -1) index = cocosMeta.originalname.lastIndexOf(".");
+    const meshName = cocosMeta.originalname.substring(0, index);
+    return gltfToCocosFile(gltfUrl, cocosMeta.path, skeletonMeta?.path, `${outPath}/${meshName}`, meshName);
 }
 
 async function sendFiles(res: express.Response, filenames: readonly string[]) {
@@ -100,31 +77,74 @@ function createExpressServer(): void {
     app.use(express.static('data'));
     const upload = multer({ dest: uploadPath });
 
-    app.get('/form', function (req, res, next) {
-        var form = fs.readFileSync('./upload_file.html', { encoding: 'utf8' });
+    app.get('/fbx2cocosForm', function (req, res, next) {
+        var form = fs.readFileSync('./uploadFbxfile.html', { encoding: 'utf8' });
         res.send(form);
         res.end();
     });
 
-    const fields = upload.fields([{ name: fieldNames.fbx, maxCount: 1 }, { name: fieldNames.gltf, maxCount: 2 }, { name: fieldNames.meshMeta, maxCount: 1 }, { name: fieldNames.skeletonMeta, maxCount: 1 }]);
-    app.post('/upload', fields, function (req, res, next) {
+    app.get('/gltf2cocosForm', function (req, res, next) {
+        var form = fs.readFileSync('./uploadGltffile.html', { encoding: 'utf8' });
+        res.send(form);
+        res.end();
+    });
+
+    const fbxFields = upload.fields([{ name: fieldNames.fbx, maxCount: 1 }, { name: fieldNames.meshMeta, maxCount: 1 }, { name: fieldNames.skeletonMeta, maxCount: 1 }]);
+    app.post('/fbx2cocos', fbxFields, function (req, res, next) {
         const fbx = req.files[fieldNames.fbx]?.[0];
-        const gltf = req.files[fieldNames.gltf];
         const cocosMeta = req.files[fieldNames.meshMeta]?.[0];
         const skeletonMeta = req.files[fieldNames.skeletonMeta]?.[0];
-        const errorText = checkFiles(fbx, gltf, cocosMeta, skeletonMeta);
+
+        const errorText = checkCocosFiles(cocosMeta, skeletonMeta) ?? checkFbxFiles(fbx);
         if (errorText != null) {
             res.end(errorText);
             return;
         }
-        convertToCocosFile(fbx, gltf, cocosMeta, skeletonMeta, function (error, filenames) {
-            if (error != null) {
-                res.end(error);
-                return;
-            }
-            sendFiles(res, filenames);
-        });
-    })
+
+        try {
+            const gltfName = path.basename(fbx.originalname, path.extname(fbx.originalname));
+            const gltfUrl = `${fbx2gltfPath}/${gltfName}/${gltfName}.gltf`;
+            facebookFbxToGltf(fbx.path, gltfUrl);
+
+            convertToCocosFile(gltfUrl, cocosMeta, skeletonMeta).then(filenames => {
+                sendFiles(res, filenames);
+            });
+        } catch (error) {
+            res.end(error);
+            return;
+        }
+
+    });
+
+    const gltfFields = upload.fields([{ name: fieldNames.gltf, maxCount: 2 }, { name: fieldNames.meshMeta, maxCount: 1 }, { name: fieldNames.skeletonMeta, maxCount: 1 }]);
+    app.post('/gltf2cocos', gltfFields, function (req, res, next) {
+        const gltf: Express.Multer.File[] = req.files[fieldNames.gltf];
+        const cocosMeta: Express.Multer.File = req.files[fieldNames.meshMeta]?.[0];
+        const skeletonMeta: Express.Multer.File = req.files[fieldNames.skeletonMeta]?.[0];
+        const errorText = checkCocosFiles(cocosMeta, skeletonMeta) ?? checkGltfFiles(gltf);
+        if (errorText != null) {
+            res.end(errorText);
+            return;
+        }
+
+        const filename = gltf[0].originalname;
+        const gltfName = path.basename(filename, path.extname(filename));
+        const gltfPath = `${fbx2gltfPath}/${gltfName}`;
+        const gltfUrl = path.join(gltfPath, filename);
+
+        fs.mkdirSync(gltfPath, { recursive: true });
+        for (const gltfFile of gltf) 
+            fs.renameSync(gltfFile.path, path.join(gltfPath, gltfFile.originalname));
+        
+        try {
+            convertToCocosFile(gltfUrl, cocosMeta, skeletonMeta).then(filenames => {
+                sendFiles(res, filenames);
+            });
+        } catch (error) {
+            res.end(error);
+            return;
+        }
+    });
 
     app.listen(PORT, () => {
         console.log(`Server started ${PORT}...`);

@@ -1,4 +1,3 @@
-import { mat4 } from "gl-matrix";
 import { Attribute, FormatInfos, getIndexStrideCtor, getOffset, getReader, getTypedArrayConstructor, ISubMesh, IVertexBundle, TypedArray } from "./Cocos";
 
 interface ArrayLike<T> {
@@ -52,11 +51,6 @@ interface VertexBundle {
     readonly attributeValues: AttributeValue[];
 }
 
-interface JointData {
-    getName(): string;
-    getParent(): JointData | any;
-}
-
 export class CocosSkeletonMeta {
     public readonly joints: string[];
     public readonly bindposes: ArrayLike<number>[];
@@ -82,13 +76,11 @@ export class CocosSkeletonMeta {
 }
 
 export class CocosSkeleton {
-    public readonly joints: string[];
+    public readonly joints: readonly string[];
     public readonly bindPoses: ArrayLike<number>[];
 
-    public constructor(joints: readonly JointData[], bindPoses: ArrayLike<number>, componentSize: number = 16) {
-        this.joints = new Array<string>(joints.length);
-        for (let i = 0; i < joints.length; i++)
-            this.joints[i] = CocosSkeleton.getJointPathName(joints[i]);
+    public constructor(joints: readonly string[], bindPoses: ArrayLike<number>, componentSize: number = 16) {
+        this.joints = joints;
 
         this.bindPoses = new Array(bindPoses.length / componentSize);
         for (let i = 0; i < bindPoses.length / componentSize; i++) {
@@ -97,15 +89,6 @@ export class CocosSkeleton {
                 mat4[j] = bindPoses[i * componentSize + j];
             this.bindPoses[i] = mat4;
         }
-    }
-
-    private static getJointPathName(joint: JointData): string {
-        let name = joint.getName();
-        while (joint.getParent().getName() != '') {
-            joint = joint.getParent();
-            name = joint.getName() + "/" + name;
-        }
-        return name;
     }
 }
 
@@ -145,7 +128,5 @@ export class CocosMesh {
             const ibo = new Ctor(arrayBuffer, indexView.offset, indexView.count);
             this.primitives.push(ibo);
         }
-
-        // console.assert(meshMeta.primitives.length == meshMeta.vertexBundles.length, meshMeta.primitives.length, meshMeta.vertexBundles.length);
     }
 }
