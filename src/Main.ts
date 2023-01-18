@@ -2,7 +2,7 @@
 import { Logger, NodeIO } from "@gltf-transform/core";
 import child_process from "child_process";
 import path from "path";
-import { computeAttributes, gltfToCocosFile, fbxToGLtf } from "./Common";
+import { computeNormalAndTangent, gltfToCocosFile, fbxToGLtf, readCocosMesh, cocosMeshToGltf, writeGltfFile } from "./Common";
 
 console.log("start main script");
 
@@ -31,7 +31,16 @@ async function translate(filename: string, meshName: string, replaceName: string
     child_process.execSync(`start "" "${outPath}"`);
 }
 
-await translate("model_cow", "model_cow", "model_tiger", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
+// await translate("model_cow", "model_cow", "model_tiger", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
+
+async function cocosToGltf(filename: string, meshName: string, filePath: string) {
+    const cocosMesh = readCocosMesh(filename, meshName, filePath);
+    const josnDoc = await cocosMeshToGltf(cocosMesh, meshName);
+    writeGltfFile(josnDoc, filename, `./temp/cocos2gltf/${filename}`);
+    console.log("Conversion completed, output directory:");
+}
+
+await cocosToGltf("Cube", "Cube", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
 
 async function testGltfTransform(filename: string, meshName: string, replaceName: string, filePath: string) {
     const gltfPath = await fbxToGLtf(`./assets/fbx/${replaceName}.fbx`);
@@ -39,7 +48,7 @@ async function testGltfTransform(filename: string, meshName: string, replaceName
     const root = doc.getRoot();
     doc.setLogger(new Logger(Logger.Verbosity.DEBUG));
 
-    await computeAttributes(doc, true);
+    await computeNormalAndTangent(doc, true);
     const mesh = root.listMeshes()[0];
     const skin = root.listSkins()?.[0];
     const primitive = mesh.listPrimitives()[0];

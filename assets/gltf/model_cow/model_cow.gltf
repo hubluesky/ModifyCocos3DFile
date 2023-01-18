@@ -3,7 +3,6 @@
         "generator" : "Khronos glTF Blender I/O v3.2.40",
         "version" : "2.0"
     },
-    "scene" : 0,
     "scenes" : [
         {
             "name" : "Scene",

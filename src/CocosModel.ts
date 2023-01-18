@@ -43,12 +43,17 @@ export class CocosMeshMeta {
 }
 
 interface AttributeValue {
-    attribute: Attribute;
+    describe: Attribute;
     data: TypedArray;
 }
 
+interface Primitive {
+    indices: TypedArray;
+    bundles: readonly VertexBundle[];
+}
+
 interface VertexBundle {
-    readonly attributeValues: AttributeValue[];
+    readonly attributeValues: readonly AttributeValue[];
 }
 
 export class CocosSkeletonMeta {
@@ -94,12 +99,13 @@ export class CocosSkeleton {
 
 export class CocosMesh {
     public readonly bundles: VertexBundle[] = [];
-    public readonly primitives: TypedArray[] = [];
+    public readonly primitives: Primitive[] = [];
 
     public constructor(arrayBuffer: ArrayBuffer, meshMeta: CocosMeshMeta) {
         for (let iv = 0; iv < meshMeta.vertexBundles.length; iv++) {
             const vertexBundle = meshMeta.vertexBundles[iv];
-            this.bundles[iv] = { attributeValues: [] };
+            const attributeValues: AttributeValue[] = [];
+            this.bundles[iv] = { attributeValues };
             for (let ia = 0; ia < vertexBundle.attributes.length; ia++) {
                 const view = new DataView(arrayBuffer, vertexBundle.view.offset + getOffset(vertexBundle.attributes, ia));
                 const { format } = vertexBundle.attributes[ia];
@@ -111,7 +117,7 @@ export class CocosMesh {
 
                 const StorageConstructor = getTypedArrayConstructor(FormatInfos[format]);
                 const storage = new StorageConstructor(vertexCount * componentCount);
-                this.bundles[iv].attributeValues[ia] = { attribute: vertexBundle.attributes[ia], data: storage };
+                attributeValues[ia] = { describe: vertexBundle.attributes[ia], data: storage };
 
                 for (let iVertex = 0; iVertex < vertexCount; iVertex++) {
                     for (let iComponent = 0; iComponent < componentCount; iComponent++) {
@@ -125,8 +131,11 @@ export class CocosMesh {
         for (const primitive of meshMeta.primitives) {
             const indexView = primitive.indexView!;
             const Ctor = getIndexStrideCtor(indexView.stride);
-            const ibo = new Ctor(arrayBuffer, indexView.offset, indexView.count);
-            this.primitives.push(ibo);
+            const indices = new Ctor(arrayBuffer, indexView.offset, indexView.count);
+            const bundles: VertexBundle[] = [];
+            for (let bundleIndex of primitive.vertexBundelIndices)
+                bundles.push(this.bundles[bundleIndex]);
+            this.primitives.push({ indices, bundles });
         }
     }
 }

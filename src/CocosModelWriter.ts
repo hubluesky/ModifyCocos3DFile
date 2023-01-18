@@ -2,20 +2,9 @@ import { bounds, Document, Mesh, Primitive, Root } from '@gltf-transform/core';
 import fs from 'fs';
 import path from 'path';
 import { AttributeName, FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './Cocos';
+import { CocosToGltfAttribute } from './CocosGltfWrap';
 import { CocosMeshMeta, CocosSkeleton, CocosSkeletonMeta } from "./CocosModel";
 import { gltf } from './gltf';
-
-const gltfAttributeMaps = new Map<AttributeName, gltf.AttributeName>();
-gltfAttributeMaps.set(AttributeName.ATTR_POSITION, gltf.AttributeName.POSITION);
-gltfAttributeMaps.set(AttributeName.ATTR_NORMAL, gltf.AttributeName.NORMAL);
-gltfAttributeMaps.set(AttributeName.ATTR_TANGENT, gltf.AttributeName.TANGENT);
-gltfAttributeMaps.set(AttributeName.ATTR_TEX_COORD, gltf.AttributeName.TEXCOORD_0);
-gltfAttributeMaps.set(AttributeName.ATTR_TEX_COORD1, gltf.AttributeName.TEXCOORD_1);
-gltfAttributeMaps.set(AttributeName.ATTR_TEX_COORD2, gltf.AttributeName.TEXCOORD_2);
-gltfAttributeMaps.set(AttributeName.ATTR_COLOR, gltf.AttributeName.COLOR_0);
-gltfAttributeMaps.set(AttributeName.ATTR_JOINTS, gltf.AttributeName.JOINTS_0);
-gltfAttributeMaps.set(AttributeName.ATTR_WEIGHTS, gltf.AttributeName.WEIGHTS_0);
-
 
 export default class CocosModelWriter {
 
@@ -90,7 +79,7 @@ export default class CocosModelWriter {
                 const outputStride = vertexBundle.view.stride;
                 const componentCount = FormatInfos[format].count;
                 const outputComponentByteLength = getComponentByteLength(format);
-                const attributeName = gltfAttributeMaps.get(name);
+                const attributeName = CocosToGltfAttribute[name];
                 const attributeAccessor = listPrimitives[iv].getAttribute(attributeName);
                 if (attributeAccessor == null)
                     throw new Error(`Attribute ${attributeName} is not supported.`);
@@ -103,7 +92,6 @@ export default class CocosModelWriter {
                         writer(outputOffset, typeArray[inputOffset]);
                     }
                 }
-                // console.log(name, typeArray);
             }
         }
 

@@ -1,3 +1,4 @@
+import { GLTF } from "@gltf-transform/core/dist/types/gltf";
 
 export namespace gltf {
     export enum AttributeName {
@@ -11,4 +12,16 @@ export namespace gltf {
         JOINTS_0 = "JOINTS_0",
         WEIGHTS_0 = "WEIGHTS_0",
     }
+
+    export const AttributeElementType: Record<AttributeName, GLTF.AccessorType> = {
+        "POSITION": "VEC3",
+        "NORMAL": "VEC3",
+        "TANGENT": "VEC4",
+        "TEXCOORD_0": "VEC2",
+        "TEXCOORD_1": "VEC2",
+        "TEXCOORD_2": "VEC2",
+        "COLOR_0": "VEC4",
+        "JOINTS_0": "SCALAR",
+        "WEIGHTS_0": "SCALAR",
+    };
 }
