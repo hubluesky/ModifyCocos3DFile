@@ -111,16 +111,13 @@ export async function gltfToCocosFile(uri: string, meshMetaPath: string, skeleto
     return new CocosModelWriter().wirteFiles(`${outPath}/${meshName}`, metaData, document, skeletonMeta, skeleton);
 }
 
-export function readCocosMesh(filename: string, meshName: string, filePath: string) {
-    const meshBinPath = `${filePath}/${filename}/${meshName}.bin`;
-    const meshMetaPath = `${filePath}/${filename}/${meshName}@mesh.json`;
-    // const skeletonPath = `${filePath}/${filename}/${meshName}@skeleton.json`;
-    if (!fs.existsSync(meshBinPath)) throw `Can not find bin file: ${meshBinPath}`;
-    if (!fs.existsSync(meshMetaPath)) throw `Can not find mesh file: ${meshMetaPath}`;
+export function readCocosMesh(binPath: string, meshMetaPath: string, skeletonPath: string) {
+    if (!fs.existsSync(binPath)) throw new Error(`Can not find bin file: ${binPath}`);
+    if (!fs.existsSync(meshMetaPath)) throw new Error(`Can not find mesh meta file: ${meshMetaPath}`);
 
     const text: string = fs.readFileSync(meshMetaPath, "utf-8");
     const meshMeta = new CocosMeshMeta(text);
-    let arrayBuffer = readFileSync(meshBinPath);
+    let arrayBuffer = readFileSync(binPath);
     const meshBin = new CocosMesh(arrayBuffer, meshMeta);
     return meshBin;
 }

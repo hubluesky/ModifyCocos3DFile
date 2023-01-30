@@ -23,11 +23,13 @@ async function fbx2Cocos(fbxPath: string, meshMetaPath: string, skeletonPath: st
     return filenames;
 }
 
-async function cocosToGltf(filename: string, meshName: string, filePath: string) {
-    const cocosMesh = readCocosMesh(filename, meshName, filePath);
-    const josnDoc = await cocosMeshToGltf(cocosMesh, meshName);
-    writeGltfFile(josnDoc, filename, `./temp/cocos2gltf/${filename}`);
-    console.log("Conversion completed, output directory:");
+async function cocosToGltf(binPath: string, meshMetaPath: string, skeletonPath: string, modelName: string, outPath: string) {
+    const cocosMesh = readCocosMesh(binPath, meshMetaPath, skeletonPath);
+    const josnDoc = await cocosMeshToGltf(cocosMesh, modelName);
+    outPath = path.join(outPath, modelName);
+    writeGltfFile(josnDoc, modelName, outPath);
+    console.log("Conversion completed, output directory:", outPath);
+    child_process.execSync(`start "" "${outPath}"`);
 }
 
 // await cocosToGltf("Cube", "Cube", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
@@ -46,8 +48,15 @@ interface Gltf2Cocos {
     output: string;
 }
 
+interface Cocos2Gltf {
+    name: string;
+    cocos: string[];
+    output: string;
+}
+
 interface Cocos3DFiles {
     name: string;
+    bin?: string;
     mesh?: string,
     skeleton?: string,
     prefab?: string,
@@ -56,9 +65,14 @@ interface Cocos3DFiles {
 function parseCocosFiles(name: string, filenames: string[]): Cocos3DFiles {
     const cocos3DFiles: Cocos3DFiles = { name };
     for (const filename of filenames) {
-        const basename = path.basename(filename, path.extname(filename));
+        const ext = path.extname(filename);
+        const basename = path.basename(filename, ext);
         const index = basename.lastIndexOf("@");
-        if (index == -1) continue;
+        if (index == -1) {
+            if (ext.toLowerCase() == ".bin")
+                cocos3DFiles.bin = filename;
+            continue;
+        }
         const type = basename.substring(index + 1);
         if (cocos3DFiles.name == null)
             cocos3DFiles.name = basename.substring(0, index);
@@ -100,6 +114,17 @@ program.command("gltf2cocos")
     .action(function (input: Gltf2Cocos) {
         const cocos3DFile = parseCocosFiles(input.name, input.cocos);
         gltf2Cocos(input.gltf, cocos3DFile.mesh, cocos3DFile.skeleton, cocos3DFile.name, input.output);
+    });
+
+program.command("cocos2gltf")
+    .alias("c2g")
+    .description("Conver cocos 3d files to gltf. PS. skeleton models are not supported.")
+    .option("-n, --name <string>", "3d file name.")
+    .requiredOption("-c, --cocos [path...]", "Input cocos 3d files")
+    .requiredOption("-o, --output <path>", "Output Cocos 3d file path. It must be local path.")
+    .action(function (input: Cocos2Gltf) {
+        const cocos3DFile = parseCocosFiles(input.name, input.cocos);
+        cocosToGltf(cocos3DFile.bin, cocos3DFile.mesh, cocos3DFile.skeleton, cocos3DFile.name, input.output);
     });
 
 program.parse();
