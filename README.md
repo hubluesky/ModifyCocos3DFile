@@ -34,3 +34,51 @@ Cocos支持两种3D模型导入格式，一种是FBX，一种是GLTF，不管是
 2. 由于FBX格式并非是开源，而且数据结构没有GLTF格式更贴近OpenGL引擎的数据格式，所以本工具是先将FBX转成GLTF，然后再解析GLTF数据到Cocos的3D文件数据格式。
 3. 由于FBX格式并非是开源，也没有使用FBX的C++版本SDK，所以解析FBX文件可能会有一些问题，所以建议优化使用GLTF文件格式
 4. FBX文件建议版本是2019及以上（PS.也不建议太高）版本，GLTF使用2.0版本。
+
+## 开始
+### 安装依赖文件
+在项目目录下，执行`npm install`命令安装项目依赖
+
+### 命令行执行
+项目是使用typescript开发，可以使用ts-node直接运行.ts文件。
+``` command-line
+ts-node src/Main.ts
+```
+显示结果为：
+```
+Usage: Main [options] [command]
+
+Options:
+  -v, --version             Cocos 3d file converter
+  -h, --help                display help for command
+
+Commands:
+  fbx2cocos|f2c [options]   Conver fbx to cocos 3d file.
+  gltf2cocos|g2c [options]  Conver gltf to cocos 3d file.
+  help [command]            display help for command
+```
+* `fbx2cocos`命令是把fbx文件转化为cocos3D文件的命令
+```
+Usage: Main fbx2cocos|f2c [options]
+
+Conver fbx to cocos 3d file.
+
+Options:
+  -n, --name <string>    3d file name.
+  -f, --fbx <path>       Input Fbx file path.
+  -c, --cocos [path...]  Input cocos 3d meta files.
+  -o, --output <path>    Output Cocos 3d file path. It must be local path.
+  -h, --help             display help for command
+```
+* `gltf2cocos`命令是把gltf文件转化为cocos3D文件的命令
+
+### 测试
+项目中有几个测试文件，用来测试转换的。
+测试命令如下：
+```
+ts-node src/Main.ts fbx2cocos -f ./assets/fbx/model_cow.FBX -c ./assets/cocos/model_cow/model_cow@mesh.json ./assets/cocos/model_cow/model_cow@skeleton.json -o ./temp/out
+
+// 转换成功后，输出以下信息。
+normals: No qualifying primitives found. See debug output.
+Conversion completed, output directory: temp\out\model_cow
+```

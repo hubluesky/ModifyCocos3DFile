@@ -5,39 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Node Js Server",
-            "program": "${workspaceFolder}/dist/NodeServer.js",
-            "request": "launch",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "type": "node"
-        },
-        {
-            "name": "Launch Node Ts Server",
-            "type": "node",
-            "request": "launch",
-            "args": [
-                "src/NodeServer.ts"
-            ],
-            // "runtimeArgs": ["-r", "ts-node/register"],
-            "runtimeArgs": [
-                "--experimental-specifier-resolution=node",
-                "--experimental-loader",
-                "ts-node/esm"
-            ],
-            "cwd": "${workspaceRoot}",
-            "protocol": "inspector",
-            "internalConsoleOptions": "openOnSessionStart",
-        },
-        {
-            "name": "Launch Test",
+            "name": "Launch Command-line",
             "type": "node",
             "request": "launch",
             "args": [
                 "src/Main.ts"
             ],
-            // "runtimeArgs": ["-r", "ts-node/register"],
             "runtimeArgs": [
                 "--experimental-specifier-resolution=node",
                 "--experimental-loader",

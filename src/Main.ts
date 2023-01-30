@@ -2,36 +2,26 @@
 import { Logger, NodeIO } from "@gltf-transform/core";
 import child_process from "child_process";
 import path from "path";
+import * as fs from 'fs';
+import { program } from "commander";
 import { computeNormalAndTangent, gltfToCocosFile, fbxToGLtf, readCocosMesh, cocosMeshToGltf, writeGltfFile } from "./Common";
 
-console.log("start main script");
 
-async function logFbxData(filename: string) {
-    // const gltf = await readFBXToGltf(`./assets/fbx/${filename}.fbx`, false);
-    // const primitive = gltf.meshes[0].primitives[0];
-    // console.log("indices", glTFLoaderBasic.accessorToTypeArray(primitive.indices));
-    // console.log("positions", glTFLoaderBasic.accessorToTypeArray(primitive.attributes.POSITION));
-
-    // const positionAccessor = primitive.attributes.POSITION;
-    // const TypedArray = glTFLoaderBasic.glTypeToTypedArray(positionAccessor.componentType);
-    // const positionArray = new TypedArray(positionAccessor.bufferView.data);
-    // console.log("normals", glTFLoaderBasic.getAccessorData(primitive.attributes.NORMAL));
-    // console.log("texcoords", glTFLoaderBasic.getAccessorData(primitive.attributes.TEXCOORD_0));
-}
-
-// await logFbxData("Horse");
-
-async function translate(filename: string, meshName: string, replaceName: string, filePath: string) {
-    const gltfPath = await fbxToGLtf(`./assets/fbx/${replaceName}.fbx`);
-    const meshMetaPath = `${filePath}/${filename}/${meshName}@mesh.json`;
-    const skeletonPath = `${filePath}/${filename}/${meshName}@skeleton.json`;
-    await gltfToCocosFile(gltfPath, meshMetaPath, skeletonPath, `./temp/out/${filename}`, meshName);
-    const outPath = path.join(process.cwd(), `/temp/out/${filename}`);
+async function gltf2Cocos(gltfPath: string, meshMetaPath: string, skeletonPath: string, modelName: string, outPath: string) {
+    outPath = path.join(outPath, modelName);
+    const filenames = await gltfToCocosFile(gltfPath, meshMetaPath, skeletonPath, outPath, modelName);
     console.log("Conversion completed, output directory:", outPath);
-    child_process.execSync(`start "" "${outPath}"`);
+    // child_process.execSync(`start "" "${outPath}"`);
+    return filenames;
 }
 
-// await translate("model_cow", "model_cow", "model_tiger", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
+async function fbx2Cocos(fbxPath: string, meshMetaPath: string, skeletonPath: string, modelName: string, outPath: string) {
+    const tempPath = `temp/fbx2gltf/${modelName}`;
+    const gltfPath = await fbxToGLtf(fbxPath, tempPath);
+    const filenames = await gltf2Cocos(gltfPath, meshMetaPath, skeletonPath, modelName, outPath);
+    fs.rmSync(tempPath, { recursive: true, force: true });
+    return filenames;
+}
 
 async function cocosToGltf(filename: string, meshName: string, filePath: string) {
     const cocosMesh = readCocosMesh(filename, meshName, filePath);
@@ -40,41 +30,76 @@ async function cocosToGltf(filename: string, meshName: string, filePath: string)
     console.log("Conversion completed, output directory:");
 }
 
-await cocosToGltf("Cube", "Cube", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
+// await cocosToGltf("Cube", "Cube", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
 
-async function testGltfTransform(filename: string, meshName: string, replaceName: string, filePath: string) {
-    const gltfPath = await fbxToGLtf(`./assets/fbx/${replaceName}.fbx`);
-    const doc = await new NodeIO().read(gltfPath);
-    const root = doc.getRoot();
-    doc.setLogger(new Logger(Logger.Verbosity.DEBUG));
-
-    await computeNormalAndTangent(doc, true);
-    const mesh = root.listMeshes()[0];
-    const skin = root.listSkins()?.[0];
-    const primitive = mesh.listPrimitives()[0];
-    const indicesAccessor = primitive.getIndices();
-    const attributes = primitive.listAttributes();
-    const semantics = primitive.listSemantics();
-    for (const semantic of semantics) {
-        const accessor = primitive.getAttribute(semantic);
-        const array = accessor.getArray();
-        // console.log(semantic, array.length);
-    }
-
-    // const nodes = root.listNodes();
-    // const joints = skin.listJoints();
-    // const jointValues: number[] = [];
-    // for (const joint of joints) {
-    //     jointValues.push(nodes.indexOf(joint));
-    // }
-
-    // console.log(jointValues);
-
-    // const gltfPath = await readFBXToGltf(`./assets/fbx/${replaceName}.fbx`, true);
-    // const meshMetaPath = `${filePath}/${filename}/${meshName}@mesh.json`;
-    // const skeletonPath = `${filePath}/${filename}/${meshName}@skeleton.json`;
-    // const outPath = path.join(process.cwd(), `/temp/out/${filename}`);
-    // const filenames = await gltfToCocosFile(gltfPath, meshName, meshMetaPath, skeletonPath, outPath);
+interface Fbx2Cocos {
+    name: string;
+    fbx: string;
+    cocos: string[];
+    output: string;
 }
 
-// await testGltfTransform("model_cow", "model_cow", "Cube", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
+interface Gltf2Cocos {
+    name: string;
+    gltf: string;
+    cocos: string[];
+    output: string;
+}
+
+interface Cocos3DFiles {
+    name: string;
+    mesh?: string,
+    skeleton?: string,
+    prefab?: string,
+}
+
+function parseCocosFiles(name: string, filenames: string[]): Cocos3DFiles {
+    const cocos3DFiles: Cocos3DFiles = { name };
+    for (const filename of filenames) {
+        const basename = path.basename(filename, path.extname(filename));
+        const index = basename.lastIndexOf("@");
+        if (index == -1) continue;
+        const type = basename.substring(index + 1);
+        if (cocos3DFiles.name == null)
+            cocos3DFiles.name = basename.substring(0, index);
+        switch (type) {
+            case "mesh":
+                cocos3DFiles.mesh = filename;
+                break;
+            case "skeleton":
+                cocos3DFiles.skeleton = filename;
+                break;
+            case "prefab":
+                cocos3DFiles.prefab = filename;
+                break;
+        }
+    }
+    return cocos3DFiles;
+}
+
+program.version("0.0.1", "-v, --version", "Cocos 3d file converter");
+program.command("fbx2cocos")
+    .alias("f2c")
+    .description("Conver fbx to cocos 3d file.")
+    .option("-n, --name <string>", "3d file name.")
+    .requiredOption("-f, --fbx <path>", "Input Fbx file path.")
+    .requiredOption("-c, --cocos [path...]", "Input cocos 3d meta files.")
+    .requiredOption("-o, --output <path>", "Output Cocos 3d file path. It must be local path.")
+    .action(function (input: Fbx2Cocos) {
+        const cocos3DFile = parseCocosFiles(input.name, input.cocos);
+        fbx2Cocos(input.fbx, cocos3DFile.mesh, cocos3DFile.skeleton, cocos3DFile.name, input.output);
+    });
+
+program.command("gltf2cocos")
+    .alias("g2c")
+    .description("Conver gltf to cocos 3d file.")
+    .option("-n, --name <string>", "3d file name.")
+    .requiredOption("-g, --gltf <path>", "Input gltf file path.")
+    .requiredOption("-c, --cocos [path...]", "Input cocos 3d meta files")
+    .requiredOption("-o, --output <path>", "Output Cocos 3d file path. It must be local path.")
+    .action(function (input: Gltf2Cocos) {
+        const cocos3DFile = parseCocosFiles(input.name, input.cocos);
+        gltf2Cocos(input.gltf, cocos3DFile.mesh, cocos3DFile.skeleton, cocos3DFile.name, input.output);
+    });
+
+program.parse();
