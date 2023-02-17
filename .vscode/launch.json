@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Command-line",
+            "name": "Launch Test",
             "type": "node",
             "request": "launch",
             "args": [
-                "src/Main.ts"
+                "src/Test.ts"
             ],
             "runtimeArgs": [
                 "--experimental-specifier-resolution=node",

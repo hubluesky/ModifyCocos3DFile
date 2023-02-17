@@ -9,10 +9,10 @@
     "forceConsistentCasingInFileNames": true,
     "strict": false,
     "allowJs": true,
-    "declaration": false,
+    "declaration": true,
     // "noImplicitAny": true,
     "skipLibCheck": true,
-    "sourceMap": true
+    "sourceMap": true,
   },
   "exclude": [
     "dist",

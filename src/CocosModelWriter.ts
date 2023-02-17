@@ -8,7 +8,7 @@ import { gltf } from './gltf';
 
 export default class CocosModelWriter {
 
-    public wirteFiles(filename: string, meshMeta: CocosMeshMeta, document: Document, skeletonMeta: CocosSkeletonMeta, skeleton: CocosSkeleton): string[] {
+    public wirteFiles(document: Document, meshPath: string, meshMeta: CocosMeshMeta): void {
         const root = document.getRoot();
         const meshes = root.listMeshes();
         if (meshes.length > 1)
@@ -18,20 +18,14 @@ export default class CocosModelWriter {
         this.writeJointMaps(meshMeta, root);
         this.writeBounds(meshMeta, root);
 
-        const filesnames: string[] = [];
-        fs.mkdirSync(path.dirname(filename), { recursive: true });
-        fs.writeFileSync(filename + ".bin", Buffer.from(arrayBuffer), "binary");
-        fs.writeFileSync(filename + "@mesh.json", JSON.stringify(meshMeta.data), "utf-8");
+        fs.mkdirSync(path.dirname(meshPath), { recursive: true });
+        fs.writeFileSync(meshPath + ".bin", Buffer.from(arrayBuffer), "binary");
+        fs.writeFileSync(meshPath + ".json", JSON.stringify(meshMeta.data), "utf-8");
 
-        filesnames.push(filename + ".bin", filename + "@mesh.json");
-
-        if (skeletonMeta != null && skeleton != null) {
-            const skeletonMetaData = this.wirteSkeleton(skeletonMeta, skeleton);
-            fs.writeFileSync(filename + "@skeleton.json", JSON.stringify(skeletonMetaData), "utf-8");
-
-            filesnames.push(filename + "@skeleton.json");
-        }
-        return filesnames;
+        // if (skeletonMeta != null && skeleton != null) {
+        //     const skeletonMetaData = this.wirteSkeleton(skeletonMeta, skeleton);
+        //     fs.writeFileSync(meshPath + ".json", JSON.stringify(skeletonMetaData), "utf-8");
+        // }
     }
 
     private updateArrayBufferSize(meshMeta: CocosMeshMeta, listPrimitives: Primitive[]): number {

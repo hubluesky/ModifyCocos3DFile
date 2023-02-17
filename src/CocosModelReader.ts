@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { CocosMesh, CocosMeshMeta, CocosSkeletonMeta } from "./CocosModel";
-import { readFileSync } from './Common';
+import { io } from './IO';
 
 export default class CocosModelReader {
     public readonly mesh: CocosMesh;
@@ -15,7 +15,7 @@ export default class CocosModelReader {
     }
 
     public static readMesh(filename: string, meshMeta: CocosMeshMeta): CocosMesh {
-        let arrayBuffer = readFileSync(filename);
+        let arrayBuffer = io.readBinaryFileSync(filename);
         return new CocosMesh(arrayBuffer, meshMeta);
     }
 
