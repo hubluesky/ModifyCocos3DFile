@@ -9,7 +9,6 @@
     "forceConsistentCasingInFileNames": true,
     "strict": false,
     "allowJs": true,
-    "declaration": true,
     // "noImplicitAny": true,
     "skipLibCheck": true,
     "sourceMap": true,

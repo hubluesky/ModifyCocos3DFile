@@ -49,29 +49,38 @@ ts-node src/Main.ts
 Usage: Main [options] [command]
 
 Options:
-  -v, --version             Cocos 3d file converter
-  -h, --help                display help for command
+  -v, --version                        Cocos 3d file converter
+  -h, --help                           display help for command
 
 Commands:
-  fbx2cocos|f2c [options]   Conver fbx to cocos 3d file.
-  gltf2cocos|g2c [options]  Conver gltf to cocos 3d file.
-  help [command]            display help for command
+  ModifyCocos3DFileByFbx|mf [options]  read the fbx and replace to the cocos 3d file.
+  ModifyCocos3DFile|mg [options]       read the gltf and replace to the cocos 3d file.
+  help [command]                       display help for command
 ```
-* `fbx2cocos`命令是把fbx文件转化为cocos3D文件的命令
+* `ModifyCocos3DFileByFbx|mf`命令是把fbx文件转化为cocos3D文件的命令
 ```
-Usage: Main fbx2cocos|f2c [options]
+Usage: Main ModifyCocos3DFileByFbx|mf [options]
 
-Conver fbx to cocos 3d file.
+read the fbx and replace to the cocos 3d file.
 
 Options:
-  -n, --name <string>    3d file name.
-  -f, --fbx <path>       Input Fbx file path.
-  -c, --cocos [path...]  Input cocos 3d meta files.
-  -o, --output <path>    Output Cocos 3d file path. It must be local path.
-  -h, --help             display help for command
+  -f, --fbx <path>           Input gltf file path.
+  -c, --cocos <path>         Input cocos 3d file
+  -o, --output <path>        Output Cocos 3d file path. It must be local path.
+  -h, --help                 display help for command
 ```
 * `gltf2cocos`命令是把gltf文件转化为cocos3D文件的命令
+```
+Usage: Main ModifyCocos3DFile|mg [options]
 
+read the gltf and replace to the cocos 3d file.
+
+Options:
+  -g, --gltf <path>          Input gltf file path.
+  -c, --cocos <path>         Input cocos 3d file
+  -o, --output <path>        Output Cocos 3d file path.
+  -h, --help                 display help for command
+```
 ### 测试
 项目中有几个测试文件，用来测试转换的。
 测试命令如下：

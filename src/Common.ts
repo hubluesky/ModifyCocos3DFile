@@ -1,12 +1,10 @@
-import { cocos } from './Cocos';
 import { Document, JSONDocument, Node, NodeIO } from '@gltf-transform/core';
 import { TypedArray } from '@gltf-transform/core/dist/constants';
 import child_process from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { AttributeName } from './Cocos';
 import { CocosToGltfAttribute } from './CocosGltfWrap';
-import { CocosMesh, CocosMeshMeta, CocosSkeleton, CocosSkeletonMeta } from './CocosModel';
+import { CocosMesh, CocosMeshMeta } from './CocosModel';
 import CocosModelReader from './CocosModelReader';
 import CocosModelWriter from './CocosModelWriter';
 import { gltf } from './gltf';

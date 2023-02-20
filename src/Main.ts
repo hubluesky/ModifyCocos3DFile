@@ -19,8 +19,6 @@ async function fbxReplaceCocos(fbxPath: string, cocosPath: string, outPath: stri
     fs.rmSync(tempPath, { recursive: true, force: true });
 }
 
-// await cocosToGltf("Cube", "Cube", "E:/workspace/Cocos/ReplaceModelTest/build/web-mobile/resource/model");
-
 interface FbxReplaceCocos {
     name: string;
     fbx: string;
@@ -35,55 +33,24 @@ interface GltfReplaceCocos {
     output: string;
 }
 
-interface Cocos3DFiles {
-    name: string;
-    bin?: string;
-    mesh?: string,
-    skeleton?: string,
-    prefab?: string,
-}
-
 program.version("0.0.1", "-v, --version", "Cocos 3d file converter");
-// program.command("fbx2cocos")
-//     .alias("f2c")
-//     .description("Conver fbx to cocos 3d file.")
-//     .option("-n, --name <string>", "3d file name.")
-//     .requiredOption("-f, --fbx <path>", "Input Fbx file path.")
-//     .requiredOption("-c, --cocos [path...]", "Input cocos 3d meta files.")
-//     .requiredOption("-o, --output <path>", "Output Cocos 3d file path. It must be local path.")
-//     .action(function (input: Fbx2Cocos) {
-//         const cocos3DFile = parseCocosFiles(input.name, input.cocos);
-//         fbx2Cocos(input.fbx, cocos3DFile.mesh, cocos3DFile.skeleton, cocos3DFile.name, input.output);
-//     });
-
-// program.command("gltf2cocos")
-//     .alias("g2c")
-//     .description("Conver gltf to cocos 3d file.")
-//     .option("-n, --name <string>", "3d file name.")
-//     .requiredOption("-g, --gltf <path>", "Input gltf file path.")
-//     .requiredOption("-c, --cocos [path...]", "Input cocos 3d meta files")
-//     .requiredOption("-o, --output <path>", "Output Cocos 3d file path. It must be local path.")
-//     .action(function (input: Gltf2Cocos) {
-//         const cocos3DFile = parseCocosFiles(input.name, input.cocos);
-//         gltf2Cocos(input.gltf, cocos3DFile.mesh, cocos3DFile.skeleton, cocos3DFile.name, input.output);
-//     });
 
 program.command("ModifyCocos3DFileByFbx")
     .alias("mf")
-    .description("read the gltf|fbx and replace to the cocos 3d file.")
+    .description("read the fbx and replace to the cocos 3d file.")
     .requiredOption("-f, --fbx <path>", "Input gltf file path.")
-    .requiredOption("-c, --cocos prefab <path>", "Input cocos 3d file")
-    .requiredOption("-o, --output <path>", "Output Cocos 3d file path. It must be local path.")
+    .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
+    .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
     .action(function (input: FbxReplaceCocos) {
         fbxReplaceCocos(input.fbx, input.cocos, input.output);
     });
 
 program.command("ModifyCocos3DFile")
     .alias("mg")
-    .description("read the gltf|fbx and replace to the cocos 3d file.")
+    .description("read the gltf and replace to the cocos 3d file.")
     .requiredOption("-g, --gltf <path>", "Input gltf file path.")
-    .requiredOption("-c, --cocos prefab <path>", "Input cocos 3d file")
-    .requiredOption("-o, --output <path>", "Output Cocos 3d file path. It must be local path.")
+    .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
+    .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
     .action(function (input: GltfReplaceCocos) {
         gltfReplaceCocos(input.gltf, input.cocos, input.output);
     });

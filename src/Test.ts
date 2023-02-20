@@ -1,7 +1,5 @@
 
-import { cocos } from './Cocos';
 import { gltfToCocosFile } from './Common';
-import { io } from './IO';
 
 
 // console.log("System", System.import);
