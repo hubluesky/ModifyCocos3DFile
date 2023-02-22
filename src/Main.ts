@@ -1,4 +1,3 @@
-
 import { program } from "commander";
 import * as fs from 'fs';
 import path from "path";
@@ -9,6 +8,7 @@ async function gltfReplaceCocos(gltfPath: string, cocosPath: string, outPath: st
     outPath = path.join(outPath, modelName);
     await gltfToCocosFile(gltfPath, cocosPath, outPath);
     // child_process.execSync(`start "" "${outPath}"`);
+    console.log("Conversion completed, output directory:", outPath);
 }
 
 async function fbxReplaceCocos(fbxPath: string, cocosPath: string, outPath: string) {

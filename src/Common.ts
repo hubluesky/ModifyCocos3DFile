@@ -22,7 +22,7 @@ export function cocosFbxToGltf(input: string, out: string) {
     const toolPath = `./fbx-gltf-conv/bin/${process.platform}/FBX-glTF-conv`;
     const result = child_process.spawnSync(toolPath, [input, "--out", out]);
     if (result.status != 0)
-        throw new Error(result.stderr.toString().trim());
+        throw new Error("FBX convert failed:"+result.stderr.toString().trim());
 }
 
 /**
@@ -34,7 +34,7 @@ export function facebookFbxToGltf(input: string, out: string) {
     const toolPath = `./FBX2glTF/FBX2glTF-${process.platform}`;
     const result = child_process.spawnSync(toolPath, ["--input", input, "--output", out]);
     if (result.status != 0)
-        throw new Error(result.stderr.toString().trim());
+        throw new Error("Gltf convert failed:"+result.stderr.toString().trim());
 }
 
 /**
@@ -123,8 +123,8 @@ export async function gltfToCocosFile(uri: string, cocosPath: string, outPath: s
 }
 
 export function readCocosMesh(binPath: string, meshMetaPath: string, skeletonPath: string) {
-    if (!fs.existsSync(binPath)) throw new Error(`Can not find bin file: ${binPath}`);
-    if (!fs.existsSync(meshMetaPath)) throw new Error(`Can not find mesh meta file: ${meshMetaPath}`);
+    if (!fs.existsSync(binPath)) throw new Error(`Can not find cocos .bin file: ${binPath}`);
+    if (!fs.existsSync(meshMetaPath)) throw new Error(`Can not find cocos mesh meta file: ${meshMetaPath}`);
 
     const text: string = fs.readFileSync(meshMetaPath, "utf-8");
     const meshMeta = new CocosMeshMeta(text);

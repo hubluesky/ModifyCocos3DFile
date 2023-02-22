@@ -39,11 +39,17 @@ Cocos支持两种3D模型导入格式，一种是FBX，一种是GLTF，不管是
 ### 安装依赖文件
 在项目目录下，执行`npm install`命令安装项目依赖
 
-### 命令行执行
+### ts命令行执行
 项目是使用typescript开发，可以使用ts-node直接运行.ts文件。
 ``` command-line
 ts-node src/Main.ts
 ```
+### js命令行执行
+需要先运行任务：```npm run build```来构建js文件，文件会生成在```dist/index.js```下。运行以下命令可执行。
+``` command-line
+node dist/index.js
+```
+
 显示结果为：
 ```
 Usage: Main [options] [command]
@@ -85,9 +91,22 @@ Options:
 项目中有几个测试文件，用来测试转换的。
 测试命令如下：
 ```
-ts-node src/Main.ts fbx2cocos -f ./assets/fbx/model_cow.FBX -c ./assets/cocos/model_cow/model_cow@mesh.json ./assets/cocos/model_cow/model_cow@skeleton.json -o ./temp/out
+node dist/index.js mf -f ./assets/fbx/model_cow.FBX -c ./assets/cocos/model_cow -o ./temp/out
 
 // 转换成功后，输出以下信息。
-normals: No qualifying primitives found. See debug output.
 Conversion completed, output directory: temp\out\model_cow
 ```
+### 异常信息：
+* Multiple Skin is not supported.
+* The ${i} of primitives does no index buffer
+* The number of primitives does no match: source ${0} upload ${1}
+* Attribute ${attributeName} is not supported.
+* FBX convert failed: ${cause}
+* Gltf convert failed: ${cause}
+* Can not find cocos mesh file which .bin extension.
+* The model contain multiply meshes files.
+* Can not find cocos mesh meta file.
+* The uploaded file does not contain skeleton information.
+* Multiple Skin is not supported.
+* Can not find cocos bin file: ${binPath}
+* Can not find cocos mesh meta file: ${meshMetaPath}

@@ -83,6 +83,9 @@ if (typeof window == "undefined") {
 // }
 
 if (typeof performance == "undefined") {
-  const hooks = await import("perf_hooks");
-  globalThis.performance = hooks.performance as any;
+  async function performance() {
+    const hooks = await import("perf_hooks");
+    globalThis.performance = hooks.performance as any;
+  }
+  performance();
 }

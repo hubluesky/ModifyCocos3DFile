@@ -2,20 +2,23 @@
 import "./Environment";
 import { io } from "./IO";
 
-global.ccModule = await System.import<typeof cc>("./src/cocos-engine/cc.js");
-globalThis.cc = Object.assign(window.cc, window.cc, global.ccModule);
-
-if (typeof cc.EmptyDevice == "undefined") {
-    const { EmptyDevice } = await import("./EmptyDevice");
-    cc.EmptyDevice = EmptyDevice;
+async function initCocos() {
+    global.ccModule = await System.import<typeof cc>("./src/cocos-engine/cc.js");
+    globalThis.cc = Object.assign(window.cc, window.cc, global.ccModule);
+    
+    if (typeof cc.EmptyDevice == "undefined") {
+        const { EmptyDevice } = await import("./EmptyDevice");
+        cc.EmptyDevice = EmptyDevice;
+    }
+    
+    await cc.game.init({ overrideSettings: { rendering: { renderMode: 3 } }, exactFitScreen: false });
+    // cc.game.run();
 }
-
-await cc.game.init({ overrideSettings: { rendering: { renderMode: 3 } }, exactFitScreen: false });
-// cc.game.run();
 
 export namespace cocos {
 
-    export function init(rootPath: string, extensionMap?: Record<string, string>): void {
+    export async function init(rootPath: string, extensionMap?: Record<string, string>) {
+        // await initCocos();
         const getUrl = function (url) { return `${rootPath}/${cc.path.basename(url)}`; }
 
         if (extensionMap != null) {

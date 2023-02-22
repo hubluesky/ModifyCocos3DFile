@@ -1,7 +1,6 @@
 
 import { gltfToCocosFile } from './Common';
 
-
 // console.log("System", System.import);
 
 // declare namespace cc {
@@ -36,11 +35,14 @@ import { gltfToCocosFile } from './Common';
 // const data = cocos.deserialize(text);
 // console.log("paotaiPrefab", data);
 
-const gltfPath = "./assets/gltf/tiger/triger.gltf";
-const cocosPath = "./assets/cocos/model_tiger";
-const outPath = "./temp";
-await gltfToCocosFile(gltfPath, cocosPath, outPath);
+async function run() {
+    const gltfPath = "./assets/gltf/tiger/triger.gltf";
+    const cocosPath = "./assets/cocos/model_tiger";
+    const outPath = "./temp";
+    await gltfToCocosFile(gltfPath, cocosPath, outPath);
+}
 
+run();
 // cocosToGltf(prefab);
 // const mesh: cc.Mesh = cocos.deserializeMesh(text, bin);
 // // console.log("mesh", mesh)
@@ -52,5 +54,3 @@ await gltfToCocosFile(gltfPath, cocosPath, outPath);
 // writeGltfFile(josnDoc, modelName, outPath);
 // console.log("Conversion completed, output directory:", outPath);
 // // child_process.execSync(`start "" "${outPath}"`);
-
-debugger;
