@@ -1,5 +1,5 @@
 
-import { gltfToCocosFile } from './Common';
+import { fbxToGLtf, gltfToCocosFile } from './Common';
 
 // console.log("System", System.import);
 
@@ -36,7 +36,9 @@ import { gltfToCocosFile } from './Common';
 // console.log("paotaiPrefab", data);
 
 async function run() {
-    const gltfPath = "./assets/gltf/tiger/triger.gltf";
+    const fbxPath = "assets/fbx/model_tiger.fbx";
+    const gltfPath = await fbxToGLtf(fbxPath);
+    // const gltfPath = "./assets/gltf/tiger/triger.gltf";
     const cocosPath = "./assets/cocos/model_tiger";
     const outPath = "./temp";
     await gltfToCocosFile(gltfPath, cocosPath, outPath);

@@ -2,10 +2,8 @@ import { Document, Node, NodeIO } from '@gltf-transform/core';
 import child_process from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { CocosMesh, CocosMeshMeta } from './CocosModel';
 import CocosModelReader from './CocosModelReader';
 import CocosModelWriter from './CocosModelWriter';
-import { io } from './IO';
 import { normals } from './gltf-transform/normals';
 import { tangents } from './gltf-transform/tangents';
 
@@ -15,11 +13,11 @@ import { tangents } from './gltf-transform/tangents';
  * @param input 
  * @param out 
  */
-export function cocosFbxToGltf(input: string, out: string) {
-    const toolPath = `./fbx-gltf-conv/bin/${process.platform}/FBX-glTF-conv`;
+function cocosFbxToGltf(input: string, out: string) {
+    const toolPath = `./fbx-gltf-conv/${process.platform}/Release/bin/FBX-glTF-conv`;
     const result = child_process.spawnSync(toolPath, [input, "--out", out]);
     if (result.status != 0)
-        throw new Error("FBX convert failed:"+result.stderr.toString().trim());
+        throw new Error("FBX convert failed:" + result.stderr.toString().trim());
 }
 
 /**
@@ -27,11 +25,11 @@ export function cocosFbxToGltf(input: string, out: string) {
  * @param input 
  * @param out 
  */
-export function facebookFbxToGltf(input: string, out: string) {
+function facebookFbxToGltf(input: string, out: string) {
     const toolPath = `./FBX2glTF/FBX2glTF-${process.platform}`;
     const result = child_process.spawnSync(toolPath, ["--input", input, "--output", out]);
     if (result.status != 0)
-        throw new Error("Gltf convert failed:"+result.stderr.toString().trim());
+        throw new Error("Gltf convert failed:" + result.stderr.toString().trim());
 }
 
 /**
@@ -46,7 +44,7 @@ export function fbxToGLtf(filename: string, tempPath: string = "temp/fbx2gltf"):
     return gltfPath;
 }
 
-export async function computeNormalAndTangent(document: Document, overwrite: boolean = false) {
+async function computeNormalAndTangent(document: Document, overwrite: boolean = false) {
     await document.transform(normals({ overwrite: overwrite }));
     await document.transform(tangents({ overwrite: overwrite }));
 }
@@ -119,13 +117,13 @@ export async function gltfToCocosFile(uri: string, cocosPath: string, outPath: s
     return new CocosModelWriter().wirteFiles(document, meshMetaOutPath, metaData);
 }
 
-export function readCocosMesh(binPath: string, meshMetaPath: string, skeletonPath: string) {
-    if (!fs.existsSync(binPath)) throw new Error(`Can not find cocos .bin file: ${binPath}`);
-    if (!fs.existsSync(meshMetaPath)) throw new Error(`Can not find cocos mesh meta file: ${meshMetaPath}`);
+// export function readCocosMesh(binPath: string, meshMetaPath: string, skeletonPath: string) {
+//     if (!fs.existsSync(binPath)) throw new Error(`Can not find cocos .bin file: ${binPath}`);
+//     if (!fs.existsSync(meshMetaPath)) throw new Error(`Can not find cocos mesh meta file: ${meshMetaPath}`);
 
-    const text: string = fs.readFileSync(meshMetaPath, "utf-8");
-    const meshMeta = new CocosMeshMeta(text);
-    let arrayBuffer = io.readBinaryFileSync(binPath);
-    const meshBin = new CocosMesh(arrayBuffer, meshMeta);
-    return meshBin;
-}
+//     const text: string = fs.readFileSync(meshMetaPath, "utf-8");
+//     const meshMeta = new CocosMeshMeta(text);
+//     let arrayBuffer = io.readBinaryFileSync(binPath);
+//     const meshBin = new CocosMesh(arrayBuffer, meshMeta);
+//     return meshBin;
+// }
