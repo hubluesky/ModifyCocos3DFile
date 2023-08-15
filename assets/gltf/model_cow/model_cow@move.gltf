@@ -1325,7 +1325,7 @@
           }
         }
       ],
-      "name": "Take 001",
+      "name": "move",
       "samplers": [
         {
           "input": 0,

@@ -1,7 +1,7 @@
 import { bounds, Document, Mesh, Primitive, Root } from '@gltf-transform/core';
 import fs from 'fs';
 import path from 'path';
-import { AttributeName, FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './Cocos';
+import { FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './Cocos';
 import { CocosToGltfAttribute } from './CocosGltfWrap';
 import { CocosMeshMeta, CocosSkeleton, CocosSkeletonMeta } from "./CocosModel";
 import { gltf } from './gltf';
@@ -128,19 +128,19 @@ export default class CocosModelWriter {
         meshMeta.maxPosition = max;
     }
 
-    private wirteSkeleton(meta: CocosSkeletonMeta, skeleton: CocosSkeleton): Object {
-        // const skeletonMeta = meta.clone();
-        meta.joints.length = 0;
-        for (let i = 0; i < skeleton.joints.length; i++)
-            meta.joints[i] = skeleton.joints[i];
-        const matrixType = meta.bindposes[0][0];
-        meta.bindposes.length = 0;
-        for (let i = 0; i < skeleton.bindPoses.length; i++)
-            meta.bindposes[i] = new Array(matrixType, ...skeleton.bindPoses[i]);
-        const bindPosesValueType = meta.bindposesValueType[1];
-        meta.bindposesValueType.length = 1;
-        for (let i = 1; i < skeleton.bindPoses.length + 1; i++)
-            meta.bindposesValueType[i] = bindPosesValueType;
-        return meta.data;
-    }
+    // private wirteSkeleton(meta: CocosSkeletonMeta, skeleton: CocosSkeleton): Object {
+    //     // const skeletonMeta = meta.clone();
+    //     meta.joints.length = 0;
+    //     for (let i = 0; i < skeleton.joints.length; i++)
+    //         meta.joints[i] = skeleton.joints[i];
+    //     const matrixType = meta.bindposes[0][0];
+    //     meta.bindposes.length = 0;
+    //     for (let i = 0; i < skeleton.bindPoses.length; i++)
+    //         meta.bindposes[i] = new Array(matrixType, ...skeleton.bindPoses[i]);
+    //     const bindPosesValueType = meta.bindposesValueType[1];
+    //     meta.bindposesValueType.length = 1;
+    //     for (let i = 1; i < skeleton.bindPoses.length + 1; i++)
+    //         meta.bindposesValueType[i] = bindPosesValueType;
+    //     return meta.data;
+    // }
 }

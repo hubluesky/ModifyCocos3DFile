@@ -1,16 +1,13 @@
-import { Document, JSONDocument, Node, NodeIO } from '@gltf-transform/core';
-import { TypedArray } from '@gltf-transform/core/dist/constants';
+import { Document, Node, NodeIO } from '@gltf-transform/core';
 import child_process from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { CocosToGltfAttribute } from './CocosGltfWrap';
 import { CocosMesh, CocosMeshMeta } from './CocosModel';
 import CocosModelReader from './CocosModelReader';
 import CocosModelWriter from './CocosModelWriter';
-import { gltf } from './gltf';
+import { io } from './IO';
 import { normals } from './gltf-transform/normals';
 import { tangents } from './gltf-transform/tangents';
-import { io } from './IO';
 
 
 /**
@@ -132,80 +129,3 @@ export function readCocosMesh(binPath: string, meshMetaPath: string, skeletonPat
     const meshBin = new CocosMesh(arrayBuffer, meshMeta);
     return meshBin;
 }
-
-export async function cocosToGltf(prefab: cc.Prefab) {
-    const doc = new Document();
-    const scene = doc.createScene()
-    const buffer = doc.createBuffer();
-
-    const createNodes = function (gltfParent: Node, cocosNode: cc.Node) {
-        for (const child of cocosNode.children) {
-            const node = doc.createNode(child.name);
-            gltfParent.addChild(node);
-
-            const meshRenderer = child.getComponent(cc.MeshRenderer);
-            if (meshRenderer != null) {
-
-            }
-        }
-    }
-
-    const rootNode: cc.Node = prefab.data;
-    createNodes(scene as any, rootNode);
-}
-
-
-export async function cocosMeshToGltf(mesh: cc.Mesh, meshName?: string): Promise<JSONDocument> {
-    const doc = new Document();
-    const buffer = doc.createBuffer();
-    const gltfMesh = doc.createMesh(meshName);
-    const node = doc.createNode().setMesh(gltfMesh);
-    const scene = doc.createScene().addChild(node);
-
-    const meshStruct = mesh.struct;
-
-    for (let indexPrimitive = 0; indexPrimitive < meshStruct.primitives.length; indexPrimitive++) {
-        const primitive = meshStruct.primitives[indexPrimitive];
-        const gltfPrimitive = doc.createPrimitive();
-        for (const bundleIndex of primitive.vertexBundelIndices) {
-            const bundle = meshStruct.vertexBundles[bundleIndex];
-            for (const attribute of bundle.attributes) {
-                const attributeType = CocosToGltfAttribute[attribute.name];
-                const attributeAccessor = doc.createAccessor();
-                attributeAccessor.setType(gltf.AttributeElementType[attributeType]);
-                attributeAccessor.setBuffer(buffer);
-
-                const data = mesh.readAttribute(indexPrimitive, attribute.name as cc.gfx.AttributeName);
-                attributeAccessor.setArray(data as TypedArray);
-                gltfPrimitive.setAttribute(attributeType, attributeAccessor);
-            }
-        }
-
-        const indices = mesh.readIndices(indexPrimitive);
-        if (indices != null) {
-            const attributeAccessor = doc.createAccessor();
-            attributeAccessor.setType("SCALAR");
-            attributeAccessor.setBuffer(buffer);
-            attributeAccessor.setArray(indices as TypedArray);
-            gltfPrimitive.setIndices(attributeAccessor);
-        }
-
-        if (primitive.vertexBundelIndices.length > 0) {
-            const material = doc.createMaterial("material");
-            gltfPrimitive.setMaterial(material);
-        }
-
-        gltfMesh.addPrimitive(gltfPrimitive);
-    }
-
-    return new NodeIO().writeJSON(doc, {});
-}
-
-// export function writeGltfFile(jsonDoc: JSONDocument, filename: string, filePath: string): void {
-//     fs.mkdirSync(filePath, { recursive: true });
-//     fs.writeFileSync(path.join(filePath, filename + ".gltf"), JSON.stringify(jsonDoc.json), "utf8");
-//     for (let name in jsonDoc.resources) {
-//         const data = jsonDoc.resources[name];
-//         fs.writeFileSync(path.join(filePath, name), data);
-//     }
-// }
