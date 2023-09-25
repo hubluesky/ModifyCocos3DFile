@@ -16,8 +16,10 @@ import { tangents } from './gltf-transform/tangents';
 function cocosFbxToGltf(input: string, out: string) {
     const toolPath = `./fbx-gltf-conv/${process.platform}/Release/bin/FBX-glTF-conv`;
     const result = child_process.spawnSync(toolPath, [input, "--out", out]);
-    if (result.status != 0)
-        throw new Error("FBX convert failed:" + result.stderr.toString().trim());
+    if (result.status != 0) {
+        const err = result.stderr != null ? result.stderr.toString().trim() : result;
+        throw new Error("FBX convert failed:" + err);
+    }
 }
 
 /**

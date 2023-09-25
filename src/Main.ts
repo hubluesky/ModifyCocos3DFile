@@ -11,9 +11,9 @@ async function gltfReplaceCocos(gltfPath: string, cocosPath: string, outPath: st
     console.log("Conversion completed, output directory:", outPath);
 }
 
-async function fbxReplaceCocos(fbxPath: string, cocosPath: string, outPath: string) {
+async function fbxReplaceCocos(fbxPath: string, tempPath: string, cocosPath: string, outPath: string) {
     const modelName = path.basename(fbxPath, path.extname(fbxPath));
-    const tempPath = `temp/fbx2gltf/${modelName}`;
+    tempPath = `${tempPath}/${modelName}`;
     const gltfPath = await fbxToGLtf(fbxPath, tempPath);
     await gltfReplaceCocos(gltfPath, cocosPath, outPath);
     fs.rmSync(tempPath, { recursive: true, force: true });
@@ -22,6 +22,7 @@ async function fbxReplaceCocos(fbxPath: string, cocosPath: string, outPath: stri
 interface FbxReplaceCocos {
     name: string;
     fbx: string;
+    temp: string;
     cocos: string;
     output: string;
 }
@@ -39,10 +40,11 @@ program.command("ModifyCocos3DFileByFbx")
     .alias("mf")
     .description("read the fbx and replace to the cocos 3d file.")
     .requiredOption("-f, --fbx <path>", "Input gltf file path.")
+    .option("-t, --temp <path>", "fbx to gltf temp path, default temp.")
     .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
     .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
     .action(function (input: FbxReplaceCocos) {
-        fbxReplaceCocos(input.fbx, input.cocos, input.output);
+        fbxReplaceCocos(input.fbx, input.temp ?? "temp", input.cocos, input.output);
     });
 
 program.command("ModifyCocos3DFile")
