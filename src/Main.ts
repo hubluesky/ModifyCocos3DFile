@@ -22,7 +22,7 @@ async function fbxReplaceCocos(fbxPath: string, tempPath: string, cocosPath: str
 interface FbxReplaceCocos {
     name: string;
     fbx: string;
-    temp: string;
+    temp?: string;
     cocos: string;
     output: string;
 }

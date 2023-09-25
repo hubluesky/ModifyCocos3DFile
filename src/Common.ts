@@ -18,7 +18,7 @@ function cocosFbxToGltf(input: string, out: string) {
     const result = child_process.spawnSync(toolPath, [input, "--out", out]);
     if (result.status != 0) {
         const err = result.stderr != null ? result.stderr.toString().trim() : result;
-        throw new Error("FBX convert failed:" + err);
+        throw new Error("fbx-gltf-conv convert failed:" + err);
     }
 }
 
@@ -31,7 +31,7 @@ function facebookFbxToGltf(input: string, out: string) {
     const toolPath = `./FBX2glTF/FBX2glTF-${process.platform}`;
     const result = child_process.spawnSync(toolPath, ["--input", input, "--output", out]);
     if (result.status != 0)
-        throw new Error("Gltf convert failed:" + result.stderr.toString().trim());
+        throw new Error("FBX2glTF convert failed:" + result.stderr.toString().trim());
 }
 
 /**
@@ -40,7 +40,7 @@ function facebookFbxToGltf(input: string, out: string) {
  */
 export function fbxToGLtf(filename: string, tempPath: string = "temp/fbx2gltf"): string {
     const gltfName = path.basename(filename, path.extname(filename));
-    const gltfPath = `./${tempPath}/${gltfName}/${gltfName}.gltf`;
+    const gltfPath = `${tempPath}/${gltfName}/${gltfName}.gltf`;
     fs.mkdirSync(path.dirname(gltfPath), { recursive: true });
     cocosFbxToGltf(filename, gltfPath);
     return gltfPath;
