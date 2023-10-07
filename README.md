@@ -97,16 +97,17 @@ node dist/index.js mf -f ./assets/fbx/model_cow.FBX -c ./assets/cocos/model_cow 
 Conversion completed, output directory: temp\out\model_cow
 ```
 ### 异常信息：
-* Multiple Skin is not supported.
-* The ${i} of primitives does no index buffer
-* The number of primitives does no match: source ${0} upload ${1}
-* Attribute ${attributeName} is not supported.
-* FBX convert failed: ${cause}
-* Gltf convert failed: ${cause}
-* Can not find cocos mesh file which .bin extension.
-* The model contain multiply meshes files.
-* Can not find cocos mesh meta file.
-* The uploaded file does not contain skeleton information.
-* Multiple Skin is not supported.
-* Can not find cocos bin file: ${binPath}
-* Can not find cocos mesh meta file: ${meshMetaPath}
+* 错误码：1011，消息：Multiple Skin is not supported.
+* 错误码：1012，消息：The ${i} of primitives does no index buffer
+* 错误码：1013，消息：The number of primitives does no match: source ${0} upload ${1}
+* 错误码：1014，消息：Attribute ${attributeName} is not supported.
+* 错误码：1001，消息：FBX convert failed: ${cause}
+* 错误码：1002，消息：Gltf convert failed: ${cause}
+* 错误码：1003，消息：Can not find cocos mesh file which .bin extension.
+* 错误码：1004，消息：The model contain multiply meshes files.
+* 错误码：1005，消息：Can not find cocos mesh meta file.
+* 错误码：1006，消息：The uploaded file does not contain skeleton information.
+* 错误码：1007，消息：Multiple Skin is not supported.
+* 错误码：1008，消息：Missing skeleton file.
+* 错误码：1009，消息：Can not find cocos bin file: ${binPath}
+* 错误码：1010，消息：Can not find cocos mesh meta file: ${meshMetaPath}
