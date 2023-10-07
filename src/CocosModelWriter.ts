@@ -12,7 +12,7 @@ export default class CocosModelWriter {
         const root = document.getRoot();
         const meshes = root.listMeshes();
         if (meshes.length > 1)
-            throw new Error("Multiple Skin is not supported.");
+            throw new Error("Multiple Skin is not supported.", { cause: 1011 });
 
         const arrayBuffer = this.wirteMesh(meshMeta, meshes[0]);
         this.writeJointMaps(meshMeta, root);
@@ -43,7 +43,7 @@ export default class CocosModelWriter {
             if (indexView == null) continue;
             const indicesAccessor = listPrimitives[i].getIndices();
             if (indicesAccessor == null)
-                throw new Error(`The ${i} of primitives does no index buffer`);
+                throw new Error(`The ${i} of primitives does no index buffer`, { cause: 1012 });
             const indices = indicesAccessor.getArray();
             indexView.offset = size;
             indexView.count = indices.length;
@@ -57,7 +57,7 @@ export default class CocosModelWriter {
         const listPrimitives = mesh.listPrimitives();
 
         if (listPrimitives.length != meshMeta.primitives.length)
-            throw new Error(`The number of primitives does no match: source ${meshMeta.primitives.length} upload ${listPrimitives.length}`);
+            throw new Error(`The number of primitives does no match: source ${meshMeta.primitives.length} upload ${listPrimitives.length}`, { cause: 1013 });
 
         const arrayBufferSize = this.updateArrayBufferSize(meshMeta, listPrimitives);
         const arrayBuffer = new ArrayBuffer(arrayBufferSize);
@@ -76,7 +76,7 @@ export default class CocosModelWriter {
                 const attributeName = CocosToGltfAttribute[name];
                 const attributeAccessor = listPrimitives[iv].getAttribute(attributeName);
                 if (attributeAccessor == null)
-                    throw new Error(`Attribute ${attributeName} is not supported.`);
+                    throw new Error(`Attribute ${attributeName} is not supported.`, { cause: 1014 });
                 const typeArray = attributeAccessor.getArray();
                 const vertexCount = typeArray.length / componentCount;
                 for (let iVertex = 0; iVertex < vertexCount; iVertex++) {

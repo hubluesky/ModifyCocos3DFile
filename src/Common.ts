@@ -17,8 +17,8 @@ function cocosFbxToGltf(input: string, out: string) {
     const toolPath = `./fbx-gltf-conv/${process.platform}/Release/bin/FBX-glTF-conv`;
     const result = child_process.spawnSync(toolPath, [input, "--out", out]);
     if (result.status != 0) {
-        const err = result.stderr != null ? result.stderr.toString().trim() : result;
-        throw new Error("fbx-gltf-conv convert failed:" + err);
+        const err = result.error != null ? result.error : result;
+        throw new Error("fbx-gltf-conv convert failed:" + err, { cause: 1001 });
     }
 }
 
@@ -31,7 +31,7 @@ function facebookFbxToGltf(input: string, out: string) {
     const toolPath = `./FBX2glTF/FBX2glTF-${process.platform}`;
     const result = child_process.spawnSync(toolPath, ["--input", input, "--output", out]);
     if (result.status != 0)
-        throw new Error("FBX2glTF convert failed:" + result.stderr.toString().trim());
+        throw new Error("FBX2glTF convert failed:" + (result.error != null ? result.error : result), { cause: 1002 });
 }
 
 /**
@@ -71,9 +71,9 @@ function searchForCocosMeshFile(cocosPath: string): string {
     const cocosFilenames = fs.readdirSync(cocosPath);
     const meshBins = cocosFilenames.filter(f => path.extname(f) == ".bin");
     if (meshBins.length == 0)
-        new Error("Can not find cocos mesh file which .bin extension.");
+        new Error("Can not find cocos mesh file which .bin extension.", { cause: 1003 });
     if (meshBins.length > 1)
-        new Error("The model contain multiply meshes files.");
+        new Error("The model contain multiply meshes files.", { cause: 1004 });
     const meshMetaName = path.basename(meshBins[0], ".bin") + ".json";
     return cocosFilenames.find(f => path.basename(f) == meshMetaName);
 }
@@ -81,7 +81,7 @@ function searchForCocosMeshFile(cocosPath: string): string {
 export async function gltfToCocosFile(uri: string, cocosPath: string, outPath: string): Promise<void> {
     const meshMetaName = searchForCocosMeshFile(cocosPath);
     if (meshMetaName == null)
-        new Error("Can not find cocos mesh meta file.");
+        new Error("Can not find cocos mesh meta file.", { cause: 1005 });
 
     const document = await new NodeIO().read(uri);
     await computeNormalAndTangent(document);
@@ -94,12 +94,12 @@ export async function gltfToCocosFile(uri: string, cocosPath: string, outPath: s
     if (metaData.jointMaps != null) {
         const skins = root.listSkins();
         if (skins == null || skins.length == 0)
-            throw new Error("The uploaded file does not contain skeleton information.");
+            throw new Error("The uploaded file does not contain skeleton information.", { cause: 1006 });
         if (skins.length > 1)
-            throw new Error("Multiple Skin is not supported.");
+            throw new Error("Multiple Skin is not supported.", { cause: 1007 });
 
         // if (!CocosModelReader.isFileExist(skeletonPath))
-        //     throw new Error("Missing skeleton file.");
+        //     throw new Error("Missing skeleton file.", { cause: 1008 });
 
         // skeletonMeta = CocosModelReader.readSkeletonMeta(skeletonPath);
         // const inverseBindAccessor = skins[0].getInverseBindMatrices();
@@ -120,8 +120,8 @@ export async function gltfToCocosFile(uri: string, cocosPath: string, outPath: s
 }
 
 // export function readCocosMesh(binPath: string, meshMetaPath: string, skeletonPath: string) {
-//     if (!fs.existsSync(binPath)) throw new Error(`Can not find cocos .bin file: ${binPath}`);
-//     if (!fs.existsSync(meshMetaPath)) throw new Error(`Can not find cocos mesh meta file: ${meshMetaPath}`);
+//     if (!fs.existsSync(binPath)) throw new Error(`Can not find cocos .bin file: ${binPath}`, { cause: 1009 });
+//     if (!fs.existsSync(meshMetaPath)) throw new Error(`Can not find cocos mesh meta file: ${meshMetaPath}`, { cause: 1010 });
 
 //     const text: string = fs.readFileSync(meshMetaPath, "utf-8");
 //     const meshMeta = new CocosMeshMeta(text);

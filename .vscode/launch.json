@@ -5,6 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Command",
+            "program": "${workspaceFolder}/dist/command.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+
+        {
             "name": "Launch Test",
             "type": "node",
             "request": "launch",
@@ -17,7 +27,7 @@
                 "ts-node/esm"
             ],
             "cwd": "${workspaceRoot}",
-            "protocol": "inspector",
+            // "protocol": "inspector",
             "internalConsoleOptions": "openOnSessionStart",
         }
     ]

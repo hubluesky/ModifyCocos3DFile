@@ -44,7 +44,9 @@ program.command("ModifyCocos3DFileByFbx")
     .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
     .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
     .action(function (input: FbxReplaceCocos) {
-        fbxReplaceCocos(input.fbx, input.temp ?? "temp", input.cocos, input.output);
+        return fbxReplaceCocos(input.fbx, input.temp ?? "temp", input.cocos, input.output).catch(error => {
+            program.error(error.message, { exitCode: error.cause });
+        });
     });
 
 program.command("ModifyCocos3DFile")
@@ -54,7 +56,9 @@ program.command("ModifyCocos3DFile")
     .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
     .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
     .action(function (input: GltfReplaceCocos) {
-        gltfReplaceCocos(input.gltf, input.cocos, input.output);
+        return gltfReplaceCocos(input.gltf, input.cocos, input.output).catch(error => {
+            program.error(error.message, { exitCode: error.cause });
+        });
     });
 
 // program.command("fbx2gltf")
