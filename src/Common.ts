@@ -17,7 +17,7 @@ function cocosFbxToGltf(input: string, out: string) {
     const toolPath = `./fbx-gltf-conv/${process.platform}/Release/bin/FBX-glTF-conv`;
     const result = child_process.spawnSync(toolPath, [input, "--out", out]);
     if (result.status != 0) {
-        const err = result.error != null ? result.error : result;
+        const err = result.error != null ? result.error : result.stderr?.toString();
         throw new Error("fbx-gltf-conv convert failed:" + err, { cause: 101 });
     }
 }
@@ -71,9 +71,9 @@ function searchForCocosMeshFile(cocosPath: string): string {
     const cocosFilenames = fs.readdirSync(cocosPath);
     const meshBins = cocosFilenames.filter(f => path.extname(f) == ".bin");
     if (meshBins.length == 0)
-        new Error("Can not find cocos mesh file which .bin extension.", { cause: 103 });
+        throw new Error("Can not find cocos mesh file which .bin extension.", { cause: 103 });
     if (meshBins.length > 1)
-        new Error("The model contain multiply meshes files.", { cause: 104 });
+        throw new Error("The model contain multiply meshes files.", { cause: 104 });
     const meshMetaName = path.basename(meshBins[0], ".bin") + ".json";
     return cocosFilenames.find(f => path.basename(f) == meshMetaName);
 }
@@ -81,7 +81,7 @@ function searchForCocosMeshFile(cocosPath: string): string {
 export async function gltfToCocosFile(uri: string, cocosPath: string, outPath: string): Promise<void> {
     const meshMetaName = searchForCocosMeshFile(cocosPath);
     if (meshMetaName == null)
-        new Error("Can not find cocos mesh meta file.", { cause: 105 });
+        throw new Error("Can not find cocos mesh meta file. Maybe be merge by one josn.", { cause: 105 });
 
     const document = await new NodeIO().read(uri);
     await computeNormalAndTangent(document);

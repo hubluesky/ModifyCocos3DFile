@@ -19,6 +19,11 @@ async function fbxReplaceCocos(fbxPath: string, tempPath: string, cocosPath: str
     fs.rmSync(tempPath, { recursive: true, force: true });
 }
 
+interface FBX2Gltf {
+    fbx: string;
+    output: string;
+}
+
 interface FbxReplaceCocos {
     name: string;
     fbx: string;
@@ -61,13 +66,13 @@ program.command("ModifyCocos3DFile")
         });
     });
 
-// program.command("fbx2gltf")
-//     .alias("f2g")
-//     .description("Conver fbx to gltf file.")
-//     .requiredOption("-f, --fbx <path>", "Input Fbx file path.")
-//     .requiredOption("-o, --output <path>", "Output gltf path. It must be local path.")
-//     .action(function (input: Fbx2Cocos) {
-//         fbxToGLtf(input.fbx, input.output);
-//     });
+program.command("fbx2gltf")
+    .alias("f2g")
+    .description("Conver fbx to gltf file.")
+    .requiredOption("-f, --fbx <path>", "Input Fbx file path.")
+    .option("-o, --output <path>", "Output gltf path. It must be local path.")
+    .action(function (input: FBX2Gltf) {
+        fbxToGLtf(input.fbx, input.output);
+    });
 
 program.parse();

@@ -105,7 +105,7 @@ Conversion completed, output directory: temp\out\model_cow
 * 错误码：102，消息：Gltf convert failed: ${cause}
 * 错误码：103，消息：Can not find cocos mesh file which .bin extension.
 * 错误码：104，消息：The model contain multiply meshes files.
-* 错误码：105，消息：Can not find cocos mesh meta file.
+* 错误码：105，消息：Can not find cocos mesh meta file. Maybe be merge by one josn.
 * 错误码：106，消息：The uploaded file does not contain skeleton information.
 * 错误码：107，消息：Multiple Skin is not supported.
 * 错误码：108，消息：Missing skeleton file.
