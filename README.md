@@ -108,6 +108,7 @@ Conversion completed, output directory: temp\out\model_cow
 * 错误码：105，消息：Can not find cocos mesh meta file. Maybe be merge by one josn.
 * 错误码：106，消息：The uploaded file does not contain skeleton information.
 * 错误码：107，消息：Multiple Skin is not supported.
-* 错误码：108，消息：Missing skeleton file.
-* 错误码：109，消息：Can not find cocos bin file: ${binPath}
-* 错误码：110，消息：Can not find cocos mesh meta file: ${meshMetaPath}
+* 错误码：108，消息：joints count is not match.
+* 错误码：109，消息：Missing skeleton file.
+* 错误码：110，消息：Can not find cocos bin file: ${binPath}
+* 错误码：111，消息：Can not find cocos mesh meta file: ${meshMetaPath}
