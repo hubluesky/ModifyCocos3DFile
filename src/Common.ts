@@ -97,13 +97,16 @@ export async function gltfToCocosFile(uri: string, cocosPath: string, outPath: s
             throw new Error("The uploaded file does not contain skeleton information.", { cause: 106 });
         if (skins.length > 1)
             throw new Error("Multiple Skin is not supported.", { cause: 107 });
-        if (metaData.jointMaps.length != skins.length)
-            throw new Error("joints count is not match.", { cause: 108 });
-        for (let i = 0; i < skins.length; i++) {
-            const jointNodes = skins[i].listJoints();
-            if (jointNodes.length != metaData.jointMaps[i].length)
-                throw new Error("joints count is not match.", { cause: 108 });
-        }
+
+            // 这里检查不正确，cocos的mesh里有jointMaps，而gltf里没有。
+        // if (metaData.jointMaps.length != skins.length)
+        //     throw new Error("joints count is not match.", { cause: 108 });
+        // for (let i = 0; i < skins.length; i++) {
+        //     const jointNodes = skins[i].listJoints();
+        //     const jointMaps = metaData.jointMaps[i];
+        //     if (jointMaps == null || jointNodes.length != jointMaps.length)
+        //         throw new Error(`joints count is not match. source ${jointMaps?.length} upload ${jointNodes.length}`, { cause: 108 });
+        // }
 
         // if (!CocosModelReader.isFileExist(skeletonPath))
         //     throw new Error("Missing skeleton file.", { cause: 108 });

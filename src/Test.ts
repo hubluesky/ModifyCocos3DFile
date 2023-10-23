@@ -36,11 +36,11 @@ import { fbxToGLtf, gltfToCocosFile } from './Common';
 // console.log("paotaiPrefab", data);
 
 async function run() {
-    const fbxPath = "assets/fbx/Axe.fbx";
+    const fbxPath = "assets/fbx/character1.FBX";
     const gltfPath = await fbxToGLtf(fbxPath);
     // const gltfPath = "./assets/gltf/tiger/triger.gltf";
-    const cocosPath = "./assets/cocos/Pickaxe";
-    const outPath = "./temp";
+    const cocosPath = "./assets/cocos/character1";
+    const outPath = "./temp/out";
     await gltfToCocosFile(gltfPath, cocosPath, outPath);
     console.log("convert completed!");
 }
