@@ -6,6 +6,8 @@ import CocosModelReader from './CocosModelReader';
 import CocosModelWriter from './CocosModelWriter';
 import { normals } from './gltf-transform/normals';
 import { tangents } from './gltf-transform/tangents';
+import { CocosMeshMeta, CocosSkeleton, CocosSkeletonMeta } from './CocosModel';
+import { decodeUuid } from './decode-uuid';
 
 
 /**
@@ -67,38 +69,64 @@ function getJointPathName(joint: Node, jointNodes: readonly Node[]): string {
     return joint.getName() + "/" + name;
 }
 
-function searchForCocosMeshFile(cocosPath: string): string {
-    const cocosFilenames = fs.readdirSync(cocosPath);
-    const meshBins = cocosFilenames.filter(f => path.extname(f) == ".bin");
-    if (meshBins.length == 0)
-        throw new Error("Can not find cocos mesh file which .bin extension.", { cause: 103 });
-    if (meshBins.length > 1)
-        throw new Error("The model contain multiply meshes files.", { cause: 104 });
-    const meshMetaName = path.basename(meshBins[0], ".bin") + ".json";
-    return cocosFilenames.find(f => path.basename(f) == meshMetaName);
+function readPrefabDependences(cocosPath: string): string[] {
+    const prefabPath = `${cocosPath}/${path.basename(cocosPath)}.json`;
+    if (!fs.existsSync(prefabPath)) return null;
+    const content = fs.readFileSync(prefabPath, { encoding: "utf8" });
+    try {
+        const jsonObject = JSON.parse(content);
+        if (!Array.isArray(jsonObject)) return null;
+        if (jsonObject.length < 2 || !Array.isArray(jsonObject[1]))
+            return null;
+        const filenames: string[] = jsonObject[1];
+        for (let i = 0; i < filenames.length; i++)
+            filenames[i] = decodeUuid(filenames[i]) + ".json";
+        return filenames;
+    } catch (error) {
+        return null;
+    }
+}
+
+function searchForCocosFile(cocosPath: string, filenames: string[], type: string): { content: string, filename: string } {
+    for (const filename of filenames) {
+        try {
+            const content = fs.readFileSync(`${cocosPath}/${filename}`, { encoding: "utf8" });
+            if (content == null) continue;
+            const jsonObject = JSON.parse(content);
+            if (!Array.isArray(jsonObject)) continue;
+            if (jsonObject.length < 3 || jsonObject[3].length < 1 || jsonObject[3][0].length < 1)
+                continue;
+            const jsonType = jsonObject[3][0][0];
+            if (jsonType == type)
+                return { content, filename };
+        } catch (error) {
+            continue;
+        }
+    }
 }
 
 export async function gltfToCocosFile(uri: string, cocosPath: string, outPath: string): Promise<void> {
-    const meshMetaName = searchForCocosMeshFile(cocosPath);
-    if (meshMetaName == null)
-        throw new Error("Can not find cocos mesh meta file. Maybe be merge by one josn.", { cause: 105 });
+    const dependenceFilenames = readPrefabDependences(cocosPath);
+    if (dependenceFilenames == null)
+        throw new Error("Can not find cocos prefab meta file. Maybe be merge by one josn.", { cause: 103 });
+
+    const meshResult = searchForCocosFile(cocosPath, dependenceFilenames, "cc.Mesh");
+    if (meshResult == null)
+        throw new Error("Can not find cocos mesh meta file. Maybe be merge by one josn.", { cause: 104 });
 
     const document = await new NodeIO().read(uri);
     await computeNormalAndTangent(document);
 
-    // let skeleton: CocosSkeleton;
-    // let skeletonMeta: CocosSkeletonMeta;
-    const metaData = CocosModelReader.readMeshMeta(path.join(cocosPath, meshMetaName));
+    const metaData = new CocosMeshMeta(meshResult.content)
 
     const root = document.getRoot();
+    const modelWrite = new CocosModelWriter();
     if (metaData.jointMaps != null) {
         const skins = root.listSkins();
         if (skins == null || skins.length == 0)
-            throw new Error("The uploaded file does not contain skeleton information.", { cause: 106 });
-        if (skins.length > 1)
-            throw new Error("Multiple Skin is not supported.", { cause: 107 });
+            throw new Error("The uploaded file does not contain skeleton information.", { cause: 105 });
 
-            // 这里检查不正确，cocos的mesh里有jointMaps，而gltf里没有。
+        // 这里检查不正确，cocos的mesh里有jointMaps，而gltf里没有。
         // if (metaData.jointMaps.length != skins.length)
         //     throw new Error("joints count is not match.", { cause: 108 });
         // for (let i = 0; i < skins.length; i++) {
@@ -108,34 +136,35 @@ export async function gltfToCocosFile(uri: string, cocosPath: string, outPath: s
         //         throw new Error(`joints count is not match. source ${jointMaps?.length} upload ${jointNodes.length}`, { cause: 108 });
         // }
 
-        // if (!CocosModelReader.isFileExist(skeletonPath))
-        //     throw new Error("Missing skeleton file.", { cause: 108 });
+        const skeletonResult = searchForCocosFile(cocosPath, dependenceFilenames, "cc.Skeleton");
+        if (skeletonResult == null)
+            throw new Error("Can not find cocos skeleton meta file. Maybe be merge by one josn.", { cause: 106 });
 
-        // skeletonMeta = CocosModelReader.readSkeletonMeta(skeletonPath);
-        // const inverseBindAccessor = skins[0].getInverseBindMatrices();
-        // const inverseBindArray = inverseBindAccessor.getArray();
-        // const elementSize = inverseBindAccessor.getElementSize();
+        const skeletonMeta = new CocosSkeletonMeta(skeletonResult.content);
 
-        // const jointNodes = skins[0].listJoints();
-        // const jointNames: string[] = [];
-        // for (let node of jointNodes) {
-        //     const name = getJointPathName(node, jointNodes);
-        //     jointNames.push(name);
-        // }
-        // skeleton = new CocosSkeleton(jointNames, inverseBindArray, elementSize);
+        if (skins.length > 1)
+            throw new Error(`Skin count is not match. source 1, upload ${skins.length}.`, { cause: 107 });
+
+        const inverseBindAccessor = skins[0].getInverseBindMatrices();
+        const inverseBindArray = inverseBindAccessor.getArray();
+        const elementSize = inverseBindAccessor.getElementSize();
+
+        const jointNodes = skins[0].listJoints();
+        const jointNames: string[] = [];
+        for (let node of jointNodes) {
+            const name = getJointPathName(node, jointNodes);
+            if (skeletonMeta.joints.indexOf(name) == -1)
+                throw new Error(`Skeleton joint name ${name} is not match.`, { cause: 108 });
+            jointNames.push(name);
+        }
+        if (jointNames.length != skeletonMeta.joints.length)
+            throw new Error(`Skeleton joints count is not match. source ${skeletonMeta.joints.length} upload ${jointNodes.length}.`, { cause: 109 });
+
+        const skeleton = new CocosSkeleton(jointNames, inverseBindArray, elementSize);
+        const meshMetaOutPath = path.join(outPath, skeletonResult.filename);
+        modelWrite.wirteSkeletonFiles(meshMetaOutPath, skeletonMeta, skeleton);
     }
 
-    const meshMetaOutPath = path.join(outPath, path.basename(meshMetaName, path.extname(meshMetaName)));
-    return new CocosModelWriter().wirteFiles(document, meshMetaOutPath, metaData);
+    const meshMetaOutPath = path.join(outPath, meshResult.filename);
+    return modelWrite.wirteMeshFiles(meshMetaOutPath, metaData, document);
 }
-
-// export function readCocosMesh(binPath: string, meshMetaPath: string, skeletonPath: string) {
-//     if (!fs.existsSync(binPath)) throw new Error(`Can not find cocos .bin file: ${binPath}`, { cause: 109 });
-//     if (!fs.existsSync(meshMetaPath)) throw new Error(`Can not find cocos mesh meta file: ${meshMetaPath}`, { cause: 110 });
-
-//     const text: string = fs.readFileSync(meshMetaPath, "utf-8");
-//     const meshMeta = new CocosMeshMeta(text);
-//     let arrayBuffer = io.readBinaryFileSync(binPath);
-//     const meshBin = new CocosMesh(arrayBuffer, meshMeta);
-//     return meshBin;
-// }

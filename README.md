@@ -97,18 +97,16 @@ node dist/index.js mf -f ./assets/fbx/model_cow.FBX -c ./assets/cocos/model_cow 
 Conversion completed, output directory: temp\out\model_cow
 ```
 ### 异常信息：
-* 错误码：111，消息：Multiple Skin is not supported.
+* 错误码：111，消息：Mesh count is not match. source 1, upload ${meshes.length}.
 * 错误码：112，消息：The ${i} of primitives does no index buffer
-* 错误码：113，消息：The number of primitives does no match: source ${0} upload ${1}
+* 错误码：113，消息：The number of primitives does no match: source ${0} upload ${1}.
 * 错误码：114，消息：Attribute ${attributeName} is not supported.
 * 错误码：101，消息：FBX convert failed: ${cause}
 * 错误码：102，消息：Gltf convert failed: ${cause}
-* 错误码：103，消息：Can not find cocos mesh file which .bin extension.
-* 错误码：104，消息：The model contain multiply meshes files.
-* 错误码：105，消息：Can not find cocos mesh meta file. Maybe be merge by one josn.
-* 错误码：106，消息：The uploaded file does not contain skeleton information.
-* 错误码：107，消息：Multiple Skin is not supported.
-* 错误码：108，消息：joints count is not match.
-* 错误码：109，消息：Missing skeleton file.
-* 错误码：110，消息：Can not find cocos bin file: ${binPath}
-* 错误码：111，消息：Can not find cocos mesh meta file: ${meshMetaPath}
+* 错误码：103，消息：Can not find cocos prefab meta file. Maybe be merge by one josn.
+* 错误码：104，消息：Can not find cocos mesh meta file. Maybe be merge by one josn.
+* 错误码：105，消息：The uploaded file does not contain skeleton information.
+* 错误码：106，消息：Can not find cocos skeleton meta file. Maybe be merge by one josn.
+* 错误码：107，消息：Skin count is not match. source 1, upload ${skins.length}.
+* 错误码：108，消息：Skeleton joint name ${name} is not match.
+* 错误码：109，消息：Skeleton joints count is not match. source ${skeletonMeta.joints.length} upload ${jointNodes.length}.

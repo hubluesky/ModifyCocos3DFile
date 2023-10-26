@@ -8,24 +8,28 @@ import { gltf } from './gltf';
 
 export default class CocosModelWriter {
 
-    public wirteFiles(document: Document, meshPath: string, meshMeta: CocosMeshMeta): void {
+    public wirteMeshFiles(outPath: string, meshMeta: CocosMeshMeta, document: Document): void {
         const root = document.getRoot();
         const meshes = root.listMeshes();
         if (meshes.length > 1)
-            throw new Error("Multiple Skin is not supported.", { cause: 111 });
+            throw new Error(`Mesh count is not match. source 1, upload ${meshes.length}.`, { cause: 111 });
 
         const arrayBuffer = this.wirteMesh(meshMeta, meshes[0]);
-        this.writeJointMaps(meshMeta, root);
+        // this.writeJointMaps(meshMeta, root);
         this.writeBounds(meshMeta, root);
 
-        fs.mkdirSync(path.dirname(meshPath), { recursive: true });
-        fs.writeFileSync(meshPath + ".bin", Buffer.from(arrayBuffer), "binary");
-        fs.writeFileSync(meshPath + ".json", JSON.stringify(meshMeta.data), "utf-8");
+        fs.mkdirSync(path.dirname(outPath), { recursive: true });
+        const binPath = path.join(path.dirname(outPath), path.basename(outPath, path.extname(outPath)) + '.bin');
+        fs.writeFileSync(binPath, Buffer.from(arrayBuffer), "binary");
+        fs.writeFileSync(outPath, JSON.stringify(meshMeta.data), "utf-8");
+    }
 
-        // if (skeletonMeta != null && skeleton != null) {
-        //     const skeletonMetaData = this.wirteSkeleton(skeletonMeta, skeleton);
-        //     fs.writeFileSync(meshPath + ".json", JSON.stringify(skeletonMetaData), "utf-8");
-        // }
+    public wirteSkeletonFiles(outPath: string, skeletonMeta: CocosSkeletonMeta, skeleton: CocosSkeleton): void {
+        if (skeletonMeta != null && skeleton != null) {
+            fs.mkdirSync(path.dirname(outPath), { recursive: true });
+            const skeletonMetaData = this.wirteSkeleton(skeletonMeta, skeleton);
+            fs.writeFileSync(outPath, JSON.stringify(skeletonMetaData), "utf-8");
+        }
     }
 
     private updateArrayBufferSize(meshMeta: CocosMeshMeta, listPrimitives: Primitive[]): number {
@@ -57,7 +61,7 @@ export default class CocosModelWriter {
         const listPrimitives = mesh.listPrimitives();
 
         if (listPrimitives.length != meshMeta.primitives.length)
-            throw new Error(`The number of primitives does no match: source ${meshMeta.primitives.length} upload ${listPrimitives.length}`, { cause: 113 });
+            throw new Error(`The number of primitives does no match: source ${meshMeta.primitives.length} upload ${listPrimitives.length}.`, { cause: 113 });
 
         const arrayBufferSize = this.updateArrayBufferSize(meshMeta, listPrimitives);
         const arrayBuffer = new ArrayBuffer(arrayBufferSize);
@@ -105,6 +109,12 @@ export default class CocosModelWriter {
         return arrayBuffer;
     }
 
+    /**
+     * 此函数计算有误
+     * @param meshMeta 
+     * @param root 
+     * @deprecated
+     */
     private writeJointMaps(meshMeta: CocosMeshMeta, root: Root): void {
         if (meshMeta.jointMaps != null) {
             const listSkin = root.listSkins();
@@ -128,19 +138,19 @@ export default class CocosModelWriter {
         meshMeta.maxPosition = max;
     }
 
-    // private wirteSkeleton(meta: CocosSkeletonMeta, skeleton: CocosSkeleton): Object {
-    //     // const skeletonMeta = meta.clone();
-    //     meta.joints.length = 0;
-    //     for (let i = 0; i < skeleton.joints.length; i++)
-    //         meta.joints[i] = skeleton.joints[i];
-    //     const matrixType = meta.bindposes[0][0];
-    //     meta.bindposes.length = 0;
-    //     for (let i = 0; i < skeleton.bindPoses.length; i++)
-    //         meta.bindposes[i] = new Array(matrixType, ...skeleton.bindPoses[i]);
-    //     const bindPosesValueType = meta.bindposesValueType[1];
-    //     meta.bindposesValueType.length = 1;
-    //     for (let i = 1; i < skeleton.bindPoses.length + 1; i++)
-    //         meta.bindposesValueType[i] = bindPosesValueType;
-    //     return meta.data;
-    // }
+    private wirteSkeleton(meta: CocosSkeletonMeta, skeleton: CocosSkeleton): Object {
+        // const skeletonMeta = meta.clone();
+        meta.joints.length = 0;
+        for (let i = 0; i < skeleton.joints.length; i++)
+            meta.joints[i] = skeleton.joints[i];
+        const matrixType = meta.bindposes[0][0];
+        meta.bindposes.length = 0;
+        for (let i = 0; i < skeleton.bindPoses.length; i++)
+            meta.bindposes[i] = new Array(matrixType, ...skeleton.bindPoses[i]);
+        const bindPosesValueType = meta.bindposesValueType[1];
+        meta.bindposesValueType.length = 1;
+        for (let i = 1; i < skeleton.bindPoses.length + 1; i++)
+            meta.bindposesValueType[i] = bindPosesValueType;
+        return meta.data;
+    }
 }
