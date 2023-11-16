@@ -55,18 +55,15 @@ async function computeNormalAndTangent(document: Document, overwrite: boolean = 
 
 function getJointPathName(joint: Node, jointNodes: readonly Node[]): string {
     let name: string = joint.getName();
-    joint = joint.getParent() as Node;
 
     const isBone = function (bone: Node): boolean {
-        if (bone.propertyType != "Node") return false;
-        if (jointNodes.indexOf(bone) != -1) return true;
-        return isBone(bone.getParent() as Node);
+        return bone?.propertyType == "Node";
     }
-    while (isBone(joint)) {
-        name = joint.getName() + "/" + name;
+    while (isBone(joint.getParent() as Node)) {
         joint = joint.getParent() as Node;
+        name = joint.getName() + "/" + name;
     }
-    return joint.getName() + "/" + name;
+    return name;
 }
 
 function readPrefabDependences(cocosPath: string): string[] {
@@ -154,7 +151,7 @@ export async function gltfToCocosFile(uri: string, cocosPath: string, outPath: s
         for (let node of jointNodes) {
             const name = getJointPathName(node, jointNodes);
             if (skeletonMeta.joints.indexOf(name) == -1)
-                throw new Error(`Skeleton joint name ${name} is not match.`, { cause: 108 });
+                throw new Error(`Skeleton joint name "${name}" is not match.`, { cause: 108 });
             jointNames.push(name);
         }
         if (jointNames.length != skeletonMeta.joints.length)

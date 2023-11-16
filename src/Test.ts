@@ -1,4 +1,5 @@
-
+import child_process from 'child_process';
+import path from 'path';
 import { fbxToGLtf, gltfToCocosFile } from './Common';
 
 // console.log("System", System.import);
@@ -38,10 +39,10 @@ import { fbxToGLtf, gltfToCocosFile } from './Common';
 async function run() {
     const fbxPath = "assets/fbx/model_EnemyTiers3.FBX";
     const gltfPath = await fbxToGLtf(fbxPath);
-    // const gltfPath = "./assets/gltf/tiger/triger.gltf";
-    const cocosPath = "./assets/cocos/Stickman02";
-    const outPath = "./temp/out/Stickman02";
+    const cocosPath = "assets/cocos/Stickman02";
+    const outPath = "temp/out/Stickman02";
     await gltfToCocosFile(gltfPath, cocosPath, outPath);
+    child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
 }
 
