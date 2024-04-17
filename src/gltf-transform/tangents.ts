@@ -117,11 +117,11 @@ export function tangents(_options: TangentsOptions = TANGENTS_DEFAULTS): Transfo
             }
         }
 
-        if (!modified) {
-            logger.warn(`${NAME}: No qualifying primitives found. See debug output.`);
-        } else {
-            logger.debug(`${NAME}: Complete.`);
-        }
+        // if (!modified) {
+        //     logger.warn(`${NAME}: No qualifying primitives found. See debug output.`);
+        // } else {
+        //     logger.debug(`${NAME}: Complete.`);
+        // }
     });
 }
 

@@ -1,9 +1,11 @@
-import { bounds, Document, Mesh, Primitive, Root } from '@gltf-transform/core';
+import { Document, getBounds, Mesh, Primitive, Root } from '@gltf-transform/core';
 import fs from 'fs';
 import path from 'path';
 import { FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './Cocos';
 import { CocosToGltfAttribute } from './CocosGltfWrap';
-import { CocosMeshMeta, CocosSkeleton, CocosSkeletonMeta } from "./CocosModel";
+import { CocosMeshMeta } from "./CocosMeshMeta";
+import { CocosSkeletonMeta } from "./CocosSkeletonMeta";
+import { CocosSkeleton } from "./CocosSkeleton";
 import { gltf } from './gltf';
 
 export default class CocosModelWriter {
@@ -133,7 +135,7 @@ export default class CocosModelWriter {
     }
 
     private writeBounds(meshMeta: CocosMeshMeta, root: Root): void {
-        const { min, max } = bounds(root.listScenes()[0]);
+        const { min, max } = getBounds(root.listScenes()[0]);
         meshMeta.minPosition = min;
         meshMeta.maxPosition = max;
     }

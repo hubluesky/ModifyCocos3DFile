@@ -103,11 +103,11 @@ export function normals(_options: NormalsOptions = NORMALS_DEFAULTS): Transform 
             }
         }
 
-        if (!modified) {
-            logger.warn(`${NAME}: No qualifying primitives found. See debug output.`);
-        } else {
-            logger.debug(`${modified} ${NAME}: Complete.`);
-        }
+        // if (!modified) {
+        //     logger.warn(`${NAME}: No qualifying primitives found. See debug output.`);
+        // } else {
+        //     logger.debug(`${modified} ${NAME}: Complete.`);
+        // }
     });
 }
 

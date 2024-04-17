@@ -2,12 +2,13 @@ import { Document, Node, NodeIO } from '@gltf-transform/core';
 import child_process from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import CocosModelReader from './CocosModelReader';
+import { CocosMeshMeta } from "./CocosMeshMeta";
 import CocosModelWriter from './CocosModelWriter';
+import { CocosSkeleton } from "./CocosSkeleton";
+import { CocosSkeletonMeta } from "./CocosSkeletonMeta";
+import { decodeUuid } from './decode-uuid';
 import { normals } from './gltf-transform/normals';
 import { tangents } from './gltf-transform/tangents';
-import { CocosMeshMeta, CocosSkeleton, CocosSkeletonMeta } from './CocosModel';
-import { decodeUuid } from './decode-uuid';
 
 
 /**
@@ -22,18 +23,6 @@ function cocosFbxToGltf(input: string, out: string) {
         const err = result.error != null ? result.error : result.stderr?.toString();
         throw new Error("fbx-gltf-conv convert failed:" + err, { cause: 101 });
     }
-}
-
-/**
- * FBX version 2019 or higher;
- * @param input 
- * @param out 
- */
-function facebookFbxToGltf(input: string, out: string) {
-    const toolPath = `./FBX2glTF/FBX2glTF-${process.platform}`;
-    const result = child_process.spawnSync(toolPath, ["--input", input, "--output", out]);
-    if (result.status != 0)
-        throw new Error("FBX2glTF convert failed:" + (result.error != null ? result.error : result), { cause: 102 });
 }
 
 /**
@@ -59,8 +48,8 @@ function getJointPathName(joint: Node, jointNodes: readonly Node[]): string {
     const isBone = function (bone: Node): boolean {
         return bone?.propertyType == "Node";
     }
-    while (isBone(joint.getParent() as Node)) {
-        joint = joint.getParent() as Node;
+    while (isBone(joint.getParentNode() as Node)) {
+        joint = joint.getParentNode() as Node;
         name = joint.getName() + "/" + name;
     }
     return name;

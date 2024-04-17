@@ -600,3 +600,10 @@ export interface ISubMesh {
      */
     jointMapIndex?: number;
 }
+
+export interface ArrayLike<T> {
+    readonly length: number;
+    readonly [n: number]: T;
+    /** Iterator */
+    [Symbol.iterator](): IterableIterator<T>;
+}

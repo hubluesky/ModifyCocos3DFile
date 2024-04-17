@@ -46,7 +46,18 @@ async function run() {
     console.log("convert completed!");
 }
 
-run();
+async function killBug() {
+    const gltfPath = "assets/gltf/Rock/CactusFlowers.gltf";
+    const cocosPath = "assets/cocos/Stickman02";
+    const outPath = "temp/out/Stickman02";
+    await gltfToCocosFile(gltfPath, cocosPath, outPath);
+    child_process.exec(`start "" "${path.resolve(outPath)}"`);
+    console.log("convert completed!");
+}
+
+killBug();
+
+// run();
 // cocosToGltf(prefab);
 // const mesh: cc.Mesh = cocos.deserializeMesh(text, bin);
 // // console.log("mesh", mesh)

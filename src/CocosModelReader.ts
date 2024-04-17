@@ -1,5 +1,7 @@
 import * as fs from 'fs';
-import { CocosMesh, CocosMeshMeta, CocosSkeletonMeta } from "./CocosModel";
+import { CocosMeshMeta } from "./CocosMeshMeta";
+import { CocosSkeletonMeta } from "./CocosSkeletonMeta";
+import { CocosMesh } from "./CocosMesh";
 import { io } from './IO';
 
 export default class CocosModelReader {
