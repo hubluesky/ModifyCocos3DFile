@@ -1,10 +1,9 @@
-import { Document, Node, NodeIO } from '@gltf-transform/core';
+import { Document, NodeIO } from '@gltf-transform/core';
 import child_process from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { CocosMeshMeta } from "./CocosMeshMeta";
 import CocosModelWriter from './CocosModelWriter';
-import { CocosSkeleton } from "./CocosSkeleton";
 import { CocosSkeletonMeta } from "./CocosSkeletonMeta";
 import { decodeUuid } from './decode-uuid';
 import { normals } from './gltf-transform/normals';
@@ -40,19 +39,6 @@ export function fbxToGLtf(filename: string, tempPath: string = "temp/fbx2gltf"):
 async function computeNormalAndTangent(document: Document, overwrite: boolean = false) {
     await document.transform(normals({ overwrite: overwrite }));
     await document.transform(tangents({ overwrite: overwrite }));
-}
-
-function getJointPathName(joint: Node, jointNodes: readonly Node[]): string {
-    let name: string = joint.getName();
-
-    const isBone = function (bone: Node): boolean {
-        return bone?.propertyType == "Node";
-    }
-    while (isBone(joint.getParentNode() as Node)) {
-        joint = joint.getParentNode() as Node;
-        name = joint.getName() + "/" + name;
-    }
-    return name;
 }
 
 function readPrefabDependences(cocosPath: string): string[] {
@@ -131,24 +117,9 @@ export async function gltfToCocosFile(uri: string, cocosPath: string, outPath: s
         if (skins.length > 1)
             throw new Error(`Skin count is not match. source 1, upload ${skins.length}.`, { cause: 107 });
 
-        const inverseBindAccessor = skins[0].getInverseBindMatrices();
-        const inverseBindArray = inverseBindAccessor.getArray();
-        const elementSize = inverseBindAccessor.getElementSize();
-
-        const jointNodes = skins[0].listJoints();
-        const jointNames: string[] = [];
-        for (let node of jointNodes) {
-            const name = getJointPathName(node, jointNodes);
-            if (skeletonMeta.joints.indexOf(name) == -1)
-                throw new Error(`Skeleton joint name "${name}" is not match.`, { cause: 108 });
-            jointNames.push(name);
-        }
-        if (jointNames.length != skeletonMeta.joints.length)
-            throw new Error(`Skeleton joints count is not match. source ${skeletonMeta.joints.length} upload ${jointNodes.length}.`, { cause: 109 });
-
-        const skeleton = new CocosSkeleton(jointNames, inverseBindArray, elementSize);
+        // const skeleton = new CocosSkeleton(jointNames, inverseBindArray, elementSize);
         const meshMetaOutPath = path.join(outPath, skeletonResult.filename);
-        modelWrite.wirteSkeletonFiles(meshMetaOutPath, skeletonMeta, skeleton);
+        modelWrite.wirteSkeletonFiles(meshMetaOutPath, skeletonMeta, skins[0]);
     }
 
     const meshMetaOutPath = path.join(outPath, meshResult.filename);

@@ -2,7 +2,7 @@ import { ArrayLike } from "./Cocos";
 
 
 export class CocosSkeletonMeta {
-    public readonly joints: string[];
+    public readonly jointNames: string[];
     public readonly bindposes: ArrayLike<number>[];
     public readonly bindposesValueType: ArrayLike<number>[];
 
@@ -15,7 +15,7 @@ export class CocosSkeletonMeta {
         this._data = JSON.parse(jsonText);
         const bin = this.getBin();
         console.assert(bin != null, "The skeleton meta file format is incorrect.");
-        this.joints = bin[3];
+        this.jointNames = bin[3];
         this.bindposesValueType = bin[4];
         this.bindposes = bin[4][0];
     }

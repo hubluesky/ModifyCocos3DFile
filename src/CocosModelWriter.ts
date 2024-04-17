@@ -1,11 +1,10 @@
-import { Document, getBounds, Mesh, Primitive, Root } from '@gltf-transform/core';
+import { Document, Mesh, Node, Primitive, Root, Skin, getBounds } from '@gltf-transform/core';
 import fs from 'fs';
 import path from 'path';
 import { FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './Cocos';
 import { CocosToGltfAttribute } from './CocosGltfWrap';
 import { CocosMeshMeta } from "./CocosMeshMeta";
 import { CocosSkeletonMeta } from "./CocosSkeletonMeta";
-import { CocosSkeleton } from "./CocosSkeleton";
 import { gltf } from './gltf';
 
 export default class CocosModelWriter {
@@ -26,10 +25,10 @@ export default class CocosModelWriter {
         fs.writeFileSync(outPath, JSON.stringify(meshMeta.data), "utf-8");
     }
 
-    public wirteSkeletonFiles(outPath: string, skeletonMeta: CocosSkeletonMeta, skeleton: CocosSkeleton): void {
-        if (skeletonMeta != null && skeleton != null) {
+    public wirteSkeletonFiles(outPath: string, skeletonMeta: CocosSkeletonMeta, skin: Skin): void {
+        if (skeletonMeta != null && skin != null) {
             fs.mkdirSync(path.dirname(outPath), { recursive: true });
-            const skeletonMetaData = this.wirteSkeleton(skeletonMeta, skeleton);
+            const skeletonMetaData = this.wirteSkeleton(skeletonMeta, skin);
             fs.writeFileSync(outPath, JSON.stringify(skeletonMetaData), "utf-8");
         }
     }
@@ -140,19 +139,60 @@ export default class CocosModelWriter {
         meshMeta.maxPosition = max;
     }
 
-    private wirteSkeleton(meta: CocosSkeletonMeta, skeleton: CocosSkeleton): Object {
+    private static getJointPathName(joint: Node, jointNodes: readonly Node[]): string {
+        let name: string = joint.getName();
+
+        const isBone = function (bone: Node): boolean {
+            return bone?.propertyType == "Node";
+        }
+        while (isBone(joint.getParentNode() as Node)) {
+            joint = joint.getParentNode() as Node;
+            name = joint.getName() + "/" + name;
+        }
+        return name;
+    }
+
+    private wirteSkeleton(meta: CocosSkeletonMeta, skin: Skin): Object {
+        const inverseBindAccessor = skin.getInverseBindMatrices();
+        const inverseBindArray = inverseBindAccessor.getArray();
+        const componentSize = inverseBindAccessor.getElementSize();
+
+        const jointNodes = skin.listJoints();
+        const jointNames: string[] = [];
+        for (let node of jointNodes) {
+            const name = CocosModelWriter.getJointPathName(node, jointNodes);
+            if (meta.jointNames.indexOf(name) == -1)
+                throw new Error(`Skeleton joint name "${name}" is not match.`, { cause: 108 });
+            jointNames.push(name);
+        }
+        if (jointNames.length != meta.jointNames.length)
+            throw new Error(`Skeleton joints count is not match. source ${meta.jointNames.length} upload ${jointNodes.length}.`, { cause: 109 });
+
+        const bindPoses = new Array(inverseBindArray.length / componentSize);
+        for (let i = 0; i < bindPoses.length / componentSize; i++) {
+            const mat4: number[] = [];
+            for (let j = 0; j < componentSize; j++)
+                mat4[j] = bindPoses[i * componentSize + j];
+            bindPoses[i] = mat4;
+        }
+
         // const skeletonMeta = meta.clone();
-        meta.joints.length = 0;
-        for (let i = 0; i < skeleton.joints.length; i++)
-            meta.joints[i] = skeleton.joints[i];
+        meta.jointNames.length = 0;
+        for (let i = 0; i < jointNames.length; i++)
+            meta.jointNames[i] = jointNames[i];
+
         const matrixType = meta.bindposes[0][0];
         meta.bindposes.length = 0;
-        for (let i = 0; i < skeleton.bindPoses.length; i++)
-            meta.bindposes[i] = new Array(matrixType, ...skeleton.bindPoses[i]);
+
+        for (let i = 0; i < bindPoses.length; i++)
+            meta.bindposes[i] = new Array(matrixType, ...bindPoses[i]);
+
         const bindPosesValueType = meta.bindposesValueType[1];
         meta.bindposesValueType.length = 1;
-        for (let i = 1; i < skeleton.bindPoses.length + 1; i++)
+
+        for (let i = 1; i < bindPoses.length + 1; i++)
             meta.bindposesValueType[i] = bindPosesValueType;
+
         return meta.data;
     }
 }
