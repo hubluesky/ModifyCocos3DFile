@@ -16,6 +16,7 @@
   "exclude": [
     "rollup.config.js",
     "dist",
+    "assets",
     "node_modules",
   ],
   "ts-node": {
