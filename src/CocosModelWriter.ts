@@ -41,8 +41,10 @@ export default class CocosModelWriter {
         fs.mkdirSync(path.dirname(outPath), { recursive: true });
 
         const arrayBuffer = this.writeAnimation(animationMeta, animation);
-        const ccon = new CCON(animationMeta.list, [new Uint8Array(arrayBuffer)]);
-        fs.writeFileSync(outPath, encodeCCONBinary(ccon), "utf-8");
+        const ccon = new CCON(animationMeta.list, [new Uint8Array(arrayBuffer.buffer)]);
+        fs.writeFileSync(outPath, Buffer.from(encodeCCONBinary(ccon)), "binary");
+
+        // fs.writeFileSync(outPath + ".ccon", JSON.stringify(ccon.document), "utf-8");
     }
 
     private updateArrayBufferSize(meshMeta: CocosMeshMeta, listPrimitives: Primitive[]): number {
@@ -248,10 +250,10 @@ export default class CocosModelWriter {
                 const valuesLength = output.getElementSize() * output.getCount();
 
                 const metaTrack = meta.createExoticTrack(offset, timesLength);
-                offset += timesLength;
+                offset += timesLength * input.getComponentSize();
                 meta.setAnimationNodePropertyId(metaAnimationNode, GltfChannelPathToCocos[channelPath], meta.getId());
                 meta.createExoticTrackValues(output.getType(), offset, valuesLength, output.getNormalized());
-                offset += valuesLength;
+                offset += valuesLength * input.getComponentSize();
                 metaTrack.values.__id__ = meta.getId();
 
                 buffer.push(... new Float32Array(input.getArray()));
@@ -259,6 +261,7 @@ export default class CocosModelWriter {
             }
         }
 
+        meta.setAdditiveSettings();
         return new Float32Array(buffer);
     }
 }

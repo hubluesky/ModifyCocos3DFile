@@ -1,6 +1,6 @@
 import child_process from 'child_process';
 import path from 'path';
-import { fbxToGLtf, gltfToCocosFile } from './Common';
+import { fbxToGltf, convertMesh, convertAnimation } from './Common';
 
 // console.log("System", System.import);
 
@@ -38,19 +38,19 @@ import { fbxToGLtf, gltfToCocosFile } from './Common';
 
 async function run() {
     const fbxPath = "assets/fbx/model_EnemyTiers3.FBX";
-    const gltfPath = await fbxToGLtf(fbxPath);
+    const gltfPath = await fbxToGltf(fbxPath);
     const cocosPath = "assets/cocos/Stickman02";
     const outPath = "temp/out/Stickman02";
-    await gltfToCocosFile(gltfPath, cocosPath, outPath);
+    await convertMesh(gltfPath, cocosPath, outPath);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
 }
 
 async function killBug() {
-    const gltfPath = "assets/gltf/Rock/CactusFlowers.gltf";
-    const cocosPath = "assets/cocos/Stickman02";
-    const outPath = "temp/out/Stickman02";
-    await gltfToCocosFile(gltfPath, cocosPath, outPath);
+    const gltfPath = "assets/gltf/ktzs@attack/ktzs@attack.gltf";
+    const cocosPath = "assets/cocos/ktzs@attack";
+    const outPath = "temp/out/ktzs@attack";
+    await convertAnimation(gltfPath, cocosPath, outPath);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
 }

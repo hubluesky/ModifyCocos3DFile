@@ -31,7 +31,7 @@ export class CocosAnimationMeta {
     private _list: any[] = [];
     public get list(): any[] { return this._list; }
 
-    public getId(): number { return this.list.length; }
+    public getId(): number { return this.list.length - 1; }
 
     public constructor(ccon: CCON) {
         this.ccon = ccon;
