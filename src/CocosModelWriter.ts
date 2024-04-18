@@ -1,21 +1,23 @@
-import { Document, Mesh, Node, Primitive, Root, Skin, getBounds } from '@gltf-transform/core';
+import { Animation, AnimationChannel, AnimationSampler, Document, Mesh, Node, Primitive, Root, Skin, getBounds } from '@gltf-transform/core';
 import fs from 'fs';
 import path from 'path';
 import { FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './Cocos';
-import { CocosToGltfAttribute } from './CocosGltfWrap';
+import { CocosAnimationMeta } from './CocosAnimationMeta';
+import { CocosToGltfAttribute, GltfChannelPathToCocos } from './CocosGltfWrap';
 import { CocosMeshMeta } from "./CocosMeshMeta";
 import { CocosSkeletonMeta } from "./CocosSkeletonMeta";
+import { CCON, encodeCCONBinary } from './ccon';
 import { gltf } from './gltf';
 
 export default class CocosModelWriter {
 
-    public wirteMeshFiles(outPath: string, meshMeta: CocosMeshMeta, document: Document): void {
+    public writeMeshFiles(outPath: string, meshMeta: CocosMeshMeta, document: Document): void {
         const root = document.getRoot();
         const meshes = root.listMeshes();
         if (meshes.length > 1)
             throw new Error(`Mesh count is not match. source 1, upload ${meshes.length}.`, { cause: 111 });
 
-        const arrayBuffer = this.wirteMesh(meshMeta, meshes[0]);
+        const arrayBuffer = this.writeMesh(meshMeta, meshes[0]);
         // this.writeJointMaps(meshMeta, root);
         this.writeBounds(meshMeta, root);
 
@@ -25,12 +27,22 @@ export default class CocosModelWriter {
         fs.writeFileSync(outPath, JSON.stringify(meshMeta.data), "utf-8");
     }
 
-    public wirteSkeletonFiles(outPath: string, skeletonMeta: CocosSkeletonMeta, skin: Skin): void {
-        if (skeletonMeta != null && skin != null) {
-            fs.mkdirSync(path.dirname(outPath), { recursive: true });
-            const skeletonMetaData = this.wirteSkeleton(skeletonMeta, skin);
-            fs.writeFileSync(outPath, JSON.stringify(skeletonMetaData), "utf-8");
-        }
+    public writeSkeletonFiles(outPath: string, skeletonMeta: CocosSkeletonMeta, skin: Skin): void {
+        console.assert(skeletonMeta != null);
+        console.assert(skin != null);
+        fs.mkdirSync(path.dirname(outPath), { recursive: true });
+        const skeletonMetaData = this.writeSkeleton(skeletonMeta, skin);
+        fs.writeFileSync(outPath, JSON.stringify(skeletonMetaData), "utf-8");
+    }
+
+    public writeAnimationFiles(outPath: string, animationMeta: CocosAnimationMeta, animation: Animation): void {
+        console.assert(animationMeta != null);
+        console.assert(animation != null);
+        fs.mkdirSync(path.dirname(outPath), { recursive: true });
+
+        const arrayBuffer = this.writeAnimation(animationMeta, animation);
+        const ccon = new CCON(animationMeta.list, [new Uint8Array(arrayBuffer)]);
+        fs.writeFileSync(outPath, encodeCCONBinary(ccon), "utf-8");
     }
 
     private updateArrayBufferSize(meshMeta: CocosMeshMeta, listPrimitives: Primitive[]): number {
@@ -58,7 +70,7 @@ export default class CocosModelWriter {
         return size;
     }
 
-    private wirteMesh(meshMeta: CocosMeshMeta, mesh: Mesh): ArrayBuffer {
+    private writeMesh(meshMeta: CocosMeshMeta, mesh: Mesh): ArrayBuffer {
         const listPrimitives = mesh.listPrimitives();
 
         if (listPrimitives.length != meshMeta.primitives.length)
@@ -139,7 +151,7 @@ export default class CocosModelWriter {
         meshMeta.maxPosition = max;
     }
 
-    private static getJointPathName(joint: Node, jointNodes: readonly Node[]): string {
+    private static getJointPathName(joint: Node): string {
         let name: string = joint.getName();
 
         const isBone = function (bone: Node): boolean {
@@ -152,7 +164,7 @@ export default class CocosModelWriter {
         return name;
     }
 
-    private wirteSkeleton(meta: CocosSkeletonMeta, skin: Skin): Object {
+    private writeSkeleton(meta: CocosSkeletonMeta, skin: Skin): Object {
         const inverseBindAccessor = skin.getInverseBindMatrices();
         const inverseBindArray = inverseBindAccessor.getArray();
         const componentSize = inverseBindAccessor.getElementSize();
@@ -160,7 +172,7 @@ export default class CocosModelWriter {
         const jointNodes = skin.listJoints();
         const jointNames: string[] = [];
         for (let node of jointNodes) {
-            const name = CocosModelWriter.getJointPathName(node, jointNodes);
+            const name = CocosModelWriter.getJointPathName(node);
             if (meta.jointNames.indexOf(name) == -1)
                 throw new Error(`Skeleton joint name "${name}" is not match.`, { cause: 108 });
             jointNames.push(name);
@@ -194,5 +206,59 @@ export default class CocosModelWriter {
             meta.bindposesValueType[i] = bindPosesValueType;
 
         return meta.data;
+    }
+
+    private writeAnimation(meta: CocosAnimationMeta, animation: Animation): Float32Array {
+        const channels = animation.listChannels();
+        const samples = animation.listSamplers();
+        console.assert(channels.length == samples.length, `channels length cannot equals samples length ${channels.length, samples.length}`);
+        const animationNodes: {
+            node: Node,
+            samples: AnimationSampler[],
+            channels: AnimationChannel[]
+        }[] = [];
+
+        for (let i = 0; i < channels.length; i++) {
+            const channel = channels[i];
+            const sample = samples[i];
+            const node = channel.getTargetNode();
+
+            let animationNode = animationNodes.find(v => v.node == node);
+            if (animationNode == null) {
+                animationNodes.push(animationNode = { node, samples: [], channels: [] });
+            }
+            animationNode.samples.push(sample);
+            animationNode.channels.push(channel);
+        }
+
+        let offset = 0;
+        const buffer = new Array<number>();
+        for (const animationNode of animationNodes) {
+            const pathname = CocosModelWriter.getJointPathName(animationNode.node);
+            const metaAnimationNode = meta.createAnimationNode(pathname);
+
+            for (let i = 0; i < animationNode.samples.length; i++) {
+                const sample = animationNode.samples[i];
+                const channel = animationNode.channels[i];
+                const channelPath = channel.getTargetPath();
+                const input = sample.getInput();
+                const output = sample.getOutput();
+
+                const timesLength = input.getElementSize() * input.getCount();
+                const valuesLength = output.getElementSize() * output.getCount();
+
+                const metaTrack = meta.createExoticTrack(offset, timesLength);
+                offset += timesLength;
+                meta.setAnimationNodePropertyId(metaAnimationNode, GltfChannelPathToCocos[channelPath], meta.getId());
+                meta.createExoticTrackValues(output.getType(), offset, valuesLength, output.getNormalized());
+                offset += valuesLength;
+                metaTrack.values.__id__ = meta.getId();
+
+                buffer.push(... new Float32Array(input.getArray()));
+                buffer.push(... new Float32Array(output.getArray()));
+            }
+        }
+
+        return new Float32Array(buffer);
     }
 }

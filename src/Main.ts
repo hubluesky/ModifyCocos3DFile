@@ -1,22 +1,38 @@
 import { program } from "commander";
 import * as fs from 'fs';
 import path from "path";
-import { fbxToGLtf, gltfToCocosFile } from "./Common";
+import { convertAnimation, convertMesh, fbxToGltf } from "./Common";
 
-async function gltfReplaceCocos(gltfPath: string, cocosPath: string, outPath: string) {
+async function convertFbxMeshFile(fbxPath: string, tempPath: string, cocosPath: string, outPath: string) {
+    const modelName = path.basename(fbxPath, path.extname(fbxPath));
+    tempPath = `${tempPath}/${modelName}`;
+    const gltfPath = await fbxToGltf(fbxPath, tempPath);
+    await convertGltfMeshFile(gltfPath, cocosPath, outPath);
+    fs.rmSync(tempPath, { recursive: true, force: true });
+}
+
+async function convertGltfMeshFile(gltfPath: string, cocosPath: string, outPath: string) {
     const modelName = path.basename(gltfPath, path.extname(gltfPath));
     outPath = path.join(outPath, modelName);
-    await gltfToCocosFile(gltfPath, cocosPath, outPath);
+    await convertMesh(gltfPath, cocosPath, outPath);
     // child_process.execSync(`start "" "${outPath}"`);
     console.log("Conversion completed, output directory:", outPath);
 }
 
-async function fbxReplaceCocos(fbxPath: string, tempPath: string, cocosPath: string, outPath: string) {
+async function convertFbxAnimationFile(fbxPath: string, tempPath: string, cocosPath: string, outPath: string) {
     const modelName = path.basename(fbxPath, path.extname(fbxPath));
     tempPath = `${tempPath}/${modelName}`;
-    const gltfPath = await fbxToGLtf(fbxPath, tempPath);
-    await gltfReplaceCocos(gltfPath, cocosPath, outPath);
+    const gltfPath = await fbxToGltf(fbxPath, tempPath);
+    await convertGltfAnimationFile(gltfPath, cocosPath, outPath);
     fs.rmSync(tempPath, { recursive: true, force: true });
+}
+
+async function convertGltfAnimationFile(gltfPath: string, cocosPath: string, outPath: string) {
+    const modelName = path.basename(gltfPath, path.extname(gltfPath));
+    outPath = path.join(outPath, modelName);
+    await convertAnimation(gltfPath, cocosPath, outPath);
+    // child_process.execSync(`start "" "${outPath}"`);
+    console.log("Conversion completed, output directory:", outPath);
 }
 
 interface FBX2Gltf {
@@ -24,7 +40,7 @@ interface FBX2Gltf {
     output: string;
 }
 
-interface FbxReplaceCocos {
+interface Fbx2Cocos {
     name: string;
     fbx: string;
     temp?: string;
@@ -32,7 +48,7 @@ interface FbxReplaceCocos {
     output: string;
 }
 
-interface GltfReplaceCocos {
+interface Gltf2Cocos {
     name: string;
     gltf: string;
     cocos: string;
@@ -41,38 +57,63 @@ interface GltfReplaceCocos {
 
 program.version("0.0.2", "-v, --version", "Cocos 3d file converter");
 
-program.command("ModifyCocos3DFileByFbx")
-    .alias("mf")
-    .description("read the fbx and replace to the cocos 3d file.")
-    .requiredOption("-f, --fbx <path>", "Input gltf file path.")
-    .option("-t, --temp <path>", "fbx to gltf temp path, default temp.")
-    .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
-    .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
-    .action(function (input: FbxReplaceCocos) {
-        return fbxReplaceCocos(input.fbx, input.temp ?? "temp", input.cocos, input.output).catch(error => {
-            program.error(error.message, { exitCode: error.cause });
-        });
-    });
-
-program.command("ModifyCocos3DFile")
-    .alias("mg")
-    .description("read the gltf and replace to the cocos 3d file.")
-    .requiredOption("-g, --gltf <path>", "Input gltf file path.")
-    .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
-    .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
-    .action(function (input: GltfReplaceCocos) {
-        return gltfReplaceCocos(input.gltf, input.cocos, input.output).catch(error => {
-            program.error(error.message, { exitCode: error.cause });
-        });
-    });
-
 program.command("fbx2gltf")
     .alias("f2g")
     .description("Conver fbx to gltf file.")
     .requiredOption("-f, --fbx <path>", "Input Fbx file path.")
     .option("-o, --output <path>", "Output gltf path. It must be local path.")
     .action(function (input: FBX2Gltf) {
-        fbxToGLtf(input.fbx, input.output);
+        fbxToGltf(input.fbx, input.output);
+    });
+
+program.command("ConvertFbxMesh")
+    .alias("mf").alias("ModifyCocos3DFileByFbx").alias("cfm")
+    .description("read the fbx and replace to the cocos 3d mesh file.")
+    .requiredOption("-f, --fbx <path>", "Input gltf file path.")
+    .option("-t, --temp <path>", "fbx to gltf temp path, default temp.")
+    .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
+    .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
+    .action(function (input: Fbx2Cocos) {
+        return convertFbxMeshFile(input.fbx, input.temp ?? "temp", input.cocos, input.output).catch(error => {
+            program.error(error.message, { exitCode: error.cause });
+        });
+    });
+
+program.command("ConvertGltfMesh")
+    .alias("mg").alias("ModifyCocos3DFile").alias("cgm")
+    .description("read the gltf and replace to the cocos 3d mesh file.")
+    .requiredOption("-g, --gltf <path>", "Input gltf file path.")
+    .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
+    .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
+    .action(function (input: Gltf2Cocos) {
+        return convertGltfMeshFile(input.gltf, input.cocos, input.output).catch(error => {
+            program.error(error.message, { exitCode: error.cause });
+        });
+    });
+
+program.command("ConvertFbxAnimation")
+    .alias("cfa")
+    .description("read the fbx and replace to the cocos 3d animation file.")
+    .requiredOption("-f, --fbx <path>", "Input gltf file path.")
+    .option("-t, --temp <path>", "fbx to gltf temp path, default temp.")
+    .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
+    .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
+    .action(function (input: Fbx2Cocos) {
+        return convertFbxAnimationFile(input.fbx, input.temp ?? "temp", input.cocos, input.output).catch(error => {
+            program.error(error.message, { exitCode: error.cause });
+        });
+    });
+
+program.command("ConvertGltfAnimation")
+    .alias("cga")
+    .description("read the gltf and replace to the cocos 3d animation file.")
+    .requiredOption("-g, --gltf <path>", "Input gltf file path.")
+    .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
+    .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
+    .action(function (input: Gltf2Cocos) {
+        return convertGltfAnimationFile(input.gltf, input.cocos, input.output).catch(error => {
+            program.error(error.message, { exitCode: error.cause });
+        });
     });
 
 program.parse();

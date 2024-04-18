@@ -1,3 +1,4 @@
+import { GLTF } from '@gltf-transform/core';
 import { AttributeName } from "./Cocos";
 import { gltf } from "./gltf";
 
@@ -11,5 +12,12 @@ export const CocosToGltfAttribute: Record<AttributeName, gltf.AttributeName> = {
     "a_color": gltf.AttributeName.COLOR_0,
     "a_joints": gltf.AttributeName.JOINTS_0,
     "a_weights": gltf.AttributeName.WEIGHTS_0,
-    
+
 } as any;
+
+export const GltfChannelPathToCocos: Record<GLTF.AnimationChannelTargetPath, "_position" | "_rotation" | "_scale"> = {
+    "translation": "_position",
+    "rotation": "_rotation",
+    "scale": "_scale",
+    "weights": undefined,
+};

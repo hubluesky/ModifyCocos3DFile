@@ -96,7 +96,7 @@ node dist/index.js mf -f ./assets/fbx/model_cow.FBX -c ./assets/cocos/model_cow 
 // 转换成功后，输出以下信息。
 Conversion completed, output directory: temp\out\model_cow
 ```
-### 异常信息：
+### 异常信息(英文)：
 * 错误码：111，消息：Mesh count is not match. source 1, upload ${meshes.length}.
 * 错误码：112，消息：The ${i} of primitives does no index buffer
 * 错误码：113，消息：The number of primitives does no match: source ${0} upload ${1}.
@@ -110,3 +110,22 @@ Conversion completed, output directory: temp\out\model_cow
 * 错误码：107，消息：Skin count is not match. source 1, upload ${skins.length}.
 * 错误码：108，消息：Skeleton joint name ${name} is not match.
 * 错误码：109，消息：Skeleton joints count is not match. source ${skeletonMeta.joints.length} upload ${jointNodes.length}.
+* 错误码：121，消息：Animation file format is error. ${err}.
+* 错误码：122，消息：Animation count is not match. source 1, upload ${animations.length}.
+
+### 异常信息(中文)：
+* 错误码：111，消息：网格数量不匹配. 源文件是 1, 上传文件是 ${meshes.length}.
+* 错误码：112，消息：第 ${i} 子网格没有使用索引缓冲
+* 错误码：113，消息：子网格数量不匹配: 源文件是 ${0} 上传文件是 ${1}.
+* 错误码：114，消息：上传文件的顶点属性没有支持 ${attributeName}.
+* 错误码：101，消息：FBX 转换失败，原因: ${cause}
+* 错误码：102，消息：Gltf 转换失败，原因: ${cause}
+* 错误码：103，消息：找不到Cocos预制的meta文件. 可能被技术人员合并了，请找相关项目开发人员.
+* 错误码：104，消息：找不到Cocos网格的meta文件. 可能被技术人员合并了，请找相关项目开发人员.
+* 错误码：105，消息：上传文件没有包含骨骼结构。
+* 错误码：106，消息：找不到Cocos骨架的meta文件. 可能被技术人员合并了，请找相关项目开发人员.
+* 错误码：107，消息：蒙皮数量不匹配. 源文件是 1, 上传文件是 ${skins.length}.
+* 错误码：108，消息：骨骼名称不匹配 ${name}.
+* 错误码：109，消息：骨骼数量不匹配. 源文件是 ${skeletonMeta.joints.length} 上传文件是 ${jointNodes.length}.
+* 错误码：121，消息：动画文件格式错误，可能使用了错误的Cocos动画文件. ${err}.
+* 错误码：122，消息：动画数量不匹配. 源文件是 1, 上传文件是 ${animations.length}.
