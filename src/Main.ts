@@ -67,7 +67,7 @@ program.command("fbx2gltf")
     });
 
 program.command("ConvertFbxMesh")
-    .alias("mf").alias("ModifyCocos3DFileByFbx").alias("cfm")
+    .alias("cfm").alias("mf").alias("ModifyCocos3DFileByFbx")
     .description("read the fbx and replace to the cocos 3d mesh file.")
     .requiredOption("-f, --fbx <path>", "Input gltf file path.")
     .option("-t, --temp <path>", "fbx to gltf temp path, default temp.")
@@ -80,7 +80,7 @@ program.command("ConvertFbxMesh")
     });
 
 program.command("ConvertGltfMesh")
-    .alias("mg").alias("ModifyCocos3DFile").alias("cgm")
+    .alias("cgm").alias("mg").alias("ModifyCocos3DFile")
     .description("read the gltf and replace to the cocos 3d mesh file.")
     .requiredOption("-g, --gltf <path>", "Input gltf file path.")
     .requiredOption("-c, --cocos <path>", "Input cocos 3d file")

@@ -52,46 +52,86 @@ node dist/index.js
 
 显示结果为：
 ```
-Usage: Main [options] [command]
+Usage: index [options] [command]
 
 Options:
-  -v, --version                        Cocos 3d file converter
-  -h, --help                           display help for command
+  -v, --version                       Cocos 3d file converter
+  -h, --help                          display help for command
 
 Commands:
-  ModifyCocos3DFileByFbx|mf [options]  read the fbx and replace to the cocos 3d file.
-  ModifyCocos3DFile|mg [options]       read the gltf and replace to the cocos 3d file.
-  help [command]                       display help for command
+  fbx2gltf|f2g [options]              Conver fbx to gltf file.
+  ConvertFbxMesh|cfm [options]        read the fbx and replace to the cocos 3d mesh file.
+  ConvertGltfMesh|cgm [options]       read the gltf and replace to the cocos 3d mesh file.
+  ConvertFbxAnimation|cfa [options]   read the fbx and replace to the cocos 3d animation file.
+  ConvertGltfAnimation|cga [options]  read the gltf and replace to the cocos 3d animation file.
+  help [command]                      display help for command
 ```
-* `ModifyCocos3DFileByFbx|mf`命令是把fbx文件转化为cocos3D文件的命令
+* `fbx2gltf|f2g`命令是把fbx文件转化为gltf文件
 ```
-Usage: Main ModifyCocos3DFileByFbx|mf [options]
+Usage: index fbx2gltf|f2g [options]
 
-read the fbx and replace to the cocos 3d file.
-
-Options:
-  -f, --fbx <path>           Input gltf file path.
-  -c, --cocos <path>         Input cocos 3d file
-  -o, --output <path>        Output Cocos 3d file path. It must be local path.
-  -h, --help                 display help for command
-```
-* `gltf2cocos`命令是把gltf文件转化为cocos3D文件的命令
-```
-Usage: Main ModifyCocos3DFile|mg [options]
-
-read the gltf and replace to the cocos 3d file.
+Conver fbx to gltf file.
 
 Options:
-  -g, --gltf <path>          Input gltf file path.
-  -c, --cocos <path>         Input cocos 3d file
-  -o, --output <path>        Output Cocos 3d file path.
-  -h, --help                 display help for command
+  -f, --fbx <path>     Input Fbx file path.
+  -o, --output <path>  Output gltf path. It must be local path.
+  -h, --help           display help for command
+```
+* `ConvertFbxMesh|cfm`命令是把fbx文件转化为cocos3D网格文件的命令
+```
+Usage: index ConvertFbxMesh|cfm [options]
+
+read the fbx and replace to the cocos 3d mesh file.
+
+Options:
+  -f, --fbx <path>     Input gltf file path.
+  -t, --temp <path>    fbx to gltf temp path, default temp.
+  -c, --cocos <path>   Input cocos 3d file
+  -o, --output <path>  Output Cocos 3d file path.
+  -h, --help           display help for command
+```
+* `ConvertGltfMesh|cgm`命令是把gltf文件转化为cocos3D网格文件的命令
+```
+Usage: index ConvertGltfMesh|cgm [options]
+
+read the gltf and replace to the cocos 3d mesh file.
+
+Options:
+  -g, --gltf <path>    Input gltf file path.
+  -c, --cocos <path>   Input cocos 3d file
+  -o, --output <path>  Output Cocos 3d file path.
+  -h, --help           display help for command
+```
+* `ConvertFbxAnimation|cfa`命令是把gltf文件转化为cocos3D网格文件的命令
+```
+Usage: index ConvertFbxAnimation|cfa [options]
+
+read the fbx and replace to the cocos 3d animation file.
+
+Options:
+  -f, --fbx <path>     Input gltf file path.
+  -t, --temp <path>    fbx to gltf temp path, default temp.
+  -c, --cocos <path>   Input cocos 3d file
+  -o, --output <path>  Output Cocos 3d file path.
+  -h, --help           display help for command
+```
+* `ConvertGltfAnimation|cfa`命令是把gltf文件转化为cocos3D网格文件的命令
+```
+Usage: index ConvertGltfAnimation|cga [options]
+
+read the gltf and replace to the cocos 3d animation file.
+
+Options:
+  -g, --gltf <path>    Input gltf file path.
+  -c, --cocos <path>   Input cocos 3d file
+  -o, --output <path>  Output Cocos 3d file path.
+  -h, --help           display help for command
 ```
 ### 测试
 项目中有几个测试文件，用来测试转换的。
 测试命令如下：
 ```
-node dist/index.js mf -f ./assets/fbx/model_cow.FBX -c ./assets/cocos/model_cow -o ./temp/out
+node dist/index.js cfm -f ./assets/fbx/model_cow.FBX -c ./assets/cocos/model_cow -o ./temp/out
 
 // 转换成功后，输出以下信息。
 Conversion completed, output directory: temp\out\model_cow
