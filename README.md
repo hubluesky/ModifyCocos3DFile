@@ -77,7 +77,7 @@ Options:
   -o, --output <path>  Output gltf path. It must be local path.
   -h, --help           display help for command
 ```
-* `ConvertFbxMesh|cfm`命令是把fbx文件转化为cocos3D网格文件的命令
+* `ConvertFbxMesh|cfm`命令是把fbx文件的网格转化为cocos3D文件的命令
 ```
 Usage: index ConvertFbxMesh|cfm [options]
 
@@ -90,7 +90,7 @@ Options:
   -o, --output <path>  Output Cocos 3d file path.
   -h, --help           display help for command
 ```
-* `ConvertGltfMesh|cgm`命令是把gltf文件转化为cocos3D网格文件的命令
+* `ConvertGltfMesh|cgm`命令是把gltf文件的网格转化为cocos3D文件的命令
 ```
 Usage: index ConvertGltfMesh|cgm [options]
 
@@ -102,7 +102,7 @@ Options:
   -o, --output <path>  Output Cocos 3d file path.
   -h, --help           display help for command
 ```
-* `ConvertFbxAnimation|cfa`命令是把gltf文件转化为cocos3D网格文件的命令
+* `ConvertFbxAnimation|cfa`命令是把fbx文件的动画转化为cocos3D文件的命令
 ```
 Usage: index ConvertFbxAnimation|cfa [options]
 
@@ -115,7 +115,7 @@ Options:
   -o, --output <path>  Output Cocos 3d file path.
   -h, --help           display help for command
 ```
-* `ConvertGltfAnimation|cfa`命令是把gltf文件转化为cocos3D网格文件的命令
+* `ConvertGltfAnimation|cfa`命令是把gltf的动画文件转化为cocos3D文件的命令
 ```
 Usage: index ConvertGltfAnimation|cga [options]
 

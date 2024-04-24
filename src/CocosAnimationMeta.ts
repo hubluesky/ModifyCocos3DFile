@@ -40,11 +40,15 @@ export class CocosAnimationMeta {
         // this.list[0]["_exoticAnimation"]["__id__"] = 1;
         this.list.push({ __type__: "cc.animation.ExoticAnimation", _nodeAnimations: [] });
 
-        const indexAdditiveSettings = document[0]["_additiveSettings"]["__id__"];
-        this._additiveSettings = document[indexAdditiveSettings];
+        const additiveSettings = document[0]["_additiveSettings"];
+        if (additiveSettings != null) {
+            const indexAdditiveSettings = additiveSettings["__id__"];
+            this._additiveSettings = document[indexAdditiveSettings];
+        }
     }
 
     public setAdditiveSettings(): void {
+        if (this.additiveSettings == null) return;
         this.list[0]["_additiveSettings"]["__id__"] = this.list.length;
         this.list.push(this.additiveSettings);
     }

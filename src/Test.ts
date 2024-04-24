@@ -47,9 +47,9 @@ async function run() {
 }
 
 async function killBug() {
-    const gltfPath = "assets/gltf/ktzs@attack/ktzs@attack.gltf";
-    const cocosPath = "assets/cocos/ktzs@attack";
-    const outPath = "temp/out/ktzs@attack";
+    const gltfPath = "assets/gltf/ktzs/ktzs@run.gltf";
+    const cocosPath = "assets/cocos/ktzs@run";
+    const outPath = "temp/out/ktzs@run";
     await convertAnimation(gltfPath, cocosPath, outPath);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
