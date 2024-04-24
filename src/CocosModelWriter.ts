@@ -8,6 +8,7 @@ import { CocosMeshMeta } from "./CocosMeshMeta";
 import { CocosSkeletonMeta } from "./CocosSkeletonMeta";
 import { CCON, encodeCCONBinary } from './ccon';
 import { gltf } from './gltf';
+import { ConvertError } from './ConvertError';
 
 export default class CocosModelWriter {
 
@@ -15,7 +16,7 @@ export default class CocosModelWriter {
         const root = document.getRoot();
         const meshes = root.listMeshes();
         if (meshes.length > 1)
-            throw new Error(`Mesh count is not match. source 1, upload ${meshes.length}.`, { cause: 111 });
+            throw new ConvertError(111, `Mesh count is not match. source 1, upload ${meshes.length}.`, meshes.length);
 
         const arrayBuffer = this.writeMesh(meshMeta, meshes[0]);
         // this.writeJointMaps(meshMeta, root);
@@ -62,7 +63,7 @@ export default class CocosModelWriter {
             if (indexView == null) continue;
             const indicesAccessor = listPrimitives[i].getIndices();
             if (indicesAccessor == null)
-                throw new Error(`The ${i} of primitives does no index buffer`, { cause: 112 });
+                throw new ConvertError(112, `The ${i} of primitives does no index buffer`, 112);
             const indices = indicesAccessor.getArray();
             indexView.offset = size;
             indexView.count = indices.length;
@@ -76,7 +77,7 @@ export default class CocosModelWriter {
         const listPrimitives = mesh.listPrimitives();
 
         if (listPrimitives.length != meshMeta.primitives.length)
-            throw new Error(`The number of primitives does no match: source ${meshMeta.primitives.length} upload ${listPrimitives.length}.`, { cause: 113 });
+            throw new ConvertError(113, `The number of primitives does no match: source ${meshMeta.primitives.length} upload ${listPrimitives.length}.`, meshMeta.primitives.length);
 
         const arrayBufferSize = this.updateArrayBufferSize(meshMeta, listPrimitives);
         const arrayBuffer = new ArrayBuffer(arrayBufferSize);
@@ -95,7 +96,7 @@ export default class CocosModelWriter {
                 const attributeName = CocosToGltfAttribute[name];
                 const attributeAccessor = listPrimitives[iv].getAttribute(attributeName);
                 if (attributeAccessor == null)
-                    throw new Error(`Attribute ${attributeName} is not supported.`, { cause: 114 });
+                    throw new ConvertError(114, `Attribute ${attributeName} is not supported.`, attributeName);
                 const typeArray = attributeAccessor.getArray();
                 const vertexCount = typeArray.length / componentCount;
                 for (let iVertex = 0; iVertex < vertexCount; iVertex++) {
@@ -176,11 +177,11 @@ export default class CocosModelWriter {
         for (let node of jointNodes) {
             const name = CocosModelWriter.getJointPathName(node);
             if (meta.jointNames.indexOf(name) == -1)
-                throw new Error(`Skeleton joint name "${name}" is not match.`, { cause: 108 });
+                throw new ConvertError(108, `Skeleton joint name "${name}" is not match.`, name);
             jointNames.push(name);
         }
         if (jointNames.length != meta.jointNames.length)
-            throw new Error(`Skeleton joints count is not match. source ${meta.jointNames.length} upload ${jointNodes.length}.`, { cause: 109 });
+            throw new ConvertError(109, `Skeleton joints count is not match. source ${meta.jointNames.length} upload ${jointNodes.length}.`, meta.jointNames.length, jointNodes.length);
 
         const bindPoses = new Array(inverseBindArray.length / componentSize);
         for (let i = 0; i < bindPoses.length / componentSize; i++) {

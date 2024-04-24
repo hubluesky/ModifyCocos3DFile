@@ -136,6 +136,13 @@ node dist/index.js cfm -f ./assets/fbx/model_cow.FBX -c ./assets/cocos/model_cow
 // 转换成功后，输出以下信息。
 Conversion completed, output directory: temp\out\model_cow
 ```
+```
+// 错误码对象
+class ConvertError extends Error {
+    constructor(code: number, msg: string, ...params: any[]);
+}
+```
+
 ### 异常信息(英文)：
 * 错误码：111，消息：Mesh count is not match. source 1, upload ${meshes.length}.
 * 错误码：112，消息：The ${i} of primitives does no index buffer
@@ -152,6 +159,8 @@ Conversion completed, output directory: temp\out\model_cow
 * 错误码：109，消息：Skeleton joints count is not match. source ${skeletonMeta.joints.length} upload ${jointNodes.length}.
 * 错误码：121，消息：Animation file format is error. ${err}.
 * 错误码：122，消息：Animation count is not match. source 1, upload ${animations.length}.
+* 错误码：131，消息：ccon encode failed.
+* 错误码：132，消息：ccon decode failed.
 
 ### 异常信息(中文)：
 * 错误码：111，消息：网格数量不匹配. 源文件是 1, 上传文件是 ${meshes.length}.
@@ -169,3 +178,5 @@ Conversion completed, output directory: temp\out\model_cow
 * 错误码：109，消息：骨骼数量不匹配. 源文件是 ${skeletonMeta.joints.length} 上传文件是 ${jointNodes.length}.
 * 错误码：121，消息：动画文件格式错误，可能使用了错误的Cocos动画文件. ${err}.
 * 错误码：122，消息：动画数量不匹配. 源文件是 1, 上传文件是 ${animations.length}.
+* 错误码：131，消息：动画文件解码失败.
+* 错误码：132，消息：动画文件编码失败.

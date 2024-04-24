@@ -22,6 +22,8 @@
  THE SOFTWARE.
 */
 
+import { ConvertError } from "./ConvertError";
+
 const VERSION = 1;
 
 const MAGIC = 0x4E4F4343;
@@ -193,7 +195,7 @@ function encodeJson (input: string): Uint8Array {
             buffer.length,
         );
     } else {
-        throw new Error("----------------");
+        throw new ConvertError(131, "ccon encode failed");
     }
 }
 
@@ -205,7 +207,7 @@ function decodeJson (data: Uint8Array): string {
         // eslint-disable-next-line no-buffer-constructor
         return Buffer.from(data.buffer, data.byteOffset, data.byteLength).toString();
     } else {
-        throw new Error("----------------");
+        throw new ConvertError(132, "ccon decode failed");
     }
 }
 
