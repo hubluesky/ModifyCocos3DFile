@@ -236,6 +236,7 @@ export default class CocosModelWriter {
 
         let offset = 0;
         const buffer = new Array<number>();
+        let newDuration: number = 0;
         for (const animationNode of animationNodes) {
             const pathname = CocosModelWriter.getJointPathName(animationNode.node);
             const metaAnimationNode = meta.createAnimationNode(pathname);
@@ -257,9 +258,17 @@ export default class CocosModelWriter {
                 offset += valuesLength * input.getComponentSize();
                 metaTrack.values.__id__ = meta.getId();
 
-                buffer.push(... new Float32Array(input.getArray()));
+                const inputArray = new Float32Array(input.getArray());
+                buffer.push(...inputArray);
                 buffer.push(... new Float32Array(output.getArray()));
+
+                newDuration = Math.max(newDuration, inputArray[inputArray.length - 1]);
             }
+        }
+
+        const duration = meta.duration;
+        for (const event of meta.events) {
+            event.frame = event.frame / duration * newDuration;
         }
 
         meta.setAdditiveSettings();
