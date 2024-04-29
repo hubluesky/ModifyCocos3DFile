@@ -183,11 +183,11 @@ export default class CocosModelWriter {
         if (jointNames.length != meta.jointNames.length)
             throw new ConvertError(109, `Skeleton joints count is not match. source ${meta.jointNames.length} upload ${jointNodes.length}.`, meta.jointNames.length, jointNodes.length);
 
-        const bindPoses = new Array(inverseBindArray.length / componentSize);
-        for (let i = 0; i < bindPoses.length / componentSize; i++) {
+        const bindPoses = new Array<number[]>(inverseBindArray.length / componentSize);
+        for (let i = 0; i < bindPoses.length; i++) {
             const mat4: number[] = [];
             for (let j = 0; j < componentSize; j++)
-                mat4[j] = bindPoses[i * componentSize + j];
+                mat4[j] = inverseBindArray[i * componentSize + j];
             bindPoses[i] = mat4;
         }
 

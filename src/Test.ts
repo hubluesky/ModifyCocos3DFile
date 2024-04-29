@@ -36,28 +36,27 @@ import { fbxToGltf, convertMesh, convertAnimation } from './Common';
 // const data = cocos.deserialize(text);
 // console.log("paotaiPrefab", data);
 
-async function run() {
-    const fbxPath = "assets/fbx/model_EnemyTiers3.FBX";
-    const gltfPath = await fbxToGltf(fbxPath);
-    const cocosPath = "assets/cocos/Stickman02";
-    const outPath = "temp/out/Stickman02";
+async function testConvertMesh() {
+    const gltfPath = "assets/gltf/ktzs/ktzs.gltf";
+    const cocosPath = "assets/cocos/ktzs";
+    const outPath = "temp/out/ktzs";
     await convertMesh(gltfPath, cocosPath, outPath);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
 }
 
-async function killBug() {
-    const gltfPath = "assets/gltf/ktzs/ktzs@run.gltf";
-    const cocosPath = "assets/cocos/ktzs@run";
-    const outPath = "temp/out/ktzs@run";
+async function testConvertAnimation() {
+    const gltfPath = "assets/gltf/ktzs/ktzs@skill.gltf";
+    const cocosPath = "assets/cocos/ktzs@attack";
+    const outPath = "temp/out/ktzs@attack";
     await convertAnimation(gltfPath, cocosPath, outPath);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
 }
 
-killBug();
+// testConvertAnimation();
 
-// run();
+testConvertMesh();
 // cocosToGltf(prefab);
 // const mesh: cc.Mesh = cocos.deserializeMesh(text, bin);
 // // console.log("mesh", mesh)
