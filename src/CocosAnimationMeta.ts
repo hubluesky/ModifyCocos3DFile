@@ -26,6 +26,7 @@ export class CocosAnimationMeta {
     public get speed(): number { return this.list[0]["speed"]; }
     public get wrapMode(): number { return this.list[0]["wrapMode"]; }
     public get duration(): number { return this.list[0]["_duration"]; }
+    public set duration(v: number) { this.list[0]["_duration"] = v; }
     public get animationName(): string { return this.list[0]["_name"]; };
     public get exoticAnimationId(): number { return this.list[0]["_exoticAnimation"]["__id__"]; }
     public get nodeAnimations(): { "__id__": number }[] { return this.list[1]["_nodeAnimations"]; }

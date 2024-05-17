@@ -13,7 +13,6 @@ import { decodeUuid } from './decode-uuid';
 import { normals } from './gltf-transform/normals';
 import { tangents } from './gltf-transform/tangents';
 
-
 /**
  * FBX version 2019 or higher;
  * @param input 

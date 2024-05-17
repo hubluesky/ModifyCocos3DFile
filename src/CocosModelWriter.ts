@@ -270,6 +270,7 @@ export default class CocosModelWriter {
         for (const event of meta.events) {
             event.frame = event.frame / duration * newDuration;
         }
+        meta.duration = newDuration;
 
         meta.setAdditiveSettings();
         return new Float32Array(buffer);
