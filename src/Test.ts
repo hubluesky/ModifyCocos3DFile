@@ -49,9 +49,9 @@ async function testConvertMesh() {
 }
 
 async function testConvertAnimation() {
-    const gltfPath = "assets/gltf/ktzs/ktzs@run.glb";
-    const cocosPath = "assets/cocos/ktzs@idle";
-    const outPath = "temp/out/ktzs@idle";
+    const gltfPath = "assets/gltf/ktzs/ktzs@attack.glb";
+    const cocosPath = "assets/cocos/ktzs@run";
+    const outPath = "temp/out/ktzs@run";
     await convertAnimation(gltfPath, cocosPath, outPath);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");

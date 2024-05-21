@@ -151,5 +151,5 @@ export async function convertAnimation(uri: string, cocosPath: string, outPath: 
         throw new ConvertError(122, `Animation count is not match. source 1, upload ${animations.length}.`, animations.length);
 
     const modelWrite = new CocosModelWriter();
-    return modelWrite.writeAnimationFiles(path.join(outPath, filename), animationMeta, animations[0]);
+    return modelWrite.writeAnimationFiles(path.join(outPath, filename), animationMeta, document, animations[0]);
 }

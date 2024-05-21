@@ -52,6 +52,18 @@ export class CocosAnimationMeta {
         }
     }
 
+    public getOriginExoticNodePath(): string[] {
+        const document = this.ccon.document;
+        const nodeAnimations: { "__id__": number }[] = document[1]._nodeAnimations;
+
+        const nodePathes: string[] = [];
+        for (const node of nodeAnimations) {
+            const path = document[node.__id__]["_path"];
+            nodePathes.push(path);
+        }
+        return nodePathes;
+    }
+
     public setAdditiveSettings(): void {
         if (this.additiveSettings == null) return;
         this.list[0]["_additiveSettings"]["__id__"] = this.list.length;

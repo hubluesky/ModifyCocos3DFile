@@ -1,4 +1,4 @@
-import { Animation, AnimationChannel, AnimationSampler, Document, Mesh, Node, Primitive, Root, Skin, getBounds } from '@gltf-transform/core';
+import { Animation, AnimationChannel, AnimationSampler, Document, GLTF, Mesh, Node, Primitive, Root, Scene, Skin, TypedArray, getBounds } from '@gltf-transform/core';
 import fs from 'fs';
 import path from 'path';
 import { FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './Cocos';
@@ -36,12 +36,12 @@ export default class CocosModelWriter {
         fs.writeFileSync(outPath, JSON.stringify(skeletonMetaData), "utf-8");
     }
 
-    public writeAnimationFiles(outPath: string, animationMeta: CocosAnimationMeta, animation: Animation): void {
+    public writeAnimationFiles(outPath: string, animationMeta: CocosAnimationMeta, document: Document, animation: Animation): void {
         console.assert(animationMeta != null);
         console.assert(animation != null);
         fs.mkdirSync(path.dirname(outPath), { recursive: true });
 
-        const arrayBuffer = this.writeAnimation(animationMeta, animation);
+        const arrayBuffer = this.writeAnimation(animationMeta, document, animation);
         const ccon = new CCON(animationMeta.list, [new Uint8Array(arrayBuffer.buffer)]);
         fs.writeFileSync(outPath, Buffer.from(encodeCCONBinary(ccon)), "binary");
 
@@ -167,6 +167,22 @@ export default class CocosModelWriter {
         return name;
     }
 
+    public static getChildByPath(parent: Node | Scene, path: string): Node | null {
+        const segments = path.split('/');
+        let lastNode: Node | Scene = parent;
+        for (let i = 0; i < segments.length; ++i) {
+            const segment = segments[i];
+            if (segment.length === 0)
+                continue;
+
+            const next = lastNode.listChildren().find((childNode) => childNode.getName() === segment);
+            if (!next)
+                return null;
+            lastNode = next;
+        }
+        return lastNode as Node;
+    }
+
     private writeSkeleton(meta: CocosSkeletonMeta, skin: Skin): Object {
         const inverseBindAccessor = skin.getInverseBindMatrices();
         const inverseBindArray = inverseBindAccessor.getArray();
@@ -211,7 +227,7 @@ export default class CocosModelWriter {
         return meta.data;
     }
 
-    private writeAnimation(meta: CocosAnimationMeta, animation: Animation): Float32Array {
+    private writeAnimation(meta: CocosAnimationMeta, document: Document, animation: Animation): Float32Array {
         const channels = animation.listChannels();
         const samples = animation.listSamplers();
         console.assert(channels.length == samples.length, `channels length cannot equals samples length ${channels.length, samples.length}`);
@@ -221,17 +237,60 @@ export default class CocosModelWriter {
             channels: AnimationChannel[]
         }[] = [];
 
+        const pathes = meta.getOriginExoticNodePath();
         for (let i = 0; i < channels.length; i++) {
             const channel = channels[i];
             const sample = samples[i];
             const node = channel.getTargetNode();
 
             let animationNode = animationNodes.find(v => v.node == node);
-            if (animationNode == null) {
+            if (animationNode == null)
                 animationNodes.push(animationNode = { node, samples: [], channels: [] });
-            }
+
             animationNode.samples.push(sample);
             animationNode.channels.push(channel);
+
+            // check the bone without key the animation.
+            const index = pathes.findIndex(x => x.endsWith(animationNode.node.getName()));
+            if (index != -1) pathes.splice(index, 1);
+        }
+
+        const scene = document.getRoot().listScenes()[0];
+        const createAnimationFrame = function (animationNode: Node, targetPath: GLTF.AnimationChannelTargetPath, data: TypedArray): [AnimationSampler, AnimationChannel] {
+            const inputArray = new Float32Array(1);
+            inputArray[0] = 0;
+            const input = document.createAccessor();
+            input.setArray(inputArray);
+            const output = document.createAccessor();
+            output.setArray(data);
+            const sampler = document.createAnimationSampler();
+            sampler.setInput(input);
+            sampler.setOutput(output);
+
+            const channel = document.createAnimationChannel();
+            channel.setTargetNode(animationNode);
+            channel.setSampler(sampler);
+            channel.setTargetPath(targetPath);
+            return [sampler, channel];
+        }
+
+        // 当有骨骼没有K关键帧的时候，自动帮忙补上一帧的数据。不然在Cocos使用骨骼动画预烘培的时候，会导致动画显示不正确。
+        for (let path of pathes) {
+            const animationNode = CocosModelWriter.getChildByPath(scene, path);
+
+            const result1 = createAnimationFrame(animationNode, "translation", new Float32Array(animationNode.getTranslation()));
+            const result2 = createAnimationFrame(animationNode, "rotation", new Float32Array(animationNode.getRotation()));
+            const result3 = createAnimationFrame(animationNode, "scale", new Float32Array(animationNode.getScale()));
+
+            const animationData = { node: animationNode, samples: [result1[0], result2[0], result3[0]], channels: [result1[1], result2[1], result3[1]] };
+            animationNodes.push(animationData);
+
+            const weights = animationNode.getWeights();
+            if (weights != null && weights.length > 0) {
+                const result4 = createAnimationFrame(animationNode, "weights", new Float32Array(weights));
+                animationData.samples.push(result4[0]);
+                animationData.channels.push(result4[1]);
+            }
         }
 
         let offset = 0;
