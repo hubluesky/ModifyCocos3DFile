@@ -92,7 +92,7 @@ export async function convertMesh(uri: string, cocosPath: string, outPath: strin
     try {
         var document = await new NodeIO().read(uri);
     } catch (error) {
-        throw new ConvertError(101, "Gltf file is invalid, please use glTF-Validator to check.");
+        throw new ConvertError(102, "Gltf file is invalid, please use glTF-Validator to check.");
     }
     await computeNormalAndTangent(document);
 
@@ -151,7 +151,7 @@ export async function convertAnimation(uri: string, cocosPath: string, outPath: 
     try {
         var document = await new NodeIO().read(uri);
     } catch (error) {
-        throw new ConvertError(101, "Gltf file is invalid, please use glTF-Validator to check.");
+        throw new ConvertError(102, "Gltf file is invalid, please use glTF-Validator to check.");
     }
     const root = document.getRoot();
     const animations = root.listAnimations();

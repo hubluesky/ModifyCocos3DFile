@@ -144,13 +144,12 @@ class ConvertError extends Error {
 ```
 
 ### 异常信息(英文)：
-* 错误码：101，消息：Gltf file is invalid, please use glTF-Validator to check.
 * 错误码：111，消息：Mesh count is not match. source 1, upload ${meshes.length}.
 * 错误码：112，消息：The ${i} of primitives does no index buffer
 * 错误码：113，消息：The number of primitives does no match: source ${0} upload ${1}.
 * 错误码：114，消息：Attribute ${attributeName} is not supported.
 * 错误码：101，消息：FBX convert failed: ${cause}
-* 错误码：102，消息：Gltf convert failed: ${cause}
+* 错误码：102，消息：Gltf file is invalid, please use glTF-Validator to check.
 * 错误码：103，消息：Can not find cocos prefab meta file. Maybe be merge by one josn.
 * 错误码：104，消息：Can not find cocos mesh meta file. Maybe be merge by one josn.
 * 错误码：105，消息：The uploaded file does not contain skeleton information.
@@ -164,13 +163,12 @@ class ConvertError extends Error {
 * 错误码：132，消息：ccon decode failed.
 
 ### 异常信息(中文)：
-* 错误码：101，消息：Gltf文件读取出错，请用glTF-Validator检查文件格式。
 * 错误码：111，消息：网格数量不匹配. 源文件是 1, 上传文件是 ${meshes.length}.
 * 错误码：112，消息：第 ${i} 子网格没有使用索引缓冲
 * 错误码：113，消息：子网格数量不匹配: 源文件是 ${0} 上传文件是 ${1}.
 * 错误码：114，消息：上传文件的顶点属性没有支持 ${attributeName}.
 * 错误码：101，消息：FBX 转换失败，原因: ${cause}
-* 错误码：102，消息：Gltf 转换失败，原因: ${cause}
+* 错误码：102，消息：Gltf文件读取出错，请用glTF-Validator检查文件格式。
 * 错误码：103，消息：找不到Cocos预制的meta文件. 可能被技术人员合并了，请找相关项目开发人员.
 * 错误码：104，消息：找不到Cocos网格的meta文件. 可能被技术人员合并了，请找相关项目开发人员.
 * 错误码：105，消息：上传文件没有包含骨骼结构。
