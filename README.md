@@ -144,6 +144,7 @@ class ConvertError extends Error {
 ```
 
 ### 异常信息(英文)：
+* 错误码：101，消息：Gltf file is invalid, please use glTF-Validator to check.
 * 错误码：111，消息：Mesh count is not match. source 1, upload ${meshes.length}.
 * 错误码：112，消息：The ${i} of primitives does no index buffer
 * 错误码：113，消息：The number of primitives does no match: source ${0} upload ${1}.
@@ -163,6 +164,7 @@ class ConvertError extends Error {
 * 错误码：132，消息：ccon decode failed.
 
 ### 异常信息(中文)：
+* 错误码：101，消息：Gltf文件读取出错，请用glTF-Validator检查文件格式。
 * 错误码：111，消息：网格数量不匹配. 源文件是 1, 上传文件是 ${meshes.length}.
 * 错误码：112，消息：第 ${i} 子网格没有使用索引缓冲
 * 错误码：113，消息：子网格数量不匹配: 源文件是 ${0} 上传文件是 ${1}.

@@ -89,7 +89,11 @@ export async function convertMesh(uri: string, cocosPath: string, outPath: strin
     if (meshResult == null)
         throw new ConvertError(104, "Can not find cocos mesh meta file. Maybe be merge by one josn.");
 
-    const document = await new NodeIO().read(uri);
+    try {
+        var document = await new NodeIO().read(uri);
+    } catch (error) {
+        throw new ConvertError(101, "Gltf file is invalid, please use glTF-Validator to check.");
+    }
     await computeNormalAndTangent(document);
 
     const metaData = new CocosMeshMeta(meshResult.content);
@@ -144,7 +148,11 @@ export async function convertAnimation(uri: string, cocosPath: string, outPath: 
 
     const animationMeta = new CocosAnimationMeta(ccon);
 
-    const document = await new NodeIO().read(uri);
+    try {
+        var document = await new NodeIO().read(uri);
+    } catch (error) {
+        throw new ConvertError(101, "Gltf file is invalid, please use glTF-Validator to check.");
+    }
     const root = document.getRoot();
     const animations = root.listAnimations();
     if (animations.length > 1)

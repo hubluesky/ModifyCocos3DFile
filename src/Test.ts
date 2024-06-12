@@ -4,6 +4,7 @@ import { fbxToGltf, convertMesh, convertAnimation } from './Common';
 import { io } from './IO';
 import { decodeCCONBinary } from './ccon';
 import { ConvertError } from './ConvertError';
+import { NodeIO } from '@gltf-transform/core';
 
 // console.log("System", System.import);
 
@@ -40,18 +41,18 @@ import { ConvertError } from './ConvertError';
 // console.log("paotaiPrefab", data);
 
 async function testConvertMesh() {
-    const gltfPath = "assets/gltf/ktzs/ktzs.gltf";
-    const cocosPath = "assets/cocos/ktzs";
-    const outPath = "temp/out/ktzs";
+    const gltfPath = "assets/gltf/rogue/Rogue.glb";
+    const cocosPath = "assets/cocos/Stickman01";
+    const outPath = "temp/out/Stickman01";
     await convertMesh(gltfPath, cocosPath, outPath);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
 }
 
 async function testConvertAnimation() {
-    const gltfPath = "assets/gltf/ktzs/ktzs@attack.glb";
-    const cocosPath = "assets/cocos/ktzs@run";
-    const outPath = "temp/out/ktzs@run";
+    const gltfPath = "assets/gltf/role@walk_r.gltf";
+    const cocosPath = "assets/cocos/Stickman01@Happy Right_Turn";
+    const outPath = "temp/out/Stickman01@Happy Right_Turn";
     await convertAnimation(gltfPath, cocosPath, outPath);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
@@ -85,10 +86,30 @@ async function splitCconb() {
     console.log("convert completed!");
 }
 
-// testConvertMesh();
-testConvertAnimation();
+testConvertMesh();
+// testConvertAnimation();
 // splitCconb();
 
+
+async function showAnimationRate() {
+    const gltfPath = "assets/gltf/role@walk_l.glb";
+    const document = await new NodeIO().read(gltfPath);
+
+    const root = document.getRoot();
+    const animations = root.listAnimations();
+    for (const animation of animations) {
+        const samplers = animation.listSamplers();
+        let rate = Number.MAX_SAFE_INTEGER;
+        for (let sampler of samplers) {
+            const inputArray = sampler.getInput().getArray();
+            for (let i = 1; i < inputArray.length; i++)
+                rate = Math.min(rate, inputArray[i] - inputArray[i - 1]);
+        }
+        console.log(animation.getName(), "animation rate is:", Math.round(1 / rate));
+    }
+}
+
+// showAnimationRate();
 // cocosToGltf(prefab);
 // const mesh: cc.Mesh = cocos.deserializeMesh(text, bin);
 // // console.log("mesh", mesh)

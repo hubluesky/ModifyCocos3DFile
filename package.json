@@ -20,8 +20,8 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@gltf-transform/core": "^3.10.1",
-    "@gltf-transform/functions": "^3.10.1",
+    "@gltf-transform/core": "^4.0.1",
+    "@gltf-transform/functions": "^4.0.1",
     "canvas": "^2.11.2",
     "commander": "^12.0.0",
     "gl-matrix": "^3.4.3",
