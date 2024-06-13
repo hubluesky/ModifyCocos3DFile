@@ -83,12 +83,18 @@ export class CocosMeshPrefabMeta {
         const bin = this.getBin();
         const classes = this.data[File.SharedClasses];
 
-        const parseNode = (objectData: any, keys: any, mask: any) => {
+        const parseNode = (objectData: any) => {
+            const mask = this.data[File.SharedMasks][objectData[OBJ_DATA_MASK]];
+            if (mask == null) return;
+            const indexClazz = mask[MASK_CLASS];
+            const clazz = classes[indexClazz];
+            const keys = clazz[CLASS_KEYS];
+
             let prefabNode: PrefabNode;
             for (let o = MASK_CLASS + 1; o < objectData.length; o++) {
                 const key = keys[mask[o]];
                 if (key == "_children")
-                    parseNode(objectData[o][0], keys, mask);
+                    parseNode(objectData[o][0]);
                 else if (prefabNodeKeys.indexOf(key) != -1) {
                     if (prefabNode == null) prefabNode = new PrefabNode();
                     prefabNode[key] = objectData[o];
@@ -100,12 +106,7 @@ export class CocosMeshPrefabMeta {
 
         for (let i = 0; i < bin.length; i++) {
             const objectData = bin[i];
-            const mask = this.data[File.SharedMasks][objectData[OBJ_DATA_MASK]];
-            const indexClazz = mask[MASK_CLASS];
-            const clazz = classes[indexClazz];
-            const keys = clazz[CLASS_KEYS];
-
-            parseNode(objectData, keys, mask);
+            parseNode(objectData);
         }
     }
 
