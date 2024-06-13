@@ -607,3 +607,27 @@ export interface ArrayLike<T> {
     /** Iterator */
     [Symbol.iterator](): IterableIterator<T>;
 }
+
+export const OBJ_DATA_MASK = 0;
+export const MASK_CLASS = 0;
+export const CLASS_KEYS = 1;
+export const enum File {
+    Version = 0,
+    Context = 0,
+
+    SharedUuids,
+    SharedStrings,
+    SharedClasses,
+    SharedMasks,
+
+    Instances,
+    InstanceTypes,
+
+    Refs,
+
+    DependObjs,
+    DependKeys,
+    DependUuidIndices,
+
+    ARRAY_LENGTH,
+}

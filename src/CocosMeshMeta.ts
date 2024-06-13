@@ -23,7 +23,7 @@ export class CocosMeshMeta {
 
     private getBin() { return this.data[5][0][3]; }
 
-    public constructor(jsonText: string) {
+    public constructor(jsonText: string, readonly filename: string) {
         this._data = JSON.parse(jsonText);
         const bin = this.getBin()[0];
         console.assert(bin != null, "The mesh meta file format is incorrect.");

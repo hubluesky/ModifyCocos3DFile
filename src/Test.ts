@@ -5,6 +5,7 @@ import { io } from './IO';
 import { decodeCCONBinary } from './ccon';
 import { ConvertError } from './ConvertError';
 import { NodeIO } from '@gltf-transform/core';
+import { CocosMeshPrefabMeta } from './CocosMeshPrefabMeta';
 
 // console.log("System", System.import);
 
@@ -41,9 +42,9 @@ import { NodeIO } from '@gltf-transform/core';
 // console.log("paotaiPrefab", data);
 
 async function testConvertMesh() {
-    const gltfPath = "assets/gltf/rogue/Rogue.glb";
-    const cocosPath = "assets/cocos/Stickman01";
-    const outPath = "temp/out/Stickman01";
+    const gltfPath = "assets/gltf/Stag/Stag.glb";
+    const cocosPath = "assets/cocos/pug";
+    const outPath = "temp/out/pug";
     await convertMesh(gltfPath, cocosPath, outPath);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
@@ -90,6 +91,12 @@ testConvertMesh();
 // testConvertAnimation();
 // splitCconb();
 
+// async function testLoadPrefab() {
+//     const cocosPath = "assets/cocos/pug/pug.json";
+//     const content = io.readTextFileSync(cocosPath);
+//     new CocosMeshPrefabMeta(content);
+// }
+// testLoadPrefab();
 
 async function showAnimationRate() {
     const gltfPath = "assets/gltf/role@walk_l.glb";

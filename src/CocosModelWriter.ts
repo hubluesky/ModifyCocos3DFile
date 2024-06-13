@@ -5,14 +5,15 @@ import { FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, get
 import { CocosAnimationMeta } from './CocosAnimationMeta';
 import { CocosToGltfAttribute, GltfChannelPathToCocos } from './CocosGltfWrap';
 import { CocosMeshMeta } from "./CocosMeshMeta";
+import { CocosMeshPrefabMeta } from './CocosMeshPrefabMeta';
 import { CocosSkeletonMeta } from "./CocosSkeletonMeta";
+import { ConvertError } from './ConvertError';
 import { CCON, encodeCCONBinary } from './ccon';
 import { gltf } from './gltf';
-import { ConvertError } from './ConvertError';
 
 export default class CocosModelWriter {
 
-    public writeMeshFiles(outPath: string, meshMeta: CocosMeshMeta, document: Document): void {
+    public writeMeshFiles(outPath: string, prefabMeta: CocosMeshPrefabMeta, meshMeta: CocosMeshMeta, document: Document): void {
         const root = document.getRoot();
         const meshes = root.listMeshes();
         if (meshes.length > 1)
@@ -21,19 +22,22 @@ export default class CocosModelWriter {
         const arrayBuffer = this.writeMesh(meshMeta, meshes[0]);
         // this.writeJointMaps(meshMeta, root);
         this.writeBounds(meshMeta, root);
+        this.writeMeshPrefab(prefabMeta, root);
 
-        fs.mkdirSync(path.dirname(outPath), { recursive: true });
-        const binPath = path.join(path.dirname(outPath), path.basename(outPath, path.extname(outPath)) + '.bin');
+        fs.mkdirSync(outPath, { recursive: true });
+        const binPath = path.join(outPath, path.basename(meshMeta.filename, path.extname(meshMeta.filename)) + '.bin');
         fs.writeFileSync(binPath, Buffer.from(arrayBuffer), "binary");
-        fs.writeFileSync(outPath, JSON.stringify(meshMeta.data), "utf-8");
+        fs.writeFileSync(path.join(outPath, meshMeta.filename), JSON.stringify(meshMeta.data), "utf-8");
+        fs.writeFileSync(path.join(outPath, prefabMeta.filename), JSON.stringify(prefabMeta.data), "utf-8");
     }
 
     public writeSkeletonFiles(outPath: string, skeletonMeta: CocosSkeletonMeta, skin: Skin): void {
         console.assert(skeletonMeta != null);
         console.assert(skin != null);
-        fs.mkdirSync(path.dirname(outPath), { recursive: true });
+        fs.mkdirSync(outPath, { recursive: true });
         const skeletonMetaData = this.writeSkeleton(skeletonMeta, skin);
-        fs.writeFileSync(outPath, JSON.stringify(skeletonMetaData), "utf-8");
+
+        fs.writeFileSync(path.join(outPath, skeletonMeta.filename), JSON.stringify(skeletonMetaData), "utf-8");
     }
 
     public writeAnimationFiles(outPath: string, animationMeta: CocosAnimationMeta, document: Document, animation: Animation): void {
@@ -71,6 +75,23 @@ export default class CocosModelWriter {
             size += indexView.length;
         }
         return size;
+    }
+
+    private writeMeshPrefab(prefabMeta: CocosMeshPrefabMeta, root: Root): void {
+        const nodes = root.listNodes();
+        for (const prefabNode of prefabMeta.prefabNodes) {
+            if (prefabNode.name == null) continue;
+            const node = nodes.find(x => x.getName() == prefabNode.name);
+            if (node == null) continue;
+            if (prefabNode.lpos != null)
+                prefabNode.lpos = node.getTranslation();
+            if (prefabNode.lrot != null)
+                prefabNode.lrot = node.getRotation();
+            if (prefabNode.euler != null)
+                prefabNode.euler = node.getRotation();
+            if (prefabNode.lscale != null)
+                prefabNode.lscale = node.getScale();
+        }
     }
 
     private writeMesh(meshMeta: CocosMeshMeta, mesh: Mesh): ArrayBuffer {

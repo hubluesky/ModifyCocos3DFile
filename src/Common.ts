@@ -12,6 +12,7 @@ import { decodeCCONBinary } from './ccon';
 import { decodeUuid } from './decode-uuid';
 import { normals } from './gltf-transform/normals';
 import { tangents } from './gltf-transform/tangents';
+import { CocosMeshPrefabMeta } from './CocosMeshPrefabMeta';
 
 /**
  * FBX version 2019 or higher;
@@ -44,8 +45,9 @@ async function computeNormalAndTangent(document: Document, overwrite: boolean = 
     await document.transform(tangents({ overwrite: overwrite }));
 }
 
-function readPrefabDependences(cocosPath: string, ext: string): string[] {
-    const prefabPath = `${cocosPath}/${path.basename(cocosPath)}.json`;
+function readPrefabDependences(cocosPath: string, ext: string): { prefabObject: Object, prefabFilename: string, filenames: string[] } {
+    const filename = `${path.basename(cocosPath)}.json`;
+    const prefabPath = `${cocosPath}/${filename}`;
     if (!fs.existsSync(prefabPath)) return null;
     const content = fs.readFileSync(prefabPath, { encoding: "utf8" });
     try {
@@ -53,10 +55,10 @@ function readPrefabDependences(cocosPath: string, ext: string): string[] {
         if (!Array.isArray(jsonObject)) return null;
         if (jsonObject.length < 2 || !Array.isArray(jsonObject[1]))
             return null;
-        const filenames: string[] = jsonObject[1];
+        const filenames: string[] = Array.from(jsonObject[1]);
         for (let i = 0; i < filenames.length; i++)
             filenames[i] = decodeUuid(filenames[i]) + ext;
-        return filenames;
+        return { prefabObject: jsonObject, prefabFilename: filename, filenames };
     } catch (error) {
         return null;
     }
@@ -81,11 +83,11 @@ function searchCocosFile(cocosPath: string, filenames: string[], type: string): 
 }
 
 export async function convertMesh(uri: string, cocosPath: string, outPath: string): Promise<void> {
-    const dependenceFilenames = readPrefabDependences(cocosPath, ".json");
-    if (dependenceFilenames == null)
+    const result = readPrefabDependences(cocosPath, ".json");
+    if (result == null || result.filenames.length == 0)
         throw new ConvertError(1103, "Can not find cocos prefab meta file. Maybe be merge by one josn.");
 
-    const meshResult = searchCocosFile(cocosPath, dependenceFilenames, "cc.Mesh");
+    const meshResult = searchCocosFile(cocosPath, result.filenames, "cc.Mesh");
     if (meshResult == null)
         throw new ConvertError(104, "Can not find cocos mesh meta file. Maybe be merge by one josn.");
 
@@ -96,7 +98,8 @@ export async function convertMesh(uri: string, cocosPath: string, outPath: strin
     }
     await computeNormalAndTangent(document);
 
-    const metaData = new CocosMeshMeta(meshResult.content);
+    const prefabMeta = new CocosMeshPrefabMeta(result.prefabObject, result.prefabFilename);
+    const metaData = new CocosMeshMeta(meshResult.content, meshResult.filename);
 
     const root = document.getRoot();
     const modelWrite = new CocosModelWriter();
@@ -115,30 +118,28 @@ export async function convertMesh(uri: string, cocosPath: string, outPath: strin
         // throw new ConvertError(108, `joints count is not match. source ${jointMaps?.length} upload ${jointNodes.length}`, jointMaps?.length, jointNodes.length);
         // }
 
-        const skeletonResult = searchCocosFile(cocosPath, dependenceFilenames, "cc.Skeleton");
+        const skeletonResult = searchCocosFile(cocosPath, result.filenames, "cc.Skeleton");
         if (skeletonResult == null)
             throw new ConvertError(1106, "Can not find cocos skeleton meta file. Maybe be merge by one josn.");
 
-        const skeletonMeta = new CocosSkeletonMeta(skeletonResult.content);
+        const skeletonMeta = new CocosSkeletonMeta(skeletonResult.content, skeletonResult.filename);
 
         if (skins.length > 1)
             throw new ConvertError(107, `Skin count is not match. source 1, upload ${skins.length}.`, skins.length);
 
         // const skeleton = new CocosSkeleton(jointNames, inverseBindArray, elementSize);
-        const meshMetaOutPath = path.join(outPath, skeletonResult.filename);
-        modelWrite.writeSkeletonFiles(meshMetaOutPath, skeletonMeta, skins[0]);
+        modelWrite.writeSkeletonFiles(outPath, skeletonMeta, skins[0]);
     }
 
-    const meshMetaOutPath = path.join(outPath, meshResult.filename);
-    return modelWrite.writeMeshFiles(meshMetaOutPath, metaData, document);
+    // const meshMetaOutPath = path.join(outPath, meshResult.filename);
+    return modelWrite.writeMeshFiles(outPath, prefabMeta, metaData, document);
 }
 
 export async function convertAnimation(uri: string, cocosPath: string, outPath: string): Promise<void> {
-    const dependenceFilenames = readPrefabDependences(cocosPath, ".cconb");
-    if (dependenceFilenames == null)
+    const result = readPrefabDependences(cocosPath, ".cconb");
+    if (result == null || result.filenames.length == 0)
         throw new ConvertError(103, "Can not find cocos prefab meta file. Maybe be merge by one josn.");
-    console.assert(dependenceFilenames.length == 1);
-    const filename = dependenceFilenames[0];
+    const filename = result.filenames[0];
     const arrayBuffer = io.readBinaryFileSync(`${cocosPath}/${filename}`);
     try {
         var ccon = decodeCCONBinary(new Uint8Array(arrayBuffer));
