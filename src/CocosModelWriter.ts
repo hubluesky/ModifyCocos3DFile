@@ -83,14 +83,10 @@ export default class CocosModelWriter {
             if (prefabNode.name == null) continue;
             const node = nodes.find(x => x.getName() == prefabNode.name);
             if (node == null) continue;
-            if (prefabNode.lpos != null)
-                prefabNode.lpos = node.getTranslation();
-            if (prefabNode.lrot != null)
-                prefabNode.lrot = node.getRotation();
-            if (prefabNode.euler != null)
-                prefabNode.euler = node.getRotation();
-            if (prefabNode.lscale != null)
-                prefabNode.lscale = node.getScale();
+            prefabNode.lpos = node.getTranslation();
+            prefabNode.lrot = node.getRotation();
+            prefabNode.euler = node.getRotation();
+            prefabNode.lscale = node.getScale();
         }
     }
 

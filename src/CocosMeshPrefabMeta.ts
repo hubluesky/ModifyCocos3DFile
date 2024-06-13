@@ -6,8 +6,9 @@ function fillArray(source: ArrayLike<number>, target: number[], startIndex = 1):
 }
 
 const _r2d = 180.0 / Math.PI;
+export const EPSILON = 0.000001;
 
-function toEuler(q: ArrayLike<number>): ArrayLike<number> {
+function toEuler(q: ArrayLike<number>): number[] {
     const x = q[0], y = q[1], z = q[2], w = q[3];
     let bank = 0;
     let heading = 0;
@@ -32,43 +33,73 @@ function toEuler(q: ArrayLike<number>): ArrayLike<number> {
     return [bank, heading, attitude];
 }
 
+function vecIsZero(value: readonly number[]): boolean {
+    for (let i = 0; i < value.length; i++)
+        if (Math.abs(value[i]) > EPSILON) return false;
+    return true;
+}
+
+function vecIsOne(value: readonly number[]): boolean {
+    for (let i = 0; i < value.length; i++)
+        if (Math.abs(value[i] - 1) > EPSILON) return false;
+    return true;
+}
+
+function quatIsIdentity(value: readonly number[]): boolean {
+    for (let i = 0; i < value.length - 1; i++)
+        if (Math.abs(value[i]) > EPSILON) return false;
+    if (Math.abs(value[value.length - 1] - 1) > EPSILON) return false;
+    return true;
+}
+
 class PrefabNode {
     private _name: string;
     public get name(): string { return this._name; }
     private _lpos: number[];
-    public get lpos(): ArrayLike<number> { return this._lpos; }
-    public set lpos(value: ArrayLike<number>) {
-        fillArray(value, this._lpos);
+    public get lpos(): readonly number[] { return this._lpos; }
+    public set lpos(value: readonly number[]) {
+        if (this._lpos != null)
+            fillArray(value, this._lpos);
+        else if (!vecIsZero(value))
+            this.addTransform("_lpos", 1, value);
+
     }
     private _lrot: number[];
-    public get lrot(): ArrayLike<number> { return this._lrot; }
-    public set lrot(value: ArrayLike<number>) {
-        fillArray(value, this._lrot);
+    public get lrot(): readonly number[] { return this._lrot; }
+    public set lrot(value: readonly number[]) {
+        if (this.lrot != null)
+            fillArray(value, this._lrot);
+        else if (!quatIsIdentity(value))
+            this.addTransform("_lrot", 3, value);
     }
     private _euler: number[];
-    public get euler(): ArrayLike<number> { return this._euler; }
-    public set euler(value: ArrayLike<number>) {
-        fillArray(toEuler(value), this._euler);
+    public get euler(): readonly number[] { return this._euler; }
+    public set euler(value: readonly number[]) {
+        if (this._euler != null)
+            fillArray(toEuler(value), this._euler);
+        else if (!vecIsZero(value))
+            this.addTransform("_euler", 1, toEuler(value));
     }
     private _lscale: number[];
-    public get lscale(): ArrayLike<number> { return this._lscale; }
-    public set lscale(value: ArrayLike<number>) {
-        fillArray(value, this._lscale);
+    public get lscale(): readonly number[] { return this._lscale; }
+    public set lscale(value: readonly number[]) {
+        if (this._lscale != null)
+            fillArray(value, this._lscale);
+        else if (!vecIsOne(value))
+            this.addTransform("_lscale", 1, toEuler(value));
     }
 
-    static parse(parseKey: (callback: (key: string, value: any) => void) => void): PrefabNode {
-        const result = new PrefabNode();
-        const keys = Object.keys(result);
-        parseKey((key, value) => {
-            if (keys.indexOf(key) != -1)
-                result[key] = value;
-        });
-
-        return result;
+    private addTransform(key: string, type: number, value: readonly number[]): void {
+        this[key] = [type, ...value];
+        this.objectData.push(this[key]);
+        const indexMask = this.keys.indexOf(key);
+        this.mask.push(indexMask);
     }
+
+    constructor(readonly objectData: any, readonly mask: number[], readonly keys: string[]) { }
 }
 
-const prefabNodeKeys = Object.keys(new PrefabNode);
+const prefabNodeKeys = Object.keys(new PrefabNode(undefined, undefined, undefined));
 
 export class CocosMeshPrefabMeta {
     public readonly prefabNodes: PrefabNode[] = [];
@@ -96,7 +127,7 @@ export class CocosMeshPrefabMeta {
                 if (key == "_children")
                     parseNode(objectData[o][0]);
                 else if (prefabNodeKeys.indexOf(key) != -1) {
-                    if (prefabNode == null) prefabNode = new PrefabNode();
+                    if (prefabNode == null) prefabNode = new PrefabNode(objectData, mask, keys);
                     prefabNode[key] = objectData[o];
                 }
             }
