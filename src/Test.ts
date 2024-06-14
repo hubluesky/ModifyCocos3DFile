@@ -42,9 +42,9 @@ import { CocosMeshPrefabMeta } from './CocosMeshPrefabMeta';
 // console.log("paotaiPrefab", data);
 
 async function testConvertMesh() {
-    const gltfPath = "assets/gltf/Stag/Stag.glb";
-    const cocosPath = "assets/cocos/pug";
-    const outPath = "temp/out/pug";
+    const gltfPath = "assets/gltf/rogue/Rogue.gltf";
+    const cocosPath = "assets/cocos/Stickman01";
+    const outPath = "temp/out/Stickman01";
     await convertMesh(gltfPath, cocosPath, outPath);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");

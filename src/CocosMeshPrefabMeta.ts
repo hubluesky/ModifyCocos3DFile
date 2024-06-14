@@ -62,7 +62,6 @@ class PrefabNode {
             fillArray(value, this._lpos);
         else if (!vecIsZero(value))
             this.addTransform("_lpos", 1, value);
-
     }
     private _lrot: number[];
     public get lrot(): readonly number[] { return this._lrot; }
@@ -75,10 +74,11 @@ class PrefabNode {
     private _euler: number[];
     public get euler(): readonly number[] { return this._euler; }
     public set euler(value: readonly number[]) {
+        value = toEuler(value);
         if (this._euler != null)
-            fillArray(toEuler(value), this._euler);
+            fillArray(value, this._euler);
         else if (!vecIsZero(value))
-            this.addTransform("_euler", 1, toEuler(value));
+            this.addTransform("_euler", 1, value);
     }
     private _lscale: number[];
     public get lscale(): readonly number[] { return this._lscale; }
@@ -91,15 +91,20 @@ class PrefabNode {
 
     private addTransform(key: string, type: number, value: readonly number[]): void {
         this[key] = [type, ...value];
+        let indexMask = this.keys.indexOf(key);
+        if (indexMask == -1) {
+            indexMask = this.keys.length;
+            this.keys.push(key);
+            this.clazz.push(5);
+        }
+        this.mask.splice(this.objectData.length, 0, indexMask);
         this.objectData.push(this[key]);
-        const indexMask = this.keys.indexOf(key);
-        this.mask.push(indexMask);
     }
 
-    constructor(readonly objectData: any, readonly mask: number[], readonly keys: string[]) { }
+    constructor(readonly objectData: any, readonly mask: number[], readonly keys: string[], readonly clazz: any[]) { }
 }
 
-const prefabNodeKeys = Object.keys(new PrefabNode(undefined, undefined, undefined));
+const prefabNodeKeys = Object.keys(new PrefabNode(undefined, undefined, undefined, undefined));
 
 export class CocosMeshPrefabMeta {
     public readonly prefabNodes: PrefabNode[] = [];
@@ -127,7 +132,7 @@ export class CocosMeshPrefabMeta {
                 if (key == "_children")
                     parseNode(objectData[o][0]);
                 else if (prefabNodeKeys.indexOf(key) != -1) {
-                    if (prefabNode == null) prefabNode = new PrefabNode(objectData, mask, keys);
+                    if (prefabNode == null) prefabNode = new PrefabNode(objectData, mask, keys, clazz);
                     prefabNode[key] = objectData[o];
                 }
             }
