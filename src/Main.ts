@@ -55,7 +55,7 @@ interface Gltf2Cocos {
     output: string;
 }
 
-program.version("0.0.2", "-v, --version", "Cocos 3d file converter");
+program.version("0.1.0", "-v, --version", "Cocos 3d file converter");
 
 program.command("fbx2gltf")
     .alias("f2g")

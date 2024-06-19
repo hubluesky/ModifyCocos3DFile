@@ -94,7 +94,7 @@ export async function convertMesh(uri: string, cocosPath: string, outPath: strin
     try {
         var document = await new NodeIO().read(uri);
     } catch (error) {
-        throw new ConvertError(102, "Gltf file is invalid, please use glTF-Validator to check.");
+        throw new ConvertError(102, "Gltf file is invalid, please use glTF-Validator to check.", error.message);
     }
     await computeNormalAndTangent(document);
 
