@@ -14,6 +14,7 @@ export namespace io {
     }
 
     export function writeTextFileSync(filePath: string, content: string): void {
+        fs.mkdirSync(path.dirname(filePath), { recursive: true });
         fs.writeFileSync(filePath, content, "utf-8");
     }
 

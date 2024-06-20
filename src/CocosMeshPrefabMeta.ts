@@ -1,4 +1,4 @@
-import { CLASS_KEYS, File, MASK_CLASS, OBJ_DATA_MASK } from "./Cocos";
+import { CLASS_KEYS, File, MASK_CLASS, OBJ_DATA_MASK } from "./cocos/Cocos";
 
 function fillArray(source: ArrayLike<number>, target: number[], startIndex = 1): void {
     for (let i = startIndex; i < target.length; i++)

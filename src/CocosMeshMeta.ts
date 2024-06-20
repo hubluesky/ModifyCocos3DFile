@@ -1,5 +1,6 @@
 import { ReadonlyVec3 } from "gl-matrix";
-import { ISubMesh, IVertexBundle } from "./Cocos";
+import { ISubMesh, IVertexBundle } from "./cocos/Cocos";
+import { murmurhash2_32_gc } from "./cocos/murmurhash2_gc";
 
 export class CocosMeshMeta {
     public readonly primitives: ISubMesh[];
@@ -21,6 +22,7 @@ export class CocosMeshMeta {
     private _data: any;
     public get data() { return this._data; }
 
+    public set hash(v) { this.data[5][0][2] = v; }
     private getBin() { return this.data[5][0][3]; }
 
     public constructor(jsonText: string, readonly filename: string) {
@@ -30,5 +32,9 @@ export class CocosMeshMeta {
         this.primitives = bin["primitives"];
         this.vertexBundles = bin["vertexBundles"];
         this.jointMaps = bin["jointMaps"];
+    }
+
+    public static computeHash(data: Uint8Array): number {
+        return murmurhash2_32_gc(data, 666);
     }
 }

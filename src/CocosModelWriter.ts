@@ -1,14 +1,14 @@
 import { Animation, AnimationChannel, AnimationSampler, Document, GLTF, Mesh, Node, Primitive, Root, Scene, Skin, TypedArray, getBounds } from '@gltf-transform/core';
 import fs from 'fs';
 import path from 'path';
-import { FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './Cocos';
-import { CocosAnimationMeta } from './CocosAnimationMeta';
+import { FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './cocos/Cocos';
+import { CocosAnimatHash, CocosAnimationMeta, ExoticAnimationHash, ExoticNodeAnimationHash, ExoticTrackHash, TrackValuesHash } from './CocosAnimationMeta';
 import { CocosToGltfAttribute, GltfChannelPathToCocos } from './CocosGltfWrap';
 import { CocosMeshMeta } from "./CocosMeshMeta";
 import { CocosMeshPrefabMeta } from './CocosMeshPrefabMeta';
 import { CocosSkeletonMeta } from "./CocosSkeletonMeta";
 import { ConvertError } from './ConvertError';
-import { CCON, encodeCCONBinary } from './ccon';
+import { CCON, encodeCCONBinary } from './cocos/ccon';
 import { gltf } from './gltf';
 
 export default class CocosModelWriter {
@@ -139,6 +139,7 @@ export default class CocosModelWriter {
             }
         }
 
+        meshMeta.hash = CocosMeshMeta.computeHash(new Uint8Array(arrayBuffer));
         return arrayBuffer;
     }
 
@@ -224,7 +225,6 @@ export default class CocosModelWriter {
             bindPoses[i] = mat4;
         }
 
-        // const skeletonMeta = meta.clone();
         meta.jointNames.length = 0;
         for (let i = 0; i < jointNames.length; i++)
             meta.jointNames[i] = jointNames[i];
@@ -241,6 +241,7 @@ export default class CocosModelWriter {
         for (let i = 1; i < bindPoses.length + 1; i++)
             meta.bindposesValueType[i] = bindPosesValueType;
 
+        meta.hash = CocosSkeletonMeta.computeHash(meta.bindposes);
         return meta.data;
     }
 
@@ -310,12 +311,16 @@ export default class CocosModelWriter {
             }
         }
 
+        const exoticAnimationHash = new ExoticAnimationHash();
         let offset = 0;
         const buffer = new Array<number>();
         let newDuration: number = 0;
         for (const animationNode of animationNodes) {
             const pathname = CocosModelWriter.getJointPathName(animationNode.node);
             const metaAnimationNode = meta.createAnimationNode(pathname);
+
+            const exoticNodeAnimationHash = new ExoticNodeAnimationHash(pathname);
+            exoticAnimationHash.addNodeAnimation(exoticNodeAnimationHash);
 
             for (let i = 0; i < animationNode.samples.length; i++) {
                 const sample = animationNode.samples[i];
@@ -329,14 +334,18 @@ export default class CocosModelWriter {
 
                 const metaTrack = meta.createExoticTrack(offset, timesLength);
                 offset += timesLength * input.getComponentSize();
-                meta.setAnimationNodePropertyId(metaAnimationNode, GltfChannelPathToCocos[channelPath], meta.getId());
+                const cocosChannelPath = GltfChannelPathToCocos[channelPath];
+                meta.setAnimationNodePropertyId(metaAnimationNode, cocosChannelPath, meta.getId());
                 meta.createExoticTrackValues(output.getType(), offset, valuesLength, output.getNormalized());
                 offset += valuesLength * input.getComponentSize();
                 metaTrack.values.__id__ = meta.getId();
 
                 const inputArray = new Float32Array(input.getArray());
+                const outArray = new Float32Array(output.getArray());
                 buffer.push(...inputArray);
-                buffer.push(... new Float32Array(output.getArray()));
+                buffer.push(...outArray);
+
+                exoticNodeAnimationHash[cocosChannelPath] = new ExoticTrackHash(inputArray, new TrackValuesHash(outArray, false, 0, 0));
 
                 newDuration = Math.max(newDuration, inputArray[inputArray.length - 1]);
             }
@@ -347,7 +356,7 @@ export default class CocosModelWriter {
             event.frame = event.frame / duration * newDuration;
         }
         meta.duration = newDuration;
-
+        meta.hash = new CocosAnimatHash(exoticAnimationHash).computeHash();
         meta.setAdditiveSettings();
         return new Float32Array(buffer);
     }

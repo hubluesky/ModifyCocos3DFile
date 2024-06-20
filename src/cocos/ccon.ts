@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-import { ConvertError } from "./ConvertError";
+import { ConvertError } from "../ConvertError";
 
 const VERSION = 1;
 

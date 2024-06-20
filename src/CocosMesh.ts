@@ -1,4 +1,4 @@
-import { Attribute, FormatInfos, TypedArray, getIndexStrideCtor, getOffset, getReader, getTypedArrayConstructor } from "./Cocos";
+import { Attribute, FormatInfos, TypedArray, getIndexStrideCtor, getOffset, getReader, getTypedArrayConstructor } from "./cocos/Cocos";
 import { CocosMeshMeta } from "./CocosMeshMeta";
 
 export interface AttributeValue {

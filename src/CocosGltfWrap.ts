@@ -1,5 +1,5 @@
 import { GLTF } from '@gltf-transform/core';
-import { AttributeName } from "./Cocos";
+import { AttributeName } from "./cocos/Cocos";
 import { gltf } from "./gltf";
 
 export const CocosToGltfAttribute: Record<AttributeName, gltf.AttributeName> = {
