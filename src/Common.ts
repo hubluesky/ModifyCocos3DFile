@@ -13,6 +13,7 @@ import { decodeUuid } from './cocos/decode-uuid';
 import { normals } from './gltf-transform/normals';
 import { tangents } from './gltf-transform/tangents';
 import { CocosMeshPrefabMeta } from './CocosMeshPrefabMeta';
+import { _d2r } from './Math';
 
 /**
  * FBX version 2019 or higher;
@@ -135,7 +136,7 @@ export async function convertMesh(uri: string, cocosPath: string, outPath: strin
     return modelWrite.writeMeshFiles(outPath, prefabMeta, metaData, document);
 }
 
-export async function convertAnimation(uri: string, cocosPath: string, outPath: string): Promise<void> {
+export async function convertAnimation(uri: string, cocosPath: string, outPath: string, rotateAngle?: number): Promise<void> {
     const result = readPrefabDependences(cocosPath, ".cconb");
     if (result == null || result.filenames.length == 0)
         throw new ConvertError(103, "Can not find cocos prefab meta file. Maybe be merge by one josn.");
@@ -159,6 +160,9 @@ export async function convertAnimation(uri: string, cocosPath: string, outPath: 
     if (animations.length > 1)
         throw new ConvertError(122, `Animation count is not match. source 1, upload ${animations.length}.`, animations.length);
 
+    const animation = animations[0];
     const modelWrite = new CocosModelWriter();
-    return modelWrite.writeAnimationFiles(path.join(outPath, filename), animationMeta, document, animations[0]);
+    if (rotateAngle && rotateAngle != 0)
+        modelWrite.rotateAnimationRoot(animation, rotateAngle);
+    return modelWrite.writeAnimationFiles(path.join(outPath, filename), animationMeta, document, animation);
 }

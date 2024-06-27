@@ -19,18 +19,18 @@ async function convertGltfMeshFile(gltfPath: string, cocosPath: string, outPath:
     console.log("Conversion completed, output directory:", outPath);
 }
 
-async function convertFbxAnimationFile(fbxPath: string, tempPath: string, cocosPath: string, outPath: string) {
+async function convertFbxAnimationFile(fbxPath: string, tempPath: string, cocosPath: string, outPath: string, rotateAngle: number) {
     const modelName = path.basename(fbxPath, path.extname(fbxPath));
     tempPath = `${tempPath}/${modelName}`;
     const gltfPath = await fbxToGltf(fbxPath, tempPath);
-    await convertGltfAnimationFile(gltfPath, cocosPath, outPath);
+    await convertGltfAnimationFile(gltfPath, cocosPath, outPath, rotateAngle);
     fs.rmSync(tempPath, { recursive: true, force: true });
 }
 
-async function convertGltfAnimationFile(gltfPath: string, cocosPath: string, outPath: string) {
+async function convertGltfAnimationFile(gltfPath: string, cocosPath: string, outPath: string, rotateAngle: number) {
     const modelName = path.basename(gltfPath, path.extname(gltfPath));
     outPath = path.join(outPath, modelName);
-    await convertAnimation(gltfPath, cocosPath, outPath);
+    await convertAnimation(gltfPath, cocosPath, outPath, rotateAngle);
     // child_process.execSync(`start "" "${outPath}"`);
     console.log("Conversion completed, output directory:", outPath);
 }
@@ -46,6 +46,7 @@ interface Fbx2Cocos {
     temp?: string;
     cocos: string;
     output: string;
+    rotateY?: string;
 }
 
 interface Gltf2Cocos {
@@ -53,6 +54,7 @@ interface Gltf2Cocos {
     gltf: string;
     cocos: string;
     output: string;
+    rotateY?: string;
 }
 
 program.version("0.1.0", "-v, --version", "Cocos 3d file converter");
@@ -98,8 +100,9 @@ program.command("ConvertFbxAnimation")
     .option("-t, --temp <path>", "fbx to gltf temp path, default temp.")
     .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
     .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
+    .option("-r, --rotateY <number>", "rotate y axis of root bone.")
     .action(function (input: Fbx2Cocos) {
-        return convertFbxAnimationFile(input.fbx, input.temp ?? "temp", input.cocos, input.output).catch(error => {
+        return convertFbxAnimationFile(input.fbx, input.temp ?? "temp", input.cocos, input.output, input.rotateY != null ? parseFloat(input.rotateY) : undefined).catch(error => {
             program.error(error.message, { exitCode: error.cause });
         });
     });
@@ -110,8 +113,9 @@ program.command("ConvertGltfAnimation")
     .requiredOption("-g, --gltf <path>", "Input gltf file path.")
     .requiredOption("-c, --cocos <path>", "Input cocos 3d file")
     .requiredOption("-o, --output <path>", "Output Cocos 3d file path.")
+    .option("-r, --rotateY <number>", "rotate y axis of root bone.")
     .action(function (input: Gltf2Cocos) {
-        return convertGltfAnimationFile(input.gltf, input.cocos, input.output).catch(error => {
+        return convertGltfAnimationFile(input.gltf, input.cocos, input.output, input.rotateY != null ? parseFloat(input.rotateY) : undefined).catch(error => {
             program.error(error.message, { exitCode: error.cause });
         });
     });

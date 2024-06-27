@@ -1,56 +1,5 @@
+import { fillArray, quatIsIdentity, quatToEuler, vecIsOne, vecIsZero } from "./Math";
 import { CLASS_KEYS, File, MASK_CLASS, OBJ_DATA_MASK } from "./cocos/Cocos";
-
-function fillArray(source: ArrayLike<number>, target: number[], startIndex = 1): void {
-    for (let i = startIndex; i < target.length; i++)
-        target[i] = source[i - startIndex];
-}
-
-const _r2d = 180.0 / Math.PI;
-export const EPSILON = 0.000001;
-
-function toEuler(q: ArrayLike<number>): number[] {
-    const x = q[0], y = q[1], z = q[2], w = q[3];
-    let bank = 0;
-    let heading = 0;
-    let attitude = 0;
-    const test = x * y + z * w;
-    if (test > 0.499999) {
-        bank = 0; // default to zero
-        heading = 2 * Math.atan2(x, w) * _r2d;
-        attitude = 90;
-    } else if (test < -0.499999) {
-        bank = 0; // default to zero
-        heading = -2 * Math.atan2(x, w) * _r2d;
-        attitude = -90;
-    } else {
-        const sqx = x * x;
-        const sqy = y * y;
-        const sqz = z * z;
-        bank = Math.atan2(2 * x * w - 2 * y * z, 1 - 2 * sqx - 2 * sqz) * _r2d;
-        heading = Math.atan2(2 * y * w - 2 * x * z, 1 - 2 * sqy - 2 * sqz) * _r2d;
-        attitude = Math.asin(2 * test) * _r2d;
-    }
-    return [bank, heading, attitude];
-}
-
-function vecIsZero(value: readonly number[]): boolean {
-    for (let i = 0; i < value.length; i++)
-        if (Math.abs(value[i]) > EPSILON) return false;
-    return true;
-}
-
-function vecIsOne(value: readonly number[]): boolean {
-    for (let i = 0; i < value.length; i++)
-        if (Math.abs(value[i] - 1) > EPSILON) return false;
-    return true;
-}
-
-function quatIsIdentity(value: readonly number[]): boolean {
-    for (let i = 0; i < value.length - 1; i++)
-        if (Math.abs(value[i]) > EPSILON) return false;
-    if (Math.abs(value[value.length - 1] - 1) > EPSILON) return false;
-    return true;
-}
 
 class PrefabNode {
     private _name: string;
@@ -74,7 +23,7 @@ class PrefabNode {
     private _euler: number[];
     public get euler(): readonly number[] { return this._euler; }
     public set euler(value: readonly number[]) {
-        value = toEuler(value);
+        value = quatToEuler(value);
         if (this._euler != null)
             fillArray(value, this._euler);
         else if (!vecIsZero(value))
@@ -86,7 +35,7 @@ class PrefabNode {
         if (this._lscale != null)
             fillArray(value, this._lscale);
         else if (!vecIsOne(value))
-            this.addTransform("_lscale", 1, toEuler(value));
+            this.addTransform("_lscale", 1, quatToEuler(value));
     }
 
     private addTransform(key: string, type: number, value: readonly number[]): void {

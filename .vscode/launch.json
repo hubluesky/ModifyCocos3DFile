@@ -7,6 +7,13 @@
         {
             "name": "Launch Command",
             "program": "${workspaceFolder}/dist/command.js",
+            "runtimeArgs": [
+                "cga",
+                "-g assets/gltf/model2_test/pug@Idle.glb",
+                "-c assets/cocos/pug@Idle",
+                "-o temp/out/pug@Idle",
+                "-r 90"
+            ],
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"

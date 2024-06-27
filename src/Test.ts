@@ -42,19 +42,19 @@ import { CocosMeshPrefabMeta } from './CocosMeshPrefabMeta';
 // console.log("paotaiPrefab", data);
 
 async function testConvertMesh() {
-    const gltfPath = "assets/gltf/model2_test/Rogue/Rogue.glb";
-    const cocosPath = "assets/cocos/Stickman01";
-    const outPath = "temp/out/Stickman01";
+    const gltfPath = "assets/gltf/model2_test/stag/stag.glb";
+    const cocosPath = "assets/cocos/pug";
+    const outPath = "temp/out/pug";
     await convertMesh(gltfPath, cocosPath, outPath);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
 }
 
 async function testConvertAnimation() {
-    const gltfPath = "assets/gltf/model2_test/animotion_glb/Stickman01@Running.glb";
-    const cocosPath = "assets/cocos/Stickman01@Happy Right_Turn";
-    const outPath = "temp/out/Stickman01@Happy Right_Turn";
-    await convertAnimation(gltfPath, cocosPath, outPath);
+    const gltfPath = "assets/gltf/model2_test/pug@Idle.glb";
+    const cocosPath = "assets/cocos/pug@Idle";
+    const outPath = "temp/out/pug@Idle";
+    await convertAnimation(gltfPath, cocosPath, outPath, 180);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
 }

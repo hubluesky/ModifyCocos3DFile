@@ -10,6 +10,7 @@ import { CocosSkeletonMeta } from "./CocosSkeletonMeta";
 import { ConvertError } from './ConvertError';
 import { CCON, encodeCCONBinary } from './cocos/ccon';
 import { gltf } from './gltf';
+import { quatFromEuler, quatRotateY, quatRotateZ, quatToEuler } from './Math';
 
 export default class CocosModelWriter {
 
@@ -50,6 +51,25 @@ export default class CocosModelWriter {
         fs.writeFileSync(outPath, Buffer.from(encodeCCONBinary(ccon)), "binary");
 
         // fs.writeFileSync(outPath + ".ccon", JSON.stringify(ccon.document), "utf-8");
+    }
+
+    public rotateAnimationRoot(animation: Animation, angle: number): void {
+        const channels = animation.listChannels();
+        for (let i = 0; i < channels.length; i++) {
+            const channel = channels[i];
+            const node = channel.getTargetNode();
+            const parentNode = node.getParentNode();
+            if (parentNode != null) continue; // find root node.
+            if (channel.getTargetPath() != "rotation") continue; // find rotation key frame
+            const sample = channel.getSampler();
+            const outputAccessor = sample.getOutput();
+            const outputArray = outputAccessor.getArray();
+            for (let i = 0; i < outputArray.length; i += 4) {
+                const euler = quatToEuler(new Float32Array([outputArray[i], outputArray[i + 1], outputArray[i + 2], outputArray[i + 3]]));
+                euler[1] += angle;
+                quatFromEuler(outputArray, i, euler[0], euler[1], euler[2]);
+            }
+        }
     }
 
     private updateArrayBufferSize(meshMeta: CocosMeshMeta, listPrimitives: Primitive[]): number {
