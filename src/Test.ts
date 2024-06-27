@@ -6,6 +6,7 @@ import { decodeCCONBinary } from './cocos/ccon';
 import { ConvertError } from './ConvertError';
 import { NodeIO } from '@gltf-transform/core';
 import { CocosMeshPrefabMeta } from './CocosMeshPrefabMeta';
+import { _d2r } from './Math';
 
 // console.log("System", System.import);
 
@@ -52,9 +53,9 @@ async function testConvertMesh() {
 
 async function testConvertAnimation() {
     const gltfPath = "assets/gltf/model2_test/pug@Idle.glb";
-    const cocosPath = "assets/cocos/pug@Idle";
-    const outPath = "temp/out/pug@Idle";
-    await convertAnimation(gltfPath, cocosPath, outPath, 180);
+    const cocosPath = "assets/cocos/reptiles@idle";
+    const outPath = "temp/out/reptiles@idle";
+    await convertAnimation(gltfPath, cocosPath, outPath, 180 * _d2r);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
 }
@@ -81,7 +82,7 @@ async function splitCconb() {
     //     } catch (err) {
     //         throw new ConvertError(121, "Animation file format is error." + err, err);
     //     }
-        
+
     //     io.writeTextFileSync(outPath2, JSON.stringify(ccon2.document));
     // }
 

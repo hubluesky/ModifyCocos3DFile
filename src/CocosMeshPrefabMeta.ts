@@ -1,4 +1,4 @@
-import { fillArray, quatIsIdentity, quatToEuler, vecIsOne, vecIsZero } from "./Math";
+import { fillArray, quat, vec3 } from "./Math";
 import { CLASS_KEYS, File, MASK_CLASS, OBJ_DATA_MASK } from "./cocos/Cocos";
 
 class PrefabNode {
@@ -9,7 +9,7 @@ class PrefabNode {
     public set lpos(value: readonly number[]) {
         if (this._lpos != null)
             fillArray(value, this._lpos);
-        else if (!vecIsZero(value))
+        else if (!vec3.isZero(value))
             this.addTransform("_lpos", 1, value);
     }
     private _lrot: number[];
@@ -17,16 +17,16 @@ class PrefabNode {
     public set lrot(value: readonly number[]) {
         if (this.lrot != null)
             fillArray(value, this._lrot);
-        else if (!quatIsIdentity(value))
+        else if (!quat.isIdentity(value))
             this.addTransform("_lrot", 3, value);
     }
     private _euler: number[];
     public get euler(): readonly number[] { return this._euler; }
     public set euler(value: readonly number[]) {
-        value = quatToEuler(value);
+        value = quat.toEuler(value);
         if (this._euler != null)
             fillArray(value, this._euler);
-        else if (!vecIsZero(value))
+        else if (!vec3.isZero(value))
             this.addTransform("_euler", 1, value);
     }
     private _lscale: number[];
@@ -34,8 +34,8 @@ class PrefabNode {
     public set lscale(value: readonly number[]) {
         if (this._lscale != null)
             fillArray(value, this._lscale);
-        else if (!vecIsOne(value))
-            this.addTransform("_lscale", 1, quatToEuler(value));
+        else if (!vec3.isOne(value))
+            this.addTransform("_lscale", 1, quat.toEuler(value));
     }
 
     private addTransform(key: string, type: number, value: readonly number[]): void {

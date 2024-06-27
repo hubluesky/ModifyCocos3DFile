@@ -603,8 +603,7 @@ export interface ISubMesh {
 
 export interface ArrayLike<T> {
     readonly length: number;
-    readonly [n: number]: T;
-    /** Iterator */
+    [n: number]: T;
     [Symbol.iterator](): IterableIterator<T>;
 }
 

@@ -1,16 +1,16 @@
 import { Animation, AnimationChannel, AnimationSampler, Document, GLTF, Mesh, Node, Primitive, Root, Scene, Skin, TypedArray, getBounds } from '@gltf-transform/core';
 import fs from 'fs';
 import path from 'path';
-import { FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './cocos/Cocos';
 import { CocosAnimatHash, CocosAnimationMeta, ExoticAnimationHash, ExoticNodeAnimationHash, ExoticTrackHash, TrackValuesHash } from './CocosAnimationMeta';
 import { CocosToGltfAttribute, GltfChannelPathToCocos } from './CocosGltfWrap';
 import { CocosMeshMeta } from "./CocosMeshMeta";
 import { CocosMeshPrefabMeta } from './CocosMeshPrefabMeta';
 import { CocosSkeletonMeta } from "./CocosSkeletonMeta";
 import { ConvertError } from './ConvertError';
+import { _d2r, quat, vec3 } from './Math';
+import { FormatInfos, getComponentByteLength, getIndexStrideCtor, getOffset, getWriter } from './cocos/Cocos';
 import { CCON, encodeCCONBinary } from './cocos/ccon';
 import { gltf } from './gltf';
-import { quatFromEuler, quatRotateY, quatRotateZ, quatToEuler } from './Math';
 
 export default class CocosModelWriter {
 
@@ -60,14 +60,29 @@ export default class CocosModelWriter {
             const node = channel.getTargetNode();
             const parentNode = node.getParentNode();
             if (parentNode != null) continue; // find root node.
-            if (channel.getTargetPath() != "rotation") continue; // find rotation key frame
-            const sample = channel.getSampler();
-            const outputAccessor = sample.getOutput();
-            const outputArray = outputAccessor.getArray();
-            for (let i = 0; i < outputArray.length; i += 4) {
-                const euler = quatToEuler(new Float32Array([outputArray[i], outputArray[i + 1], outputArray[i + 2], outputArray[i + 3]]));
-                euler[1] += angle;
-                quatFromEuler(outputArray, i, euler[0], euler[1], euler[2]);
+            switch (channel.getTargetPath()) {
+                case "translation": {
+                    const sample = channel.getSampler();
+                    const outputAccessor = sample.getOutput();
+                    const outputArray = outputAccessor.getArray();
+                    for (let i = 0; i < outputArray.length; i += 3) {
+                        vec3.rotateY(outputArray, i, [0, 0, 0], angle);
+                    }
+                    break;
+                }
+                case "rotation": {
+                    const sample = channel.getSampler();
+                    const outputAccessor = sample.getOutput();
+                    const outputArray = outputAccessor.getArray();
+                    const angleRotation = quat.fromAngleY([], 0, angle);
+                    for (let i = 0; i < outputArray.length; i += 4) {
+                        quat.multiply(outputArray, i, angleRotation, 0, outputArray, i);
+                        // const euler = quat.toEuler(new Float32Array([outputArray[i], outputArray[i + 1], outputArray[i + 2], outputArray[i + 3]]));
+                        // euler[1] += angle;
+                        // quat.fromEuler(outputArray, i, euler[0], euler[1], euler[2]);
+                    }
+                    break;
+                }
             }
         }
     }
