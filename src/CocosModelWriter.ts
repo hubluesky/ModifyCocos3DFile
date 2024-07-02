@@ -281,34 +281,17 @@ export default class CocosModelWriter {
     }
 
     private writeAnimation(meta: CocosAnimationMeta, document: Document, animation: Animation): Float32Array {
+        const scene = document.getRoot().listScenes()[0];
         const channels = animation.listChannels();
         const samples = animation.listSamplers();
         console.assert(channels.length == samples.length, `channels length cannot equals samples length ${channels.length, samples.length}`);
-        const animationNodes: {
+        const keyframes: {
             node: Node,
             samples: AnimationSampler[],
             channels: AnimationChannel[]
         }[] = [];
 
         const pathes = meta.getOriginExoticNodePath();
-        for (let i = 0; i < channels.length; i++) {
-            const channel = channels[i];
-            const sample = samples[i];
-            const node = channel.getTargetNode();
-
-            let animationNode = animationNodes.find(v => v.node == node);
-            if (animationNode == null)
-                animationNodes.push(animationNode = { node, samples: [], channels: [] });
-
-            animationNode.samples.push(sample);
-            animationNode.channels.push(channel);
-
-            // check the bone without key the animation.
-            const index = pathes.findIndex(x => x.endsWith(animationNode.node.getName()));
-            if (index != -1) pathes.splice(index, 1);
-        }
-
-        const scene = document.getRoot().listScenes()[0];
         const createAnimationFrame = function (animationNode: Node, targetPath: GLTF.AnimationChannelTargetPath, data: TypedArray): [AnimationSampler, AnimationChannel] {
             const inputArray = new Float32Array(1);
             inputArray[0] = 0;
@@ -327,22 +310,25 @@ export default class CocosModelWriter {
             return [sampler, channel];
         }
 
-        // 当有骨骼没有K关键帧的时候，自动帮忙补上一帧的数据。不然在Cocos使用骨骼动画预烘培的时候，会导致动画显示不正确。
-        for (let path of pathes) {
-            const animationNode = CocosModelWriter.getChildByPath(scene, path);
-
-            const result1 = createAnimationFrame(animationNode, "translation", new Float32Array(animationNode.getTranslation()));
-            const result2 = createAnimationFrame(animationNode, "rotation", new Float32Array(animationNode.getRotation()));
-            const result3 = createAnimationFrame(animationNode, "scale", new Float32Array(animationNode.getScale()));
-
-            const animationData = { node: animationNode, samples: [result1[0], result2[0], result3[0]], channels: [result1[1], result2[1], result3[1]] };
-            animationNodes.push(animationData);
-
-            const weights = animationNode.getWeights();
-            if (weights != null && weights.length > 0) {
-                const result4 = createAnimationFrame(animationNode, "weights", new Float32Array(weights));
-                animationData.samples.push(result4[0]);
-                animationData.channels.push(result4[1]);
+        // const propertyFuncWrap = ["getTranslation", "getRotation", "getScale", "getWeights"];
+        // 暂不支持带weights的动画哦，就是不支持变化动画
+        const properties = ["translation", "rotation", "scale"/*, "weights"*/] as GLTF.AnimationChannelTargetPath[];
+        for (const path of pathes) {
+            const node = CocosModelWriter.getChildByPath(scene, path);
+            const keyframeValues = { node, samples: [], channels: [] };
+            keyframes.push(keyframeValues);
+            for (let i = 0; i < properties.length; i++) {
+                const property = properties[i];
+                const channel = channels.find(c => c.getTargetNode() == node && c.getTargetPath() == property);
+                if (channel == null) {
+                    // @ts-ignore
+                    const result = createAnimationFrame(node, property, new Float32Array(node.get(property)));
+                    keyframeValues.samples.push(result[0]);
+                    keyframeValues.channels.push(result[1]);
+                } else {
+                    keyframeValues.samples.push(channel.getSampler());
+                    keyframeValues.channels.push(channel);
+                }
             }
         }
 
@@ -350,16 +336,16 @@ export default class CocosModelWriter {
         let offset = 0;
         const buffer = new Array<number>();
         let newDuration: number = 0;
-        for (const animationNode of animationNodes) {
-            const pathname = CocosModelWriter.getJointPathName(animationNode.node);
+        for (const keyframe of keyframes) {
+            const pathname = CocosModelWriter.getJointPathName(keyframe.node);
             const metaAnimationNode = meta.createAnimationNode(pathname);
 
             const exoticNodeAnimationHash = new ExoticNodeAnimationHash(pathname);
             exoticAnimationHash.addNodeAnimation(exoticNodeAnimationHash);
 
-            for (let i = 0; i < animationNode.samples.length; i++) {
-                const sample = animationNode.samples[i];
-                const channel = animationNode.channels[i];
+            for (let i = 0; i < keyframe.samples.length; i++) {
+                const sample = keyframe.samples[i];
+                const channel = keyframe.channels[i];
                 const channelPath = channel.getTargetPath();
                 const input = sample.getInput();
                 const output = sample.getOutput();

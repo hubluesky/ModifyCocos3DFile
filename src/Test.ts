@@ -52,10 +52,10 @@ async function testConvertMesh() {
 }
 
 async function testConvertAnimation() {
-    const gltfPath = "assets/gltf/model2_test/pug@Idle.glb";
-    const cocosPath = "assets/cocos/reptiles@idle";
-    const outPath = "temp/out/reptiles@idle";
-    await convertAnimation(gltfPath, cocosPath, outPath, 180 * _d2r);
+    const gltfPath = "assets/gltf/human@die.glb";
+    const cocosPath = "assets/cocos/human@happyrightturn";
+    const outPath = "temp/out/human@happyrightturn";
+    await convertAnimation(gltfPath, cocosPath, outPath, 0 * _d2r);
     child_process.exec(`start "" "${path.resolve(outPath)}"`);
     console.log("convert completed!");
 }

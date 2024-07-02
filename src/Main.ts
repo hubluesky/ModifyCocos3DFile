@@ -58,7 +58,7 @@ interface Gltf2Cocos {
     rotateY?: string;
 }
 
-program.version("0.1.0", "-v, --version", "Cocos 3d file converter");
+program.version("0.1.1", "-v, --version", "Cocos 3d file converter");
 
 program.command("fbx2gltf")
     .alias("f2g")
