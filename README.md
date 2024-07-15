@@ -109,11 +109,12 @@ Usage: index ConvertFbxAnimation|cfa [options]
 read the fbx and replace to the cocos 3d animation file.
 
 Options:
-  -f, --fbx <path>     Input gltf file path.
-  -t, --temp <path>    fbx to gltf temp path, default temp.
-  -c, --cocos <path>   Input cocos 3d file
-  -o, --output <path>  Output Cocos 3d file path.
-  -h, --help           display help for command
+  -f, --fbx <path>        Input gltf file path.
+  -t, --temp <path>       fbx to gltf temp path, default temp.
+  -c, --cocos <path>      Input cocos 3d file
+  -o, --output <path>     Output Cocos 3d file path.
+  -r, --rotateY <number>  rotate y axis of root bone.
+  -h, --help              display help for command
 ```
 * `ConvertGltfAnimation|cfa`命令是把gltf的动画文件转化为cocos3D文件的命令
 ```
@@ -122,10 +123,11 @@ Usage: index ConvertGltfAnimation|cga [options]
 read the gltf and replace to the cocos 3d animation file.
 
 Options:
-  -g, --gltf <path>    Input gltf file path.
-  -c, --cocos <path>   Input cocos 3d file
-  -o, --output <path>  Output Cocos 3d file path.
-  -h, --help           display help for command
+  -g, --gltf <path>       Input gltf file path.
+  -c, --cocos <path>      Input cocos 3d file
+  -o, --output <path>     Output Cocos 3d file path.
+  -r, --rotateY <number>  rotate y axis of root bone.
+  -h, --help              display help for command
 ```
 ### 测试
 项目中有几个测试文件，用来测试转换的。
