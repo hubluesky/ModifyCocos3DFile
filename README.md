@@ -159,6 +159,7 @@ class ConvertError extends Error {
 * 错误码：107，消息：Skin count is not match. source 1, upload ${skins.length}.
 * 错误码：108，消息：Skeleton joint name ${name} is not match.
 * 错误码：109，消息：Skeleton joints count is not match. source ${skeletonMeta.joints.length} upload ${jointNodes.length}.
+* 错误码：110，消息：Can not find cocos animation file. Maybe be merge by one josn.
 * 错误码：121，消息：Animation file format is error. ${err}.
 * 错误码：122，消息：Animation count is not match. source 1, upload ${animations.length}.
 * 错误码：131，消息：ccon encode failed.

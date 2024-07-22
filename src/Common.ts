@@ -86,7 +86,7 @@ function searchCocosFile(cocosPath: string, filenames: string[], type: string): 
 export async function convertMesh(uri: string, cocosPath: string, outPath: string): Promise<void> {
     const result = readPrefabDependences(cocosPath, ".json");
     if (result == null || result.filenames.length == 0)
-        throw new ConvertError(1103, "Can not find cocos prefab meta file. Maybe be merge by one josn.");
+        throw new ConvertError(103, "Can not find cocos prefab meta file. Maybe be merge by one josn.");
 
     const meshResult = searchCocosFile(cocosPath, result.filenames, "cc.Mesh");
     if (meshResult == null)
@@ -139,7 +139,7 @@ export async function convertMesh(uri: string, cocosPath: string, outPath: strin
 export async function convertAnimation(uri: string, cocosPath: string, outPath: string, rotateAngle?: number): Promise<void> {
     const result = readPrefabDependences(cocosPath, ".cconb");
     if (result == null || result.filenames.length == 0)
-        throw new ConvertError(103, "Can not find cocos prefab meta file. Maybe be merge by one josn.");
+        throw new ConvertError(110, "Can not find cocos animation file. Maybe be merge by one josn");
     const filename = result.filenames[0];
     const arrayBuffer = io.readBinaryFileSync(`${cocosPath}/${filename}`);
     try {

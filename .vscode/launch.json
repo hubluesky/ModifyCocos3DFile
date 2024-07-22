@@ -6,13 +6,14 @@
     "configurations": [
         {
             "name": "Launch Command",
-            "program": "${workspaceFolder}/dist/command.js",
+            // "program": "${workspaceFolder}/dist/index.js",
             "runtimeArgs": [
+                "dist/index.js",
                 "cga",
-                "-g assets/gltf/model2_test/pug@Idle.glb",
-                "-c assets/cocos/pug@Idle",
-                "-o temp/out/pug@Idle",
-                "-r 90"
+                "-g", "assets/gltf/2a6ec6e50e6bf030e86342818dbe5ce6.glb",
+                "-c", "assets/cocos/human@hug",
+                "-o", "temp/out/human@hug",
+                "-r", "90"
             ],
             "request": "launch",
             "skipFiles": [
