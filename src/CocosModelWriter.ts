@@ -27,7 +27,7 @@ export default class CocosModelWriter {
 
         fs.mkdirSync(outPath, { recursive: true });
         const binPath = path.join(outPath, path.basename(meshMeta.filename, path.extname(meshMeta.filename)) + '.bin');
-        fs.writeFileSync(binPath, Buffer.from(arrayBuffer), "binary");
+        fs.writeFileSync(binPath, new Uint8Array(Buffer.from(arrayBuffer)), "binary");
         fs.writeFileSync(path.join(outPath, meshMeta.filename), JSON.stringify(meshMeta.data), "utf-8");
         fs.writeFileSync(path.join(outPath, prefabMeta.filename), JSON.stringify(prefabMeta.data), "utf-8");
     }
@@ -48,7 +48,7 @@ export default class CocosModelWriter {
 
         const arrayBuffer = this.writeAnimation(animationMeta, document, animation);
         const ccon = new CCON(animationMeta.list, [new Uint8Array(arrayBuffer.buffer)]);
-        fs.writeFileSync(outPath, Buffer.from(encodeCCONBinary(ccon)), "binary");
+        fs.writeFileSync(outPath, new Uint8Array(Buffer.from(encodeCCONBinary(ccon))), "binary");
 
         // fs.writeFileSync(outPath + ".ccon", JSON.stringify(ccon.document), "utf-8");
     }
