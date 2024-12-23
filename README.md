@@ -77,6 +77,17 @@ Options:
   -o, --output <path>  Output gltf path. It must be local path.
   -h, --help           display help for command
 ```
+* `fbx2glb|f2b`命令是把fbx文件转化为glb文件
+```
+Usage: index fbx2gltf|f2b [options]
+
+Conver fbx to glb file.
+
+Options:
+  -f, --fbx <path>     Input Fbx file path.
+  -o, --output <path>  Output glb path. It must be local path.
+  -h, --help           display help for command
+```
 * `ConvertFbxMesh|cfm`命令是把fbx文件的网格转化为cocos3D文件的命令
 ```
 Usage: index ConvertFbxMesh|cfm [options]

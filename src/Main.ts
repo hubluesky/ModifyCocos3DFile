@@ -1,7 +1,7 @@
 import { program } from "commander";
 import * as fs from 'fs';
 import path from "path";
-import { convertAnimation, convertMesh, fbxToGltf } from "./Common";
+import { convertAnimation, convertMesh, fbxToGlb, fbxToGltf } from "./Common";
 import { _d2r } from "./Math";
 
 async function convertFbxMeshFile(fbxPath: string, tempPath: string, cocosPath: string, outPath: string) {
@@ -67,6 +67,15 @@ program.command("fbx2gltf")
     .option("-o, --output <path>", "Output gltf path. It must be local path.")
     .action(function (input: FBX2Gltf) {
         fbxToGltf(input.fbx, input.output);
+    });
+
+program.command("fbx2glb")
+    .alias("f2b")
+    .description("Conver fbx to gltf file.")
+    .requiredOption("-f, --fbx <path>", "Input Fbx file path.")
+    .option("-o, --output <path>", "Output glb path. It must be local path.")
+    .action(function (input: FBX2Gltf) {
+        fbxToGlb(input.fbx, input.output);
     });
 
 program.command("ConvertFbxMesh")

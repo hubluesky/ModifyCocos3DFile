@@ -41,6 +41,19 @@ export function fbxToGltf(filename: string, tempPath: string = "temp/fbx2gltf"):
     return gltfPath;
 }
 
+
+/**
+ * FBX version 2019 or higher;
+ * @param filename fbx文件路径
+ */
+export function fbxToGlb(filename: string, tempPath: string = "temp/fbx2gltf"): string {
+    const gltfName = path.basename(filename, path.extname(filename));
+    const gltfPath = `${tempPath}/${gltfName}/${gltfName}.glb`;
+    fs.mkdirSync(path.dirname(gltfPath), { recursive: true });
+    cocosFbxToGltf(filename, gltfPath);
+    return gltfPath;
+}
+
 async function computeNormalAndTangent(document: Document, overwrite: boolean = false) {
     await document.transform(normals({ overwrite: overwrite }));
     await document.transform(tangents({ overwrite: overwrite }));
